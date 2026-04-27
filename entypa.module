@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * Implements hook_preprocess_entity_print().
+ */
+function entypa_preprocess_entity_print(array &$variables) {
+  $webform_submission = _webform_entity_print_preprocess_entity_print_get_webform_submission($variables['content']);
+  if (!$webform_submission) {
+    return;
+  }
+  $webform = $webform_submission->getWebform();
+  $variables['data'] = $webform_submission->getData();
+  $variables['elements'] = $webform->getElementsDecodedAndFlattened();
+}

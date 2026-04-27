@@ -1,0 +1,5 @@
+services:
+  entypa_print_css_subscriber:
+    class: '\Drupal\entypa\EventSubscriber\EntypaEntityPrintCssAlterSubscriber'
+    tags:
+      - { name: 'event_subscriber' }

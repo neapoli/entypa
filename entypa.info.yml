@@ -1,0 +1,12 @@
+name: "Entýpa"
+description: 'Entýpa, dal greco Moduli/Formulari, è un modulo Drupal per la gestione delle Istanze del personale scolastico'
+package: "Neapoli"
+
+type: module
+core_version_requirement: ^9 || ^10 || ^11
+dependencies:
+  - drupal:pathauto
+  - entity_print:entity_print
+  - webform:webform
+  - webform:webform_entity_print
+  - webform:webform_entity_print_attachment
