@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * Registers the entity_print template suggestion for the "adesione_a_commissioni"
+ * webform so entity_print can find the file in this submodule's templates directory.
+ */
+function adesione_commissioni_theme_registry_alter(&$theme_registry) {
+  if (!isset($theme_registry['entity_print'])) {
+    return;
+  }
+  $module_path = \Drupal::service('extension.list.module')->getPath('adesione_commissioni');
+  $theme_registry['entity_print__webform_submission__adesione_a_commissioni'] = [
+    'base hook' => 'entity_print',
+    'path' => $module_path . '/templates/entity_print',
+    'template' => 'entity-print--webform-submission--adesione-a-commissioni',
+    'type' => 'module',
+    'theme path' => $module_path,
+    'variables' => $theme_registry['entity_print']['variables'] ?? [],
+    'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
+  ];
+}

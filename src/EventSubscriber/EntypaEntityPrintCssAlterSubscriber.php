@@ -23,7 +23,8 @@ class EntypaEntityPrintCssAlterSubscriber implements EventSubscriberInterface {
     $entities = $event->getEntities();
     foreach ($entities as $entity) {
       if ($entity->getEntityTypeId() === 'webform_submission') {
-        $event->getBuild()['#attached']['library'][] = 'entypa/istanze';
+        $build = &$event->getBuild();
+        $build['#attached']['library'][] = 'entypa/istanze';
       }
     }
   }

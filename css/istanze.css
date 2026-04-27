@@ -77,5 +77,9 @@ td, th {
 
 .center {
   text-align: center;
+}
+
+.center-bold {
+  text-align: center;
   font-weight: bold;
 }
