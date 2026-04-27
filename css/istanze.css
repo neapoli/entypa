@@ -1,0 +1,81 @@
+@page {
+  margin: 0 30px 0 30px;
+}
+#header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 0;
+  /*background-color: orange;*/
+  text-align: center;
+}
+#footer {
+  position: fixed;
+  left: 0;
+  bottom: -80px;
+  right: 0;
+  height: 100px;
+  text-align: right;
+  font-size: 9px;
+  /*background-color: lightblue;*/
+}
+#footer .page:after {
+  content: counter(page, upper-roman);
+}
+body {
+  font-family: "DejaVu Sans", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+#header table {
+  table-layout: fixed !important;
+  min-width:100%;
+  max-width:800px !important;
+  /*font-family: arial, sans-serif;*/
+  border-collapse: collapse;
+}
+td, th {
+  /* border: 2px solid #898989; */
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.nome_modulo {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.nomeistituto {
+  font-size: 9px;
+}
+.infoistituto {
+  font-size: 8px;
+  line-height: 1.5;
+}
+#content {
+  margin-top: 10px;
+  padding: 12px;
+}
+.content_header {
+  text-align: right;
+}
+.corpo p {
+  /*letter-spacing: 2px;*/
+  line-height: 1.5;
+  word-spacing: 3px;
+}
+
+.firma_docente .firma {
+  position: relative;
+  left: 250px;
+  text-align: center;
+}
+
+.firma_ds {
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+  font-weight: bold;
+}

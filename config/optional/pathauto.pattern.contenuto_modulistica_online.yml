@@ -1,0 +1,21 @@
+langcode: it
+status: true
+dependencies:
+  module:
+    - node
+id: contenuto_modulistica_online
+label: 'Contenuto: MODULISTICA ONLINE'
+type: 'canonical_entities:node'
+pattern: 'modulistica-online/[node:title]'
+selection_criteria:
+  83b79857-f5ba-4dc1-8110-9f4d0f2f2d59:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 83b79857-f5ba-4dc1-8110-9f4d0f2f2d59
+    context_mapping:
+      node: node
+    bundles:
+      modulistica_online: modulistica_online
+selection_logic: and
+weight: -5
+relationships: {  }

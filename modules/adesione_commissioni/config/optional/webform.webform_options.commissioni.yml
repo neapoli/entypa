@@ -1,0 +1,12 @@
+langcode: it
+status: true
+dependencies: {  }
+id: commissioni
+label: Commissioni
+category: Scuola
+likert: false
+options: |-
+  'Commissione 1': 'Commissione 1'
+  'Commissione 2': 'Commissione 2'
+  'Commissione 3': 'Commissione 3'
+  'Commissione 4': 'Commissione 4'

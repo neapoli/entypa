@@ -1,0 +1,8 @@
+name: "Adesione a Commissioni"
+description: 'This module install "Adesione a Commissioni" form for School.'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11
+dependencies:
+  - entypa:entypa

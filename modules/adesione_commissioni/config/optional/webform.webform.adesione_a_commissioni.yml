@@ -1,0 +1,455 @@
+langcode: it
+status: open
+dependencies:
+  module:
+    - entypa
+    - webform_entity_print
+third_party_settings:
+  webform_entity_print:
+    template:
+      header: '<h2>Adesione a Commissioni</h2>'
+      footer: ''
+      css: ''
+    export_types:
+      pdf:
+        enabled: true
+        link_text: ''
+        link_attributes: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: adesione_a_commissioni
+title: 'Adesione a Commissioni'
+description: 'Form per la Modulistica del Personale'
+category: 'Modulistica DOCENTI / ATA'
+elements: |-
+  dati_anagrafici:
+    '#type': webform_flexbox
+    '#align_items': center
+    markup:
+      '#type': webform_markup
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - amministratore
+      '#access_view_roles':
+        - authenticated
+      '#display_on': both
+      '#markup': '<p>Il/La sottoscritto/a</p>'
+    cognome:
+      '#type': textfield
+      '#title': Cognome
+      '#readonly': true
+      '#input_mask': '''casing'': ''upper'''
+      '#default_value': '[current-user:field_cognome]'
+    nome:
+      '#type': textfield
+      '#title': Nome
+      '#readonly': true
+      '#input_mask': '''casing'': ''upper'''
+      '#default_value': '[current-user:field_nome]'
+    codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice Fiscale'
+      '#readonly': true
+      '#input_mask': '''casing'': ''upper'''
+      '#required': true
+      '#default_value': '[current-user:field_codice_fiscale]'
+  flexbox:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    '#align_items': center
+    sede_di_servizio:
+      '#type': textfield
+      '#title': 'In servizio presso:'
+      '#readonly': true
+      '#flex': 2
+      '#default_value': '[current-user:field_sede_di_servizio]'
+    in_qualita_di_:
+      '#type': textfield
+      '#title': 'In qualità di:'
+      '#readonly': true
+      '#default_value': '[current-user:field_qualifica]'
+    a_tempo:
+      '#type': textfield
+      '#title': 'A Tempo:'
+      '#readonly': true
+      '#default_value': '[current-user:field_tipologia_incarico:entity]'
+  processed_text:
+    '#type': processed_text
+    '#display_on': both
+    '#text': |
+      <p class="text-align-center"><strong>COMUNICA</strong></p>
+
+      <p>con la presente, la propria disponibilità a partecipare ai lavori delle Commissioni /Gruppi di lavoro sottoindicati e programmati per l'anno scolastico in corso:</p>
+    '#format': bootstrap_italia_2
+  commissione:
+    '#type': checkboxes
+    '#title': Commissione
+    '#options': commissioni
+    '#required': true
+  note:
+    '#type': textarea
+    '#title': Note
+    '#wrapper_attributes':
+      style: 'margin-top: 50px'
+  data_firma:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 50px'
+    data_di_invio:
+      '#type': date
+      '#title': 'Data compilazione'
+      '#title_display': inline
+      '#disabled': true
+      '#default_value': today
+      '#format': bootstrap_italia_short_date
+      '#date_date_format': ''
+    firma_digitale:
+      '#type': textarea
+      '#title': FIRMA
+      '#rows': 3
+      '#disabled': true
+      '#flex': 0
+      '#default_value': |-
+        [current-user:field_cognome] [current-user:field_nome]
+        C.F. [current-user:field_codice_fiscale]
+        E-mail: [current-user:mail]
+      '#format': raw
+  file_pdf:
+    '#type': 'webform_entity_print_attachment:pdf'
+    '#title': 'File PDF'
+    '#display_on': view
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+  istituto:
+    '#type': hidden
+    '#title': Istituto
+    '#default_value': '[site:name]'
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': '[site:mail]'
+  mail_user:
+    '#type': hidden
+    '#title': 'Mail user'
+    '#default_value': '[current-user:mail]'
+  richiesta_annullamento:
+    '#type': number
+    '#title': 'Richiesta Annullamento'
+    '#default_value': '0'
+    '#access': false
+css: ''
+javascript: ''
+settings:
+  ajax: false
+  ajax_scroll_top: form
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: true
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: '[webform_submission:submitted-to]: [webform_submission:values:cognome]'
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements:
+    istituto: istituto
+    mail_istituto: mail_istituto
+    mail_user: mail_user
+    richiesta_annullamento: richiesta_annullamento
+  submission_exclude_empty: true
+  submission_exclude_empty_checkbox: true
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - element__cognome
+    - element__nome
+    - element__sede_di_servizio
+    - element__in_qualita_di_
+    - element__a_tempo
+    - completed
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: false
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: '< Precedente'
+  wizard_next_button_label: ''
+  wizard_toggle: false
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
+  preview: 2
+  preview_label: Anteprima
+  preview_title: '[webform:title]: Anteprima'
+  preview_message: "<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>\r\n\r\n<p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>"
+  preview_attributes: {  }
+  preview_excluded_elements:
+    file_pdf: file_pdf
+    istituto: istituto
+    mail_istituto: mail_istituto
+    mail_user: mail_user
+    richiesta_annullamento: richiesta_annullamento
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: url_message
+  confirmation_url: /modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: 'La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.'
+  confirmation_attributes: {  }
+  confirmation_back: true
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: true
+  confirmation_exclude_token: true
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: true
+access:
+  create:
+    roles:
+      - amministratore
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+      - ata_amministrativo
+      - ata_tecnico
+      - collaboratore
+      - dirigente_scolastico
+      - direttore_amministrativo_dsga_
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles:
+      - amministratore
+      - redattore
+      - dirigente_scolastico
+      - direttore_amministrativo_dsga_
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles:
+      - amministratore
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles:
+      - amministratore
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles:
+      - amministratore
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+      - personale_amministrativo
+      - personale_tecnico
+      - collaboratore
+      - dirigente_scolastico
+      - direttore_amministrativo_dsga_
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles:
+      - amministratore
+      - dirigente_scolastico
+      - direttore_amministrativo_dsga_
+    users: {  }
+    permissions: {  }
+  test:
+    roles:
+      - amministratore
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles:
+      - amministratore
+    users: {  }
+    permissions: {  }
+handlers:
+  e_mail:
+    id: email
+    handler_id: e_mail
+    label: E-mail
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_istituto:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: '[site:mail]'
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      reply_to: '[webform_submission:values:mail_user:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
+      body: "<p>Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} del {{ webform_token('[webform_submission:created]', webform_submission) }}<br />\r\nda <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
+      excluded_elements:
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      parameters: {  }
+      debug: false
+  e_mail_conferma_ricezione:
+    id: email
+    handler_id: e_mail_conferma_ricezione
+    label: 'E-mail conferma ricezione'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 1
+    settings:
+      states:
+        - completed
+      to_mail: '[current-user:mail]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[site:name]'
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      parameters: {  }
+      debug: false
+variants: {  }
