@@ -1,0 +1,25 @@
+{
+    "name": "neapoli/entypa",
+    "type": "drupal-module",
+    "description": "Entýpa, dal greco Moduli/Formulari, è un modulo Drupal per la gestione delle Istanze del personale scolastico",
+    "keywords": ["Drupal", "module", "Entýpa"],
+    "homepage": "https://github.com/neapoli/entypa",
+    "license": "AGPL-3.0-only",
+    "authors": [
+        {
+            "name": "Crescenzo Velleca",
+            "email": "info@softwebadvice.com",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/neapoli/entypa/issues",
+        "source": "https://github.com/neapoli/entypa"
+    },
+    "require": {
+        "drupal/core": "^10",
+        "ouitoulia/skenografia": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
