@@ -30,22 +30,21 @@
 
     <div id="content">
       <div class="content_header">
-        <p style="float: right;">Al Dirigente scolastico<br />
+        <p>Al Dirigente scolastico<br />
            {{ data.istituto }} <br />
            {{ data.mail_istituto }}
         </p>
-        <p style="clear: right;">&nbsp;</p>
       </div>
-      <div class="oggetto">
+      <div>
         <p>Oggetto: <strong>Adesione a commissioni - {{ data.cognome }} {{ data.nome }}</strong></p>
       </div>
       <div class="corpo">
         <p>
           Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
           in servizio presso {{ data.sede_di_servizio }}
-          in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}<br>
+          in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}<br>
         </p>
-        <p class="center">{{ elements.processed_text }}</p>
+          <div>{{ elements.processed_text['#text']|raw }}</div>
         <div style="margin-top: 20px;">
           <p>Commissione:
             {{ webform_token('[webform_submission:values:commissione]', webform_submission, [], options) }}
