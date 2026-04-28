@@ -14,7 +14,7 @@ function malattia_doc_theme_registry_alter(&$theme_registry) {
   $theme_registry['entity_print__webform_submission__assenza_per_malattia_doc'] = [
     'base hook' => 'entity_print',
     'path' => $module_path . '/templates/entity_print',
-    'template' => 'entity-print--webform-submission--assenza-per-malattia-ata',
+    'template' => 'entity-print--webform-submission--assenza-per-malattia-doc',
     'type' => 'module',
     'theme path' => $module_path,
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
