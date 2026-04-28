@@ -11,7 +11,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 /**
  * Implements hook_uninstall().
  */
-function malattia_ata_uninstall() {
+function permessi_retribuiti_doc_ti_uninstall() {
 
   // ID of webform to delete.
   $webform_id = 'permessi_retribuiti_doc_ti';
