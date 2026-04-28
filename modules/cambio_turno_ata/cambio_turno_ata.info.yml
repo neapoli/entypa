@@ -1,0 +1,8 @@
+name: "Cambio turno - ATA"
+description: 'This module install "Cambio turno - ATA" form for School.'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11
+dependencies:
+  - entypa:entypa

@@ -1,0 +1,103 @@
+{#
+/**
+ * @file
+ * Default theme implementation for webform submission data.
+ *
+ * Available variables:
+ * - webform_submission: The webform submission.
+ * - webform: The webform.
+ *
+ * @see template_preprocess_webform_submission_data()
+ *
+ * @ingroup themeable
+ */
+#}
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    {{ entity_print_css }}
+  </head>
+  <body>
+    {# The footer is repeated on all pages and must be printed first. #}
+    <div id="footer">
+      <p class="page">Pagina </p>
+    </div>
+
+    <div id="header">
+    </div>
+
+    <div id="content">
+      <div class="content_header">
+        <p>Al Dirigente scolastico<br />
+          {{ data.istituto }} <br />
+          {{ data.mail_istituto }}
+        </p>
+      </div>
+      <div>
+        <p>Oggetto: <strong>Richiesta Permesso breve - DOCENTI {{ data.cognome }} {{ data.nome }}</strong></p>
+      </div>
+      <div class="corpo">
+        <p>
+          Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
+          in servizio presso {{ data.sede_di_servizio }}
+          in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}
+        </p>
+        <div>{{ elements.processed_text['#text']|raw }}</div>
+        {% if data.permesso_orario %}
+          <strong>Permesso Orario:</strong>
+          <table class="text-align-center" style="width:80%;">
+            <thead>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Giorno</th>
+                <th>Dalle Ore</th>
+                <th>Alle Ore</th>
+                <th>Plesso</th>
+                <th>Classe</th>
+              </tr>
+              {% for item in data.permesso_orario %}
+                <tr>
+                  <td>{{ item.giorno|date('d/m/Y') }}</td>
+                  <td>{{ item.ora_inizio|date('H:i') }}</td>
+                  <td>{{ item.ora_fine|date('H:i') }}</td>
+                  <td>{{ item.plesso }}</td>
+                  <td>{{ item.classe }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p>Per un totale di ore: <strong>{{ data.totale_ore }}</strong></p>
+        {% endif %}
+        {{ elements.processed_text_01 }}{{ data.dichiarazione }}<br />
+        <p><strong>Descrizione modalità di recupero</strong><br />
+          {{ data.recupero_permesso}}
+        </p>
+        <div class="data_invio">
+          <p>Data,  {{ data.data_compilazione|date('d/m/Y') }}</p>
+        </div>
+        <div class="firma_docente">
+          <div class="firma">
+            <strong>Firma</strong><br>
+            {{ data.cognome }} {{ data.nome }}<br />
+            codice fiscale {{ data.codice_fiscale }}<br />
+            {{ data.mail_user }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {#  <p style="page-break-before: always;">the second page</p>#}
+    <div class="autorizzazione">
+      <p>
+      </p>
+      <div class="firma_ata"></div>
+      <div class="firma_ds"></div>
+    </div>
+    {#
+    {{ kint(data) }}
+    {{ kint(elements) }}
+    {{ kint(content) }}
+    #}
+  </body>
+</html>

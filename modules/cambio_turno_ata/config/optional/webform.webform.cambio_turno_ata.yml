@@ -6,7 +6,7 @@ dependencies:
 third_party_settings:
   webform_entity_print:
     template:
-      header: '<h2>Adesione a Commissioni</h2>'
+      header: '<h2>Cambio turno - ATA</h2>'
       footer: ''
       css: ''
     export_types:
@@ -20,9 +20,9 @@ close: null
 uid: 1
 template: false
 archive: false
-id: adesione_a_commissioni
-title: 'Adesione a Commissioni'
-description: 'Form per la Modulistica del Personale'
+id: cambio_turno_ata
+title: 'Cambio turno - ATA'
+description: '<p>Form per la Modulistica del Personale</p>'
 categories: {  }
 elements: |-
   dati_anagrafici:
@@ -37,14 +37,16 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#display_on': both
       '#markup': '<p>Il/La sottoscritto/a</p>'
     cognome:
       '#type': textfield
       '#title': Cognome
+      '#autocomplete': 'off'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#flex': 2
       '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -54,9 +56,12 @@ elements: |-
     nome:
       '#type': textfield
       '#title': Nome
+      '#autocomplete': 'off'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#flex': 2
       '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -68,8 +73,8 @@ elements: |-
       '#title': 'Codice Fiscale'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
-      '#required': true
       '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -80,13 +85,14 @@ elements: |-
     '#type': webform_flexbox
     '#attributes':
       style: 'margin-top: 30px'
-    '#align_items': center
     sede_di_servizio:
       '#type': textfield
-      '#title': 'In servizio presso:'
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
       '#readonly': true
-      '#flex': 2
+      '#flex': 3
       '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -95,9 +101,12 @@ elements: |-
         - authenticated
     in_qualita_di_:
       '#type': textfield
-      '#title': 'In qualità di:'
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
       '#readonly': true
+      '#flex': 2
       '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -106,9 +115,11 @@ elements: |-
         - authenticated
     a_tempo:
       '#type': textfield
-      '#title': 'A Tempo:'
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
       '#readonly': true
       '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -117,19 +128,188 @@ elements: |-
         - authenticated
   processed_text:
     '#type': processed_text
-    '#display_on': both
-    '#text': '<p class="text-align-center"><strong>COMUNICA</strong></p><p>la propria disponibilità a partecipare ai lavori delle <strong>Commissioni/Gruppi di lavoro</strong> sottoindicati e programmati per l''anno scolastico in corso:</p>'
-    '#format': bootstrap_italia_2
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-  commissione:
-    '#type': checkboxes
-    '#title': Commissione
-    '#options': commissioni
+    '#display_on': both
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p class="text-align-center">l''autorizzazione ad effettuare il seguente cambio turno:</p>'
+    '#format': bootstrap_italia_2
+  turno_previsto_tabella:
+    '#type': webform_table
+    '#title': 'Turno previsto'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    turno_previsto:
+      '#type': webform_table_row
+      '#title': 'Turno previsto'
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      turno_previsto_plesso_interessato:
+        '#type': select
+        '#title': 'Plesso interessato'
+        '#options': plessi_scolastici
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_giorno:
+        '#type': date
+        '#title': Giorno
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format': bootstrap_italia_short_date
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_dalle_ore:
+        '#type': webform_time
+        '#title': 'dalle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_alle_ore:
+        '#type': webform_time
+        '#title': 'alle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_totale_ore:
+        '#type': webform_time
+        '#title': 'Totale ore'
+        '#description': '<p>Automatico</p>'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format_items': comma
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+        '#min': '00:01:00'
+        '#max': '06:00:00'
+  turno_modificato_tabella:
+    '#type': webform_table
+    '#title': 'Turno modificato'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    turno_modificato:
+      '#type': webform_table_row
+      '#title': 'Turno modificato'
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      turno_modificato_plesso_interessato:
+        '#type': select
+        '#title': 'Plesso interessato'
+        '#options': plessi_scolastici
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_giorno:
+        '#type': date
+        '#title': Giorno
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format': bootstrap_italia_short_date
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_dalle_ore:
+        '#type': webform_time
+        '#title': 'dalle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format_items': comma
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_alle_ore:
+        '#type': webform_time
+        '#title': 'alle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_totale_ore:
+        '#type': webform_time
+        '#title': 'Totale ore'
+        '#description': '<p>Automatico</p>'
+        '#description_display': after
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format_items': comma
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+        '#min': '00:01:00'
+        '#max': '06:00:00'
+  collega:
+    '#type': textfield
+    '#title': 'Nome del collega con cui si effettua il cambio turno:'
     '#required': true
     '#access_create_roles':
       - authenticated
@@ -137,34 +317,79 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-  note:
-    '#type': textarea
-    '#title': Note
+  collega_accetta:
+    '#type': checkbox
+    '#title': 'Il personale coinvolto nella modifica è stato informato e acconsente al cambio '
+    '#required': true
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#wrapper_attributes':
-      style: 'margin-top: 50px'
+  motivo_della_richiesta:
+    '#type': textarea
+    '#title': 'Motivo della richiesta'
+    '#title_display': before
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#required': true
+  il_servizio_giornaliero_sara_cosi_riorganizzato:
+    '#type': textarea
+    '#title': 'Il servizio giornaliero sarà così riorganizzato'
+    '#title_display': before
+    '#placeholder': "Precisare in modo dettagliato l'orario di servizio di tutte le persone coinvolte nella modifica."
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#required': true
+  documento_allegato:
+    '#type': managed_file
+    '#title': 'Allegati (non obbligatorio)'
+    '#multiple': 5
+    '#format_items': comma
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#max_filesize': '2'
+    '#file_extensions': ''
+    '#file_name': 'cambio-turno-ata-[current-user:field_cognome]'
+    '#sanitize': true
   data_firma:
     '#type': webform_flexbox
     '#attributes':
-      style: 'margin-top: 50px'
-    data_di_invio:
+      style: 'margin-top: 100px'
+    data_compilazione:
       '#type': date
       '#title': 'Data compilazione'
       '#title_display': inline
       '#disabled': true
       '#default_value': today
+      '#format': bootstrap_italia_short_date
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#format': bootstrap_italia_short_date
       '#date_date_format': ''
     firma_digitale:
       '#type': textarea
@@ -186,8 +411,15 @@ elements: |-
   file_pdf:
     '#type': 'webform_entity_print_attachment:pdf'
     '#title': 'File PDF'
-    '#display_on': view
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#display_on': both
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
   istituto:
     '#type': hidden
     '#title': Istituto
@@ -224,10 +456,10 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ''
-javascript: ''
+javascript: "(function ($) {\r\n  $('input[name=\"turno_previsto_dalle_ore\"]').change(function(){\r\n    SommaTime();\r\n  });\r\n  $('input[name=\"turno_previsto_alle_ore\"]').change(function(){\r\n    SommaTime();\r\n  });\r\n  \r\n  $('input[name=\"turno_modificato_dalle_ore\"]').change(function(){\r\n    SommaTime2();\r\n  });\r\n  $('input[name=\"turno_modificato_alle_ore\"]').change(function(){\r\n    SommaTime2();\r\n  });\r\n  \r\n  $('input[name=\"turno_previsto_totale_ore\"]').attr('readonly','readonly');\r\n  $('input[name=\"turno_modificato_totale_ore\"]').attr('readonly','readonly');\r\n  \r\n  function SommaTime() {\r\n    var time1 = document.getElementById(\"edit-turno-previsto-dalle-ore\").value;\r\n    var time2 = document.getElementById(\"edit-turno-previsto-alle-ore\").value;\r\n    //alert(time1);\r\n        \r\n    var hour = 0;\r\n    var minute = 0;\r\n        \r\n    var splitTime1= time1.split(':');\r\n    var splitTime2= time2.split(':');\r\n        \r\n    hour = parseInt(splitTime2[0])-parseInt(splitTime1[0]);\r\n    minute = parseInt(splitTime2[1])-parseInt(splitTime1[1]);\r\n    hour = Math.floor(hour + minute/60);\r\n    if (hour < 10) hour = \"0\" + hour;\r\n    minute = minute%60;\r\n    if (minute < 10) minute = \"0\" + minute;\r\n    \r\n    //alert('sum of above time= '+hour+':'+minute);\r\n    document.getElementById(\"edit-turno-previsto-totale-ore\").value = hour+':'+minute;\r\n  }\r\n  \r\n  function SommaTime2() {\r\n    var time3 = document.getElementById(\"edit-turno-modificato-dalle-ore\").value;\r\n    var time4 = document.getElementById(\"edit-turno-modificato-alle-ore\").value;\r\n    //alert(time1);\r\n        \r\n    var hour = 0;\r\n    var minute = 0;\r\n        \r\n    var splitTime3= time3.split(':');\r\n    var splitTime4= time4.split(':');\r\n        \r\n    hour = parseInt(splitTime4[0])-parseInt(splitTime3[0]);\r\n    minute = parseInt(splitTime4[1])-parseInt(splitTime3[1]);\r\n    hour = Math.floor(hour + minute/60);\r\n    if (hour < 10) hour = \"0\" + hour;\r\n    minute = minute%60;\r\n    if (minute < 10) minute = \"0\" + minute;\r\n    \r\n    //alert('sum of above time= '+hour+':'+minute);\r\n    document.getElementById(\"edit-turno-modificato-totale-ore\").value = hour+':'+minute;\r\n  }\r\n}(jQuery));"
 settings:
   ajax: false
-  ajax_scroll_top: form
+  ajax_scroll_top: ''
   ajax_progress_type: ''
   ajax_effect: ''
   ajax_speed: null
@@ -290,10 +522,15 @@ settings:
     - created
     - element__cognome
     - element__nome
+    - element__codice_fiscale
     - element__sede_di_servizio
     - element__in_qualita_di_
     - element__a_tempo
     - completed
+    - element__documento_allegato
+    - element__data_compilazione
+    - element__firma_digitale
+    - element__file_pdf
   submission_user_duplicate: false
   submission_access_denied: default
   submission_access_denied_title: ''
@@ -311,7 +548,7 @@ settings:
   wizard_progress_states: false
   wizard_start_label: ''
   wizard_preview_link: false
-  wizard_confirmation: false
+  wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_auto_forward: true
   wizard_auto_forward_hide_next_button: false
@@ -319,7 +556,7 @@ settings:
   wizard_track: ''
   wizard_prev_button_label: '< Precedente'
   wizard_next_button_label: ''
-  wizard_toggle: false
+  wizard_toggle: true
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
   wizard_page_type: container
@@ -346,10 +583,10 @@ settings:
   draft_pending_multiple_message: ''
   confirmation_type: url_message
   confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
-  confirmation_message: 'La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.'
+  confirmation_title: ''
+  confirmation_message: '<p>La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.</p>'
   confirmation_attributes: {  }
-  confirmation_back: true
+  confirmation_back: false
   confirmation_back_label: ''
   confirmation_back_attributes: {  }
   confirmation_exclude_query: true
@@ -376,6 +613,7 @@ settings:
   token_update: false
   token_delete: false
   serial_disabled: true
+  form_remote_addr: true
 access:
   create:
     roles:
@@ -384,10 +622,9 @@ access:
       - personale_amministrativo
       - personale_tecnico
       - amministratore
+      - capo_redattore
+      - redattore
       - dirigente_scolastico
-      - doc_infanzia
-      - doc_primaria
-      - doc_secondaria
     users: {  }
     permissions: {  }
   view_any:
@@ -426,9 +663,6 @@ access:
       - collaboratore
       - personale_amministrativo
       - personale_tecnico
-      - doc_infanzia
-      - doc_primaria
-      - doc_secondaria
     users: {  }
     permissions: {  }
   update_own:
@@ -469,15 +703,15 @@ handlers:
       bcc_options: {  }
       cc_mail: ''
       cc_options: {  }
-      from_mail: '[site:mail]'
+      from_mail: _default
       from_options: {  }
-      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      from_name: '[webform_submission:values:cognome:raw]'
       reply_to: '[webform_submission:values:mail_user:raw]'
       return_path: ''
       sender_mail: ''
       sender_name: ''
       subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
-      body: "<p>Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} del {{ webform_token('[webform_submission:created]', webform_submission) }}<br />\r\nda <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
       excluded_elements:
         istituto: istituto
         mail_istituto: mail_istituto
@@ -501,7 +735,7 @@ handlers:
     notes: ''
     status: true
     conditions: {  }
-    weight: 1
+    weight: 4
     settings:
       states:
         - completed

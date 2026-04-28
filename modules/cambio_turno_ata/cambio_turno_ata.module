@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * Registers the entity_print template suggestion for the "adesione_a_commissioni"
+ * webform so entity_print can find the file in this submodule's templates directory.
+ */
+function cambio_turno_ata_theme_registry_alter(&$theme_registry) {
+  if (!isset($theme_registry['entity_print'])) {
+    return;
+  }
+  $module_path = \Drupal::service('extension.list.module')->getPath('cambio_turno_ata');
+  $theme_registry['entity_print__webform_submission__cambio_turno_ata'] = [
+    'base hook' => 'entity_print',
+    'path' => $module_path . '/templates/entity_print',
+    'template' => 'entity-print--webform-submission--cambio-turno-ata',
+    'type' => 'module',
+    'theme path' => $module_path,
+    'variables' => $theme_registry['entity_print']['variables'] ?? [],
+    'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
+  ];
+}

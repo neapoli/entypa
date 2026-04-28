@@ -1,0 +1,717 @@
+langcode: it
+status: open
+dependencies:
+  module:
+    - webform_entity_print
+third_party_settings:
+  webform_entity_print:
+    template:
+      header: '<h2>Assenza per malattia - DOCENTI</h2>'
+      footer: ''
+      css: ''
+    export_types:
+      pdf:
+        enabled: true
+        link_text: ''
+        link_attributes: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: assenza_per_malattia_doc
+title: 'Assenza per malattia - DOCENTI'
+description: '<p>Form per la Modulistica del Personale</p>'
+categories: {  }
+elements: |-
+  informazioni:
+    '#type': webform_more
+    '#more_title': 'Informazioni CCNL (art. 17 - Assenze per malattia)'
+    '#more': '<ol><li data-list-item-id="ef17b0500c00cafaf721f3f078085f43f">Il dipendente assente per malattia ha diritto alla conservazione del posto per un periodo di diciotto mesi. Ai fini della maturazione del predetto periodo, si sommano, alle assenze dovute all''ultimo episodio morboso, le assenze per malattia verificatesi nel triennio precedente.</li><li data-list-item-id="e57afa3de6ffa0533283abfef2edb1351">Superato il periodo previsto dal comma 1, al lavoratore che ne faccia richiesta è concesso di assentarsi per un ulteriore periodo di 18 mesi in casi particolarmente gravi, senza diritto ad alcun trattamento retributivo.</li><li data-list-item-id="e2cba35b15de76126c980aaf1bfdb4ea4">Prima di concedere su richiesta del dipendente l''ulteriore periodo di assenza di cui al comma 2 l''amministrazione procede all''accertamento delle sue condizioni di salute, per il tramite del competente organo sanitario ai sensi delle vigenti disposizioni, al fine di stabilire la sussistenza di eventuali cause di assoluta e permanente inidoneità fisica a svolgere qualsiasi proficuo lavoro.</li><li data-list-item-id="ed0ea1e215d1e35ba26859590925e072c">Superati i periodi di conservazione del posto previsti dai commi 1 e 2, oppure nel caso che, a seguito dell''accertamento disposto ai sensi del comma 3, il dipendente sia dichiarato permanentemente inidoneo a svolgere qualsiasi proficuo lavoro, l''amministrazione può procedere, salvo quanto previsto dal successivo comma 5, alla risoluzione del rapporto corrispondendo al dipendente l''indennità sostitutiva del preavviso.</li><li data-list-item-id="e5868e20e4fb5162320b1777c2da9c863">Il personale docente dichiarato inidoneo alla sua funzione per motivi di salute può a domanda essere collocato fuori ruolo e/o utilizzato in altri compiti tenuto conto della sua preparazione culturale e professionale. Tale utilizzazione è disposta dal Direttore regionale sulla base di criteri definiti in sede di contrattazione integrativa nazionale.</li><li data-list-item-id="eab8a7bd05a1a6e5efdd94450e65179cb">I periodi di assenza per malattia, salvo quelli previsti dal comma 2 del presente articolo, non interrompono la maturazione dell''anzianità di servizio a tutti gli effetti.</li><li data-list-item-id="e29281d287599f66a64650d6f9abc15da">Sono fatte salve le vigenti disposizioni di legge a tutela degli affetti da TBC, nonché quanto previsto dalla legge 26 giugno 1990, n. 162 e dal D.P.R. 9 ottobre 1990, n. 309.</li><li data-list-item-id="e11a703c551523afab1607d0777415ea9">Il trattamento economico spettante al dipendente, nel caso di assenza per malattia nel triennio di cui al comma 1, è il seguente:<ul><li data-list-item-id="eb75b08fb9a26b946e002c39a62003b1e">intera retribuzione fissa mensile, ivi compresa la retribuzione professionale docenti ed il compenso individuale accessorio, con esclusione di ogni altro compenso accessorio, comunque denominato, per i primi nove mesi di assenza. Nell''ambito di tale periodo per le malattie superiori a 15 gg. lavorativi o in caso di ricovero ospedaliero e per il successivo periodo di convalescenza post-ricovero, al dipendente compete anche ogni trattamento economico accessorio a carattere fisso e continuativo;</li><li data-list-item-id="e60980b8e706496bdd4023074de40c7c4">90% della retribuzione di cui alla lett. a) per i successivi 3 mesi di assenza;</li><li data-list-item-id="e1f117cdf99e68a684168d1b6249033ee">50% della retribuzione di cui alla lett. a) per gli ulteriori 6 mesi del periodo di conservazione del posto previsto nel comma 1.</li></ul></li><li data-list-item-id="edf612c0666c772a080efffeb5302cacb">In caso di gravi patologie che richiedano terapie temporaneamente e/o parzialmente invalidanti sono esclusi dal computo dei giorni di assenza per malattia, di cui ai commi 1 e 8 del presente articolo, oltre ai giorni di ricovero ospedaliero o di day hospital anche quelli di assenza dovuti alle conseguenze certificate delle terapie. Pertanto per i giorni anzidetti di assenza spetta l''intera retribuzione.</li><li data-list-item-id="ebe33d480c7b335df7366c047dc3b3eec">L''assenza per malattia, salva l''ipotesi di comprovato impedimento, deve essere comunicata all''istituto scolastico o educativo in cui il dipendente presta servizio, tempestivamente e comunque non oltre l''inizio dell''orario di lavoro del giorno in cui essa si verifica, anche nel caso di eventuale prosecuzione di tale assenza.</li><li data-list-item-id="e44e40c30d2c5bef6fc7f5a019e223840">Il dipendente, salvo comprovato impedimento, è tenuto a recapitare o spedire a mezzo raccomandata con avviso di ricevimento il certificato medico di giustificazione dell''assenza con indicazione della sola prognosi entro i cinque giorni successivi all''inizio della malattia o alla eventuale prosecuzione della stessa, comunicando per le vie brevi la presumibile durata della prognosi. Qualora tale termine scada in giorno festivo esso è prorogato al primo giorno lavorativo successivo.</li><li data-list-item-id="e0f5557b45ad8df61b20a7a647302a872">L''istituzione scolastica o educativa, oppure l''amministrazione di appartenenza o di servizio può disporre, sin dal primo giorno, il controllo della malattia, ai sensi delle vigenti disposizioni di legge, attraverso il competente organo sanitario. Il controllo non è disposto se il dipendente è ricoverato in strutture ospedaliere, pubbliche o private.</li><li data-list-item-id="ef4289522de76ae0ae4c9116dfc3e3a93">Il dipendente, che durante l''assenza, per particolari motivi, dimori in luogo diverso da quello di residenza o del domicilio dichiarato all''amministrazione deve darne immediata comunicazione, precisando l''indirizzo dove può essere reperito.</li><li data-list-item-id="e174da8a2b5af41d2fd7c78e44e1178ef">Il dipendente assente per malattia, pur in presenza di espressa autorizzazione del medico curante ad uscire, è tenuto a farsi trovare nel domicilio comunicato all''amministrazione, in ciascun giorno, anche se domenicale o festivo, dalle ore 10 alle ore 12 e dalle ore 17 alle ore 19.</li><li data-list-item-id="eed8df81a2fae609e3b469367896d6cec">La permanenza del dipendente nel proprio domicilio durante le fasce orarie come sopra definite può essere verificata nell''ambito e nei limiti delle vigenti disposizioni di legge.</li><li data-list-item-id="e517a1e11e86a914ebe39ffa1b526f191">Qualora il dipendente debba allontanarsi, durante le fasce di reperibilità, dall''indirizzo comunicato per visite mediche, prestazioni o accertamenti specialistici o per altri giustificati motivi, che devono essere, a richiesta, documentati, è tenuto a darne preventiva comunicazione all''amministrazione con l''indicazione della diversa fascia oraria di reperibilità da osservare.</li><li data-list-item-id="ea73ff41b8b0578c56393071e3e8e557b">Nel caso in cui l''infermità sia causata da colpa di un terzo, il risarcimento del danno da mancato guadagno effettivamente liquidato da parte del terzo responsabile - qualora comprensivo anche della normale retribuzione - è versato dal dipendente all''amministrazione fino a concorrenza di quanto dalla stessa erogato durante il periodo di assenza ai sensi del comma 8, lettere a), b) e c), compresi gli oneri riflessi inerenti. La presente disposizione non pregiudica l''esercizio, da parte dell''amministrazione, di eventuali azioni dirette nei confronti del terzo responsabile.</li><li data-list-item-id="eace118ecd28f597c222d8eb97ade0937">Le disposizioni di cui al presente articolo sono comunque adottate nel rispetto dell''art. 35 della legge 27.12.2002, n. 289 e successive modifiche.</li></ol><p>&nbsp;</p>'
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  dati_anagrafici:
+    '#type': webform_flexbox
+    '#align_items': center
+    markup:
+      '#type': webform_markup
+      '#flex': 0
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#markup': '<p>Il/La sottoscritto/a</p>'
+    cognome:
+      '#type': textfield
+      '#title': Cognome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    nome:
+      '#type': textfield
+      '#title': Nome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice Fiscale'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  flexbox:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    sede_di_servizio:
+      '#type': textfield
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 3
+      '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    in_qualita_di_:
+      '#type': textfield
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 2
+      '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    a_tempo:
+      '#type': textfield
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  processed_text:
+    '#type': processed_text
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': '<p><em>ai sensi del C.C.N.L. comparto scuola del 29.11.2007 di cui all’articolo sopra indicato,</em></p><div class="text-align-center"><strong>CHIEDE</strong></div>'
+    '#format': bootstrap_italia_2
+  tipologia_richiesta:
+    '#type': radios
+    '#title': 'Tipologia Assenza'
+    '#description_display': tooltip
+    '#options':
+      Malattia: Malattia
+      'MALATTIA per esami diagnostici o terapie': 'Malattia per esami diagnostici e/o terapie e/o visite'
+      'Prolungamento malattia': 'Prolungamento malattia'
+      'ASSENZE per gravi patologie': 'Assenze per gravi patologie'
+      Ricovero: Ricovero
+      'Day ospital': 'Day ospital'
+      'Convalescenza POST-RICOVERO': 'Convalescenza POST-RICOVERO'
+    '#options_display': two_columns
+    '#required': true
+    '#flex': 2
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  giorni:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    data_inizio:
+      '#type': date
+      '#title': Dal
+      '#required': true
+      '#format': bootstrap_italia_short_date
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    data_fine:
+      '#type': date
+      '#title': Al
+      '#required': true
+      '#format': bootstrap_italia_short_date
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    numero_giorni:
+      '#type': number
+      '#title': 'Numero Giorni'
+      '#placeholder': Automatico
+      '#readonly': true
+      '#required': true
+      '#flex': 0
+      '#default_value': Automatico
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  protocollo_certificato_medico:
+    '#type': radios
+    '#title': 'Certificato Medico ?'
+    '#options':
+      SI: 'SI -- Inserire il protocollo nella relativa casella riportata sotto'
+      'NO': 'NO (comunicazione provvisoria) -- Verrà comunicato in seguito'
+    '#states':
+      visible:
+        - ':input[name="tipologia_richiesta"]':
+            value: Malattia
+        - xor
+        - ':input[name="tipologia_richiesta"]':
+            value: COVID-19
+      required:
+        - ':input[name="tipologia_richiesta"]':
+            value: Malattia
+        - xor
+        - ':input[name="tipologia_richiesta"]':
+            value: COVID-19
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  certificato_medico:
+    '#type': textfield
+    '#title': 'Protocollo Certificato Medico'
+    '#title_display': before
+    '#size': 21
+    '#autocomplete': 'off'
+    '#input_mask': "'casing': 'upper'"
+    '#states':
+      visible:
+        ':input[name="protocollo_certificato_medico"]':
+          value: SI
+      required:
+        ':input[name="protocollo_certificato_medico"]':
+          value: SI
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#format_items': comma
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  reperibilita:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    indirizzo:
+      '#type': textfield
+      '#title': Indirizzo
+      '#description': "<p>Digita nella casella l'indirizzo completo al quale sei reperibile durante l'assenza per salute (solo per malattia)<em>. (Via - n° - CAP Città - Provincia)</em></p>"
+      '#flex': 2
+      '#states':
+        visible:
+          ':input[name="tipologia_richiesta"]':
+            value: Malattia
+        required:
+          ':input[name="tipologia_richiesta"]':
+            value: Malattia
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    telefono:
+      '#type': textfield
+      '#title': Telefono
+      '#description': "<p>Digita il numero telefonico al quale sei reperibile durante l'assenza per salute (solo per malattia).</p>"
+      '#states':
+        visible:
+          ':input[name="tipologia_richiesta"]':
+            value: Malattia
+        required:
+          ':input[name="tipologia_richiesta"]':
+            value: Malattia
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  allegati:
+    '#type': managed_file
+    '#title': 'Allegato/i (Non Obbligatorio)'
+    '#multiple': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#sanitize': true
+  note:
+    '#type': textarea
+    '#title': Note
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  data_firma:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    data_compilazione:
+      '#type': date
+      '#title': 'Data compilazione'
+      '#title_display': inline
+      '#disabled': true
+      '#default_value': today
+      '#format': bootstrap_italia_short_date
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    firma_digitale:
+      '#type': textarea
+      '#title': FIRMA
+      '#rows': 3
+      '#disabled': true
+      '#flex': 0
+      '#default_value': |-
+        [current-user:field_cognome] [current-user:field_nome]
+        C.F. [current-user:field_codice_fiscale]
+        E-mail: [current-user:mail]
+      '#format': raw
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  file_pdf:
+    '#type': 'webform_entity_print_attachment:pdf'
+    '#title': 'File PDF'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
+  istituto:
+    '#type': hidden
+    '#title': Istituto
+    '#default_value': '[site:name]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_user:
+    '#type': hidden
+    '#title': 'Mail user'
+    '#default_value': '[current-user:mail]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': toic8aj00t@istruzione.it
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  richiesta_annullamento:
+    '#type': number
+    '#title': 'Richiesta Annullamento'
+    '#default_value': '0'
+    '#access': false
+css: ''
+javascript: "(function ($) {  \r\n  $('input[name=\"data_inizio\"]').change(function(){\r\n    Controllo();\r\n  });\r\n  $('input[name=\"data_fine\"]').change(function(){\r\n    Controllo();\r\n  });\r\n  function Controllo() {\r\n    var date1 = document.getElementById(\"edit-data-inizio\").value;\r\n    var date2 = document.getElementById(\"edit-data-fine\").value;\r\n    //alert(date1);\r\n    //alert(date2);\r\n    dt1 = new Date(date1);\r\n    dt2 = new Date(date2);\r\n    giorni = Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));\r\n    //alert (prova);\r\n    document.getElementById(\"edit-numero-giorni\").value = giorni + 1;\r\n  }\r\n}(jQuery));"
+settings:
+  ajax: false
+  ajax_scroll_top: ''
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: true
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_file_limit_message: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: '[webform_submission:submitted-to]: [webform_submission:values:cognome]'
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements:
+    istituto: istituto
+    mail_user: mail_user
+    mail_istituto: mail_istituto
+    richiesta_annullamento: richiesta_annullamento
+  submission_exclude_empty: true
+  submission_exclude_empty_checkbox: true
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - element__cognome
+    - element__nome
+    - element__codice_fiscale
+    - element__sede_di_servizio
+    - element__in_qualita_di_
+    - element__a_tempo
+    - element__tipologia_richiesta
+    - element__data_inizio
+    - element__data_fine
+    - element__numero_giorni
+    - completed
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: '< Precedente'
+  wizard_next_button_label: ''
+  wizard_toggle: true
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
+  preview: 2
+  preview_label: Anteprima
+  preview_title: '[webform:title]: Anteprima'
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
+  preview_attributes: {  }
+  preview_excluded_elements:
+    file_pdf: file_pdf
+    istituto: istituto
+    mail_user: mail_user
+    mail_istituto: mail_istituto
+    richiesta_annullamento: richiesta_annullamento
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: url_message
+  confirmation_url: /modulistica-online/le-mie-istanze
+  confirmation_title: ''
+  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
+  confirmation_attributes: {  }
+  confirmation_back: false
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: true
+  confirmation_exclude_token: true
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: false
+access:
+  create:
+    roles:
+      - direttore_amministrativo_dsga_
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles:
+      - direttore_amministrativo_dsga_
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles:
+      - direttore_amministrativo_dsga_
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles:
+      - amministratore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers:
+  e_mail:
+    id: email
+    handler_id: e_mail
+    label: E-mail
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -50
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_istituto:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome:raw]'
+      reply_to: '[webform_submission:values:mail_user:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Invio Richiesta: [webform_submission:serial] - "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_user: mail_user
+        mail_istituto: mail_istituto
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_conferma_ricezione:
+    id: email
+    handler_id: e_mail_conferma_ricezione
+    label: 'E-mail conferma ricezione'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -49
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_user:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[site:name]'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_user: mail_user
+        mail_istituto: mail_istituto
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+variants: {  }

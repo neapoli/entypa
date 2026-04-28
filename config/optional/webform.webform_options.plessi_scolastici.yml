@@ -1,0 +1,14 @@
+langcode: it
+status: true
+dependencies: {  }
+id: plessi_scolastici
+label: 'Plessi scolastici'
+category: Scuola
+likert: false
+options: |-
+  'Infanzia PETER PAN': 'Infanzia PETER PAN'
+  'Infanzia APRIERO': 'Infanzia APRIERO'
+  'Primaria GRAMSCI': 'Primaria GRAMSCI'
+  'Primaria RODARI': 'Primaria RODARI'
+  'Secondaria primo grado DA VINCI': 'Secondaria primo grado DA VINCI'
+  Direzione: Direzione

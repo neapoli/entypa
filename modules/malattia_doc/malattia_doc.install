@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Comment module.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_uninstall().
+ */
+function malattia_ata_uninstall() {
+
+  // ID of webform to delete.
+  $webform_id = 'assenza_per_malattia_doc';
+  $webform_entity = \Drupal::entityTypeManager()->getStorage('webform')->load($webform_id);
+  if (!is_null($webform_entity)) {
+    $webform_entity->delete();
+  }
+}

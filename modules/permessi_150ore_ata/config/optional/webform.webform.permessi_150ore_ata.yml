@@ -6,7 +6,7 @@ dependencies:
 third_party_settings:
   webform_entity_print:
     template:
-      header: '<h2>Adesione a Commissioni</h2>'
+      header: '<h2>Richiesta permessi straordinari per diritto allo studio (150 ore) - ATA</h2>'
       footer: ''
       css: ''
     export_types:
@@ -20,9 +20,9 @@ close: null
 uid: 1
 template: false
 archive: false
-id: adesione_a_commissioni
-title: 'Adesione a Commissioni'
-description: 'Form per la Modulistica del Personale'
+id: permessi_150ore_ata
+title: 'Permessi straordinari per diritto allo studio (150 ore) - ATA'
+description: '<p>Form per la Modulistica del Personale</p>'
 categories: {  }
 elements: |-
   dati_anagrafici:
@@ -37,14 +37,16 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#display_on': both
       '#markup': '<p>Il/La sottoscritto/a</p>'
     cognome:
       '#type': textfield
       '#title': Cognome
+      '#autocomplete': 'off'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#flex': 2
       '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -54,9 +56,12 @@ elements: |-
     nome:
       '#type': textfield
       '#title': Nome
+      '#autocomplete': 'off'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#flex': 2
       '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -68,8 +73,8 @@ elements: |-
       '#title': 'Codice Fiscale'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
-      '#required': true
       '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -80,13 +85,14 @@ elements: |-
     '#type': webform_flexbox
     '#attributes':
       style: 'margin-top: 30px'
-    '#align_items': center
     sede_di_servizio:
       '#type': textfield
-      '#title': 'In servizio presso:'
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
       '#readonly': true
-      '#flex': 2
+      '#flex': 3
       '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -95,9 +101,12 @@ elements: |-
         - authenticated
     in_qualita_di_:
       '#type': textfield
-      '#title': 'In qualità di:'
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
       '#readonly': true
+      '#flex': 2
       '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -106,31 +115,93 @@ elements: |-
         - authenticated
     a_tempo:
       '#type': textfield
-      '#title': 'A Tempo:'
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
       '#readonly': true
       '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
         - authenticated
       '#access_view_roles':
         - authenticated
-  processed_text:
-    '#type': processed_text
-    '#display_on': both
-    '#text': '<p class="text-align-center"><strong>COMUNICA</strong></p><p>la propria disponibilità a partecipare ai lavori delle <strong>Commissioni/Gruppi di lavoro</strong> sottoindicati e programmati per l''anno scolastico in corso:</p>'
-    '#format': bootstrap_italia_2
+  indirizzo:
+    '#type': textfield
+    '#title': 'Residente in'
+    '#placeholder': 'Inserire Via, numero - CAP Città (sigla Provincia)'
+    '#required': true
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-  commissione:
-    '#type': checkboxes
-    '#title': Commissione
-    '#options': commissioni
+  iscrizione_presso:
+    '#type': textfield
+    '#title': 'Iscrizione presso:'
+    '#placeholder': 'Precisare la sede di iscrizione dello studio'
     '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  processed_text:
+    '#type': processed_text
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#display_on': both
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>I seguenti giorni di permesso straordinario retribuito per il diritto allo studio ai sensi dell''art. 3 del D.P.R. 395/1988 e dell''art.15, comma 7, del C.C.N.L. per il comparto Scuola.</p>'
+    '#format': bootstrap_italia_2
+  permesso_orario:
+    '#type': webform_custom_composite
+    '#title': 'Permesso orario'
+    '#required': true
+    '#multiple__sorting': false
+    '#multiple__add_more': false
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#element':
+      giorno:
+        '#type': date
+        '#required': true
+        '#title': Giorno
+      ora_inizio:
+        '#type': webform_time
+        '#required': true
+        '#title': 'Dalle ore'
+      ora_fine:
+        '#type': webform_time
+        '#required': true
+        '#title': 'Alle ore'
+      totale_ore:
+        '#type': textfield
+        '#title': 'Totale ore'
+        '#readonly': true
+        '#size': 6
+        '#attributes':
+          readonly: readonly
+          class:
+            - totale-ore-row
+  per_un_totale_di_ore:
+    '#type': textfield
+    '#title': 'Tot. ore'
+    '#readonly': true
+    '#size': 10
+    '#attributes':
+      readonly: readonly
+    '#wrapper_attributes':
+      style: 'width: 120px'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -140,31 +211,49 @@ elements: |-
   note:
     '#type': textarea
     '#title': Note
+    '#title_display': before
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#wrapper_attributes':
-      style: 'margin-top: 50px'
+  documento_allegato:
+    '#type': managed_file
+    '#title': 'Allegato/i (Non obbligatorio)'
+    '#multiple': 5
+    '#format_items': comma
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#max_filesize': '2'
+    '#file_extensions': ''
+    '#file_name': 'permesso-150-ore-ata-[current-user:field_cognome]'
+    '#sanitize': true
   data_firma:
     '#type': webform_flexbox
     '#attributes':
-      style: 'margin-top: 50px'
-    data_di_invio:
+      style: 'margin-top: 100px'
+    data_compilazione:
       '#type': date
       '#title': 'Data compilazione'
       '#title_display': inline
       '#disabled': true
       '#default_value': today
+      '#format': bootstrap_italia_short_date
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#format': bootstrap_italia_short_date
       '#date_date_format': ''
     firma_digitale:
       '#type': textarea
@@ -186,8 +275,27 @@ elements: |-
   file_pdf:
     '#type': 'webform_entity_print_attachment:pdf'
     '#title': 'File PDF'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
     '#display_on': view
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
+  email_referenti_plesso:
+    '#type': webform_email_multiple
+    '#title': 'Email Referenti Plesso'
+    '#wrapper_attributes':
+      class:
+        - referenti-plesso
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   istituto:
     '#type': hidden
     '#title': Istituto
@@ -202,12 +310,6 @@ elements: |-
     '#type': hidden
     '#title': 'Mail Istituto'
     '#default_value': toic8aj00t@istruzione.it
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
   mail_user:
     '#type': hidden
     '#title': 'Mail user'
@@ -223,11 +325,11 @@ elements: |-
     '#title': 'Richiesta Annullamento'
     '#default_value': '0'
     '#access': false
-css: ''
-javascript: ''
+css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
+javascript: "(function ($) {                                                                                                                                                                     \r\n  function toMin(t) {\r\n    if (!t) return 0;                                                                                                                                                               \r\n    var p = t.split(':');                                                                                                                                                         \r\n    return p.length < 2 ? 0 : parseInt(p[0], 10) * 60 + parseInt(p[1], 10);                                                                                                         \r\n  }\r\n  function formatOre(min) {                                                                                                                                                         \r\n    if (min <= 0) return '';\r\n    var h = Math.floor(min / 60);                                                                                                                                                   \r\n    var m = min % 60;                                                                                                                                                               \r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n  function calcTotaleOre($row) {\r\n    var diff = toMin($row.find('input[name*=\"[ora_fine]\"]').val()) - toMin($row.find('input[name*=\"[ora_inizio]\"]').val());                                                                   $row.find('input[name*=\"[totale_ore]\"]').val(formatOre(diff));                                                                                                                  \r\n  }\r\n  function calcTotaleGenerale() {                                                                                                                                                   \r\n    var totMin = 0;\r\n    $('input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"]').each(function () {                                                                                                    \r\n      var $row = $(this).closest('tr');                                                                                                                                             \r\n      var diff = toMin($row.find('input[name*=\"[ora_fine]\"]').val()) - toMin($(this).val());\r\n      if (diff > 0) totMin += diff;                                                                                                                                                 \r\n    });                                                                                                                                                                           \r\n    $('input[name=\"per_un_totale_di_ore\"]').val(formatOre(totMin));                                                                                                                 \r\n  }\r\n  $(document).on(                                                                                                                                                                   \r\n    'change',                                                                                                                                                                     \r\n    'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]',\r\n    function () {                                                                                                                                                                   \r\n      calcTotaleOre($(this).closest('tr'));\r\n      calcTotaleGenerale();                                                                                                                                                         \r\n    }                                                                                                                                                                             \r\n  );                                                                                                                                                                                \r\n}(jQuery));"
 settings:
   ajax: false
-  ajax_scroll_top: form
+  ajax_scroll_top: ''
   ajax_progress_type: ''
   ajax_effect: ''
   ajax_speed: null
@@ -264,6 +366,7 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_file_limit_message: ''
   form_attributes: {  }
   form_method: ''
   form_action: ''
@@ -277,6 +380,7 @@ settings:
   submission_locked_message: ''
   submission_log: false
   submission_excluded_elements:
+    email_referenti_plesso: email_referenti_plesso
     istituto: istituto
     mail_istituto: mail_istituto
     mail_user: mail_user
@@ -290,10 +394,17 @@ settings:
     - created
     - element__cognome
     - element__nome
+    - element__codice_fiscale
     - element__sede_di_servizio
     - element__in_qualita_di_
     - element__a_tempo
     - completed
+    - element__per_un_totale_di_ore
+    - element__note
+    - element__documento_allegato
+    - element__data_compilazione
+    - element__firma_digitale
+    - element__file_pdf
   submission_user_duplicate: false
   submission_access_denied: default
   submission_access_denied_title: ''
@@ -311,7 +422,7 @@ settings:
   wizard_progress_states: false
   wizard_start_label: ''
   wizard_preview_link: false
-  wizard_confirmation: false
+  wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_auto_forward: true
   wizard_auto_forward_hide_next_button: false
@@ -319,7 +430,7 @@ settings:
   wizard_track: ''
   wizard_prev_button_label: '< Precedente'
   wizard_next_button_label: ''
-  wizard_toggle: false
+  wizard_toggle: true
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
   wizard_page_type: container
@@ -327,10 +438,11 @@ settings:
   preview: 2
   preview_label: Anteprima
   preview_title: '[webform:title]: Anteprima'
-  preview_message: "<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>\r\n\r\n<p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>"
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
   preview_attributes: {  }
   preview_excluded_elements:
     file_pdf: file_pdf
+    email_referenti_plesso: email_referenti_plesso
     istituto: istituto
     mail_istituto: mail_istituto
     mail_user: mail_user
@@ -346,10 +458,10 @@ settings:
   draft_pending_multiple_message: ''
   confirmation_type: url_message
   confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
-  confirmation_message: 'La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.'
+  confirmation_title: ''
+  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
   confirmation_attributes: {  }
-  confirmation_back: true
+  confirmation_back: false
   confirmation_back_label: ''
   confirmation_back_attributes: {  }
   confirmation_exclude_query: true
@@ -375,7 +487,8 @@ settings:
   token_view: false
   token_update: false
   token_delete: false
-  serial_disabled: true
+  serial_disabled: false
+  form_remote_addr: true
 access:
   create:
     roles:
@@ -384,10 +497,9 @@ access:
       - personale_amministrativo
       - personale_tecnico
       - amministratore
+      - capo_redattore
+      - redattore
       - dirigente_scolastico
-      - doc_infanzia
-      - doc_primaria
-      - doc_secondaria
     users: {  }
     permissions: {  }
   view_any:
@@ -409,12 +521,7 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles:
-      - direttore_amministrativo_dsga_
-      - amministratore
-      - capo_redattore
-      - redattore
-      - dirigente_scolastico
+    roles: {  }
     users: {  }
     permissions: {  }
   purge_any:
@@ -426,9 +533,7 @@ access:
       - collaboratore
       - personale_amministrativo
       - personale_tecnico
-      - doc_infanzia
-      - doc_primaria
-      - doc_secondaria
+      - amministratore
     users: {  }
     permissions: {  }
   update_own:
@@ -469,16 +574,17 @@ handlers:
       bcc_options: {  }
       cc_mail: ''
       cc_options: {  }
-      from_mail: '[site:mail]'
+      from_mail: _default
       from_options: {  }
-      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      from_name: '[webform_submission:values:cognome:raw]'
       reply_to: '[webform_submission:values:mail_user:raw]'
       return_path: ''
       sender_mail: ''
       sender_name: ''
       subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
-      body: "<p>Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} del {{ webform_token('[webform_submission:created]', webform_submission) }}<br />\r\nda <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
       excluded_elements:
+        email_referenti_plesso: email_referenti_plesso
         istituto: istituto
         mail_istituto: mail_istituto
         mail_user: mail_user
@@ -501,7 +607,7 @@ handlers:
     notes: ''
     status: true
     conditions: {  }
-    weight: 1
+    weight: 4
     settings:
       states:
         - completed
@@ -514,13 +620,67 @@ handlers:
       from_mail: _default
       from_options: {  }
       from_name: '[site:name]'
-      reply_to: '[webform_submission:values:mail_istituto:raw]'
+      reply_to: ''
       return_path: ''
       sender_mail: ''
       sender_name: ''
       subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
       body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
       excluded_elements:
+        email_referenti_plesso: email_referenti_plesso
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_referenti_di_plesso:
+    id: email
+    handler_id: e_mail_referenti_di_plesso
+    label: 'E-mail: Referenti di Plesso'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 5
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome:raw]'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Comunicazione assenza'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>\r\n\r\n<p>I Dati inseriti sono i seguenti:.</p>\r\n\r\n\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
+      excluded_elements:
+        markup: markup
+        codice_fiscale: codice_fiscale
+        indirizzo: indirizzo
+        iscrizione_presso: iscrizione_presso
+        processed_text: processed_text
+        note: note
+        documento_allegato: documento_allegato
+        data_compilazione: data_compilazione
+        firma_digitale: firma_digitale
+        file_pdf: file_pdf
+        email_referenti_plesso: email_referenti_plesso
         istituto: istituto
         mail_istituto: mail_istituto
         mail_user: mail_user

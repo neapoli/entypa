@@ -1,0 +1,8 @@
+name: "Permessi straordinari per diritto allo studio (150 ore) - ATA"
+description: 'This module install "Permessi straordinari per diritto allo studio (150 ore) - ATA" form for School.'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11
+dependencies:
+  - entypa:entypa

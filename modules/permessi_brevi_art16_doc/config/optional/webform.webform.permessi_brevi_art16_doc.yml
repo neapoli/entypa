@@ -6,7 +6,7 @@ dependencies:
 third_party_settings:
   webform_entity_print:
     template:
-      header: '<h2>Adesione a Commissioni</h2>'
+      header: '<h2>ASSENZA - Permessi brevi art. 16 - DOCENTI</h2>'
       footer: ''
       css: ''
     export_types:
@@ -20,11 +20,23 @@ close: null
 uid: 1
 template: false
 archive: false
-id: adesione_a_commissioni
-title: 'Adesione a Commissioni'
-description: 'Form per la Modulistica del Personale'
+id: permessi_brevi_art16_doc
+title: 'Permessi brevi art. 16 - DOCENTI'
+description: '<p>Form per la Modulistica del Personale</p>'
 categories: {  }
 elements: |-
+  informazioni:
+    '#type': webform_more
+    '#more_title': 'Informazioni CCNL (art. 16 Permessi brevi)'
+    '#more': '<ol><li data-list-item-id="ed60f0893a4c60ec8e3356e644d1baa5b">Compatibilmente con le esigenze di servizio, al dipendente con contratto a tempo indeterminato e al personale con contratto a tempo determinato, sono attribuiti, per esigenze personali e a domanda, brevi permessi di durata non superiore alla metà dell''orario giornaliero individuale di servizio e, comunque, per il personale docente fino ad un massimo di due ore. Per il personale docente i permessi brevi si riferiscono ad unità minime che siano orarie di lezione.</li><li data-list-item-id="e22c175e6142e025f9eda3bff6b4d3fe1">I permessi complessivamente fruiti non possono eccedere 36 ore nel corso dell''anno scolastico per il personale A.T.A.; per il personale docente il limite corrisponde al rispettivo orario settimanale di insegnamento.</li><li data-list-item-id="ef27bf82800ec75aec37b2c9ec8c05f9e">Entro i due mesi lavorativi successivi a quello della fruizione del permesso, il dipendente è tenuto a recuperare le ore non lavorate in una o più soluzioni in relazione alle esigenze di servizio. Il recupero da parte del personale docente avverrà prioritariamente con riferimento alle supplenze o allo svolgimento di interventi didattici integrativi, con precedenza nella classe dove avrebbe dovuto prestare servizio il docente in permesso.</li><li data-list-item-id="ea5b7262f714aa4d9c5f8f0bd1f2105f7">Nei casi in cui non sia possibile il recupero per fatto imputabile al dipendente, l''Amministrazione provvede a trattenere una somma pari alla retribuzione spettante al dipendente stesso per il numero di ore non recuperate.</li><li data-list-item-id="eafae3f1da9edf3634bfa091ae09ee1f0">Per il personale docente l''attribuzione dei permessi è subordinata alla possibilità della sostituzione con personale in servizio.</li></ol>'
+    '#attributes':
+      style: 'margin: 20px 0px 50px 0px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   dati_anagrafici:
     '#type': webform_flexbox
     '#align_items': center
@@ -37,14 +49,16 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#display_on': both
       '#markup': '<p>Il/La sottoscritto/a</p>'
     cognome:
       '#type': textfield
       '#title': Cognome
+      '#autocomplete': 'off'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#flex': 2
       '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -54,9 +68,12 @@ elements: |-
     nome:
       '#type': textfield
       '#title': Nome
+      '#autocomplete': 'off'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#flex': 2
       '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -68,8 +85,8 @@ elements: |-
       '#title': 'Codice Fiscale'
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
-      '#required': true
       '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -80,13 +97,14 @@ elements: |-
     '#type': webform_flexbox
     '#attributes':
       style: 'margin-top: 30px'
-    '#align_items': center
     sede_di_servizio:
       '#type': textfield
-      '#title': 'In servizio presso:'
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
       '#readonly': true
-      '#flex': 2
+      '#flex': 3
       '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -95,9 +113,12 @@ elements: |-
         - authenticated
     in_qualita_di_:
       '#type': textfield
-      '#title': 'In qualità di:'
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
       '#readonly': true
+      '#flex': 2
       '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -106,9 +127,11 @@ elements: |-
         - authenticated
     a_tempo:
       '#type': textfield
-      '#title': 'A Tempo:'
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
       '#readonly': true
       '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
@@ -117,19 +140,86 @@ elements: |-
         - authenticated
   processed_text:
     '#type': processed_text
-    '#display_on': both
-    '#text': '<p class="text-align-center"><strong>COMUNICA</strong></p><p>la propria disponibilità a partecipare ai lavori delle <strong>Commissioni/Gruppi di lavoro</strong> sottoindicati e programmati per l''anno scolastico in corso:</p>'
-    '#format': bootstrap_italia_2
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-  commissione:
-    '#type': checkboxes
-    '#title': Commissione
-    '#options': commissioni
+    '#text': '<div class="text-align-center"><strong>CHIEDE</strong></div><div class="text-align-center">&nbsp;</div><div>di poter usufruire di ore di permesso orario ai sensi dell''art 16 del CCNL contratto scuola e precisamente:</div><div class="text-align-center">&nbsp;</div>'
+    '#format': bootstrap_italia_2
+  permesso_orario:
+    '#type': webform_custom_composite
+    '#title': 'Permesso Orario'
+    '#required': true
+    '#multiple__sorting': false
+    '#multiple__add_more': false
+    '#multiple__add_more_input': false
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#element':
+      giorno:
+        '#type': date
+        '#required': true
+        '#title': Giorno
+      ora_inizio:
+        '#type': webform_time
+        '#required': true
+        '#title': 'Dalle Ore'
+      ora_fine:
+        '#type': webform_time
+        '#required': true
+        '#title': 'Alle Ore'
+      plesso:
+        '#type': select
+        '#options': plessi_scolastici
+        '#required': true
+        '#title': 'Plesso Interessato'
+      classe:
+        '#type': textfield
+        '#required': true
+        '#title': Classe
+  totale_ore:
+    '#type': webform_computed_twig
+    '#title': 'Totale Ore'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#template': |-
+      {% for item in data.permesso_orario %}
+      {# USO ('U') equivalente di strtotime #}
+      {% set startTime = item.ora_inizio|date('U') %}
+      {% set endTime = item.ora_fine|date('U') %}
+      {% set difference = endTime - startTime %}
+      {% set sum = difference + sum ?? 0 %}
+      {# USO ('UTC') per evitare che aggiunga un'ora per ora legale #}
+      {% if loop.last %}{{ sum|date('H:i', 'UTC') }}{% endif %}
+      {% endfor %}
+    '#store': true
+  processed_text_02:
+    '#type': processed_text
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><span style="color: red;"><strong>Attenzione</strong></span>: la somma delle ore di permesso richieste verrà <strong>calcolata/aggiornata in automatico</strong> nella pagina di <strong>ANTEPRIMA</strong></p>
+    '#format': bootstrap_italia_2
+  recupero_permesso:
+    '#type': radios
+    '#title': 'Recupero permesso'
+    '#options':
+      'Ore da recuperare entro i due mesi lavorativi successivi alla data della fruizione': 'Ore da recuperare entro i due mesi lavorativi successivi alla data della fruizione'
+      'Ore di servizio già prestate': 'Ore di servizio già prestate'
     '#required': true
     '#access_create_roles':
       - authenticated
@@ -137,34 +227,49 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-  note:
-    '#type': textarea
-    '#title': Note
+  processed_text_01:
+    '#type': processed_text
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#wrapper_attributes':
-      style: 'margin-top: 50px'
+    '#text': |
+      <p>Il/la sottoscritto/a, ai sensi dell’art.16 del C.C.N.L. Comparto Scuola 2006 – 2009, del D.P.R. 28 dicembre 2000, n. 445 e della Legge 12 novembre 2011, n. 183, sotto la propria responsabilità,</p>
+
+      <p class="text-align-center"><strong>DICHIARA&nbsp;</strong></p>
+
+      <p>che il coordinatore è stato già informato della richiesta e provvederà alla copertura e di richiedere il permesso per:</p>
+    '#format': bootstrap_italia_2
+  dichiarazione:
+    '#type': textarea
+    '#title': 'Descrizione dei motivi per cui si chiede il permesso'
+    '#description_display': before
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   data_firma:
     '#type': webform_flexbox
     '#attributes':
-      style: 'margin-top: 50px'
-    data_di_invio:
+      style: 'margin-top: 30px'
+    data_compilazione:
       '#type': date
       '#title': 'Data compilazione'
       '#title_display': inline
       '#disabled': true
       '#default_value': today
+      '#format': bootstrap_italia_short_date
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#format': bootstrap_italia_short_date
       '#date_date_format': ''
     firma_digitale:
       '#type': textarea
@@ -186,22 +291,30 @@ elements: |-
   file_pdf:
     '#type': 'webform_entity_print_attachment:pdf'
     '#title': 'File PDF'
-    '#display_on': view
-    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
-  istituto:
-    '#type': hidden
-    '#title': Istituto
-    '#default_value': '[site:name]'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-  mail_istituto:
+    '#display_on': view
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+  email_referenti_plesso:
+    '#type': webform_email_multiple
+    '#title': 'Email Referenti Plesso'
+    '#wrapper_attributes':
+      class:
+        - referenti-plesso
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  istituto:
     '#type': hidden
-    '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#title': Istituto
+    '#default_value': '[site:name]'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -218,16 +331,26 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': toic8aj00t@istruzione.it
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   richiesta_annullamento:
     '#type': number
     '#title': 'Richiesta Annullamento'
     '#default_value': '0'
     '#access': false
-css: ''
+css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
 javascript: ''
 settings:
   ajax: false
-  ajax_scroll_top: form
+  ajax_scroll_top: ''
   ajax_progress_type: ''
   ajax_effect: ''
   ajax_speed: null
@@ -277,9 +400,10 @@ settings:
   submission_locked_message: ''
   submission_log: false
   submission_excluded_elements:
+    email_referenti_plesso: email_referenti_plesso
     istituto: istituto
-    mail_istituto: mail_istituto
     mail_user: mail_user
+    mail_istituto: mail_istituto
     richiesta_annullamento: richiesta_annullamento
   submission_exclude_empty: true
   submission_exclude_empty_checkbox: true
@@ -290,6 +414,7 @@ settings:
     - created
     - element__cognome
     - element__nome
+    - element__codice_fiscale
     - element__sede_di_servizio
     - element__in_qualita_di_
     - element__a_tempo
@@ -311,7 +436,7 @@ settings:
   wizard_progress_states: false
   wizard_start_label: ''
   wizard_preview_link: false
-  wizard_confirmation: false
+  wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_auto_forward: true
   wizard_auto_forward_hide_next_button: false
@@ -319,7 +444,7 @@ settings:
   wizard_track: ''
   wizard_prev_button_label: '< Precedente'
   wizard_next_button_label: ''
-  wizard_toggle: false
+  wizard_toggle: true
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
   wizard_page_type: container
@@ -327,13 +452,17 @@ settings:
   preview: 2
   preview_label: Anteprima
   preview_title: '[webform:title]: Anteprima'
-  preview_message: "<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>\r\n\r\n<p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>"
+  preview_message: |-
+    <p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>
+
+    <p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>
   preview_attributes: {  }
   preview_excluded_elements:
     file_pdf: file_pdf
+    email_referenti_plesso: email_referenti_plesso
     istituto: istituto
-    mail_istituto: mail_istituto
     mail_user: mail_user
+    mail_istituto: mail_istituto
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
   preview_exclude_empty_checkbox: false
@@ -346,10 +475,10 @@ settings:
   draft_pending_multiple_message: ''
   confirmation_type: url_message
   confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
-  confirmation_message: 'La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.'
+  confirmation_title: ''
+  confirmation_message: '<p>La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.</p>'
   confirmation_attributes: {  }
-  confirmation_back: true
+  confirmation_back: false
   confirmation_back_label: ''
   confirmation_back_attributes: {  }
   confirmation_exclude_query: true
@@ -376,14 +505,13 @@ settings:
   token_update: false
   token_delete: false
   serial_disabled: true
+  form_remote_addr: true
 access:
   create:
     roles:
-      - collaboratore
-      - direttore_amministrativo_dsga_
-      - personale_amministrativo
-      - personale_tecnico
       - amministratore
+      - capo_redattore
+      - redattore
       - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
@@ -392,7 +520,6 @@ access:
     permissions: {  }
   view_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -401,7 +528,6 @@ access:
     permissions: {  }
   update_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -409,12 +535,7 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles:
-      - direttore_amministrativo_dsga_
-      - amministratore
-      - capo_redattore
-      - redattore
-      - dirigente_scolastico
+    roles: {  }
     users: {  }
     permissions: {  }
   purge_any:
@@ -423,9 +544,6 @@ access:
     permissions: {  }
   view_own:
     roles:
-      - collaboratore
-      - personale_amministrativo
-      - personale_tecnico
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
@@ -459,7 +577,7 @@ handlers:
     notes: ''
     status: true
     conditions: {  }
-    weight: 0
+    weight: -50
     settings:
       states:
         - completed
@@ -469,7 +587,7 @@ handlers:
       bcc_options: {  }
       cc_mail: ''
       cc_options: {  }
-      from_mail: '[site:mail]'
+      from_mail: _default
       from_options: {  }
       from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
       reply_to: '[webform_submission:values:mail_user:raw]'
@@ -477,12 +595,72 @@ handlers:
       sender_mail: ''
       sender_name: ''
       subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
-      body: "<p>Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} del {{ webform_token('[webform_submission:created]', webform_submission) }}<br />\r\nda <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
       excluded_elements:
+        email_referenti_plesso: email_referenti_plesso
         istituto: istituto
-        mail_istituto: mail_istituto
         mail_user: mail_user
+        mail_istituto: mail_istituto
         richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_1:
+    id: email
+    handler_id: e_mail_1
+    label: 'E-mail: Referenti di Plesso'
+    notes: ''
+    status: false
+    conditions:
+      enabled:
+        ':input[name="in_qualita_di_"]':
+          value: Docente
+    weight: -48
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: '[current-user:mail]'
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome:raw]'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Comunicazione assenza'
+      body: |-
+        <p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>
+
+        <p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>
+
+        <p>I Dati inseriti sono i seguenti:.</p>
+
+
+        {{ webform_token('[webform_submission:values]', webform_submission, [], options) }}
+      excluded_elements:
+        processed_text_01: processed_text_01
+        markup: markup
+        codice_fiscale: codice_fiscale
+        processed_text: processed_text
+        indirizzo: indirizzo
+        telefono: telefono
+        note: note
+        data_compilazione: data_compilazione
+        firma_digitale: firma_digitale
+        file_pdf: file_pdf
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: true
@@ -501,7 +679,7 @@ handlers:
     notes: ''
     status: true
     conditions: {  }
-    weight: 1
+    weight: -49
     settings:
       states:
         - completed
@@ -519,11 +697,19 @@ handlers:
       sender_mail: ''
       sender_name: ''
       subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
-      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      body: |-
+        <p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>
+        <p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>
+        <p>Di seguito sono riportati i dati acquisiti dal sistema:</p>
+        <hr />
+        {{ webform_token('[webform_submission:values]', webform_submission, [], options) }}
+        <hr />
+        <p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>
       excluded_elements:
+        email_referenti_plesso: email_referenti_plesso
         istituto: istituto
-        mail_istituto: mail_istituto
         mail_user: mail_user
+        mail_istituto: mail_istituto
         richiesta_annullamento: richiesta_annullamento
       ignore_access: false
       exclude_empty: true

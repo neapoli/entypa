@@ -1,0 +1,121 @@
+{#
+/**
+ * @file
+ * Default theme implementation for webform submission data.
+ *
+ * Available variables:
+ * - webform_submission: The webform submission.
+ * - webform: The webform.
+ *
+ * @see template_preprocess_webform_submission_data()
+ *
+ * @ingroup themeable
+ */
+#}
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    {{ entity_print_css }}
+  </head>
+  <body>
+
+    {# The footer is repeated on all pages and must be printed first. #}
+    <div id="footer">
+      <p class="page">Pagina </p>
+    </div>
+
+    <div id="header">
+    </div>
+
+    <div id="content">
+      <div class="content_header">
+        <p>Al Dirigente scolastico<br />
+		      {{ data.istituto }} <br />
+		      {{ data.mail_istituto }}
+        </p>
+      </div>
+      <div>
+        <p>Oggetto: <strong>Richiesta autorizzazione di cambio turno - ATA - {{ data.cognome }} {{ data.nome }}</strong></p>
+      </div>
+      <div class="corpo">
+        <p>
+          Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
+          in servizio presso {{ data.sede_di_servizio }}
+          in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}
+        </p>
+        <div>{{ elements.processed_text['#text']|raw }}</div>
+        {{ elements.turno_previsto_tabella }}
+        <table style="width:90%; border: 1px #ccc solid;">
+          <thead>
+            <tr>
+              <th>Plesso</th>
+              <th>data</th>
+              <th>dalle ore</th>
+              <th>alle ore</th>
+              <th>Totale ore</th>
+            </tr>
+          </thead>
+          <tbody class="text-align-center">
+            <tr>
+              <td>{{ data.turno_previsto_plesso_interessato }}</td>
+              <td>{{ data.turno_previsto_giorno|date('d.m.Y') }}</td>
+              <td>{{ data.turno_previsto_dalle_ore|date('H:i') }}</td>
+              <td>{{ data.turno_previsto_alle_ore|date('H:i') }}</td>
+              <td>{{ data.turno_previsto_totale_ore|date('H:i') }}</td>
+            </tr>
+          </tbody>
+        </table>
+        {{ elements.turno_modificato_tabella }}
+        <table style="width:90%; border: 1px #ccc solid;">
+          <thead>
+            <tr>
+              <th>Plesso</th>
+              <th>data</th>
+              <th>dalle ore</th>
+              <th>alle ore</th>
+              <th>Totale ore</th>
+            </tr>
+          </thead>
+          <tbody class="text-align-center">
+            <tr>
+              <td>{{ data.turno_modificato_plesso_interessato }}</td>
+              <td>{{ data.turno_modificato_giorno|date('d.m.Y') }}</td>
+              <td>{{ data.turno_modificato_dalle_ore|date('H:i') }}</td>
+              <td>{{ data.turno_modificato_alle_ore|date('H:i') }}</td>
+              <td>{{ data.turno_modificato_totale_ore|date('H:i') }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>Motivo della richiesta</strong><br /> {{ data.motivo_della_richiesta }}</p>
+        <p>Nome del collega con cui si effettua il cambio turno:<strong> {{ data.collega }}</strong></p>
+        <p>Il personale coinvolto nella modifica è stato informato e acconsente al cambio</p>
+        <p><strong>Il servizio giornaliero sarà così riorganizzato</strong><br /> {{ data.il_servizio_giornaliero_sara_cosi_riorganizzato }}</p>
+        <div class="data_invio">
+          <p>Data, {{ data.data_compilazione|date('d.m.Y') }}</p>
+        </div>
+        <div class="firma_docente">
+          <div class="firma">
+            <strong>Firma</strong><br>
+            {{ data.cognome }} {{ data.nome }}<br />
+            {{ data.codice_fiscale }}<br />
+            {{ data.mail_user }}
+          </div>
+        </div>
+      </div>
+
+      {#  <p style="page-break-before: always;">the second page</p>#}
+      <div class="autorizzazione">
+        <p>
+        </p>
+        <div class="firma_ata"></div>
+        <div class="firma_ds"></div>
+      </div>
+    </div>
+    {#
+    {{ kint(data) }}
+     {{ kint(elements) }}
+    {{ kint(content) }}
+#}
+  </body>
+</html>

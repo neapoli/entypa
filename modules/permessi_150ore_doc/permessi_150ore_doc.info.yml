@@ -1,0 +1,8 @@
+name: "Permessi straordinari per diritto allo studio (150 ore) - DOCENTI"
+description: 'This module install "Permessi straordinari per diritto allo studio (150 ore) - DOCENTI" form for School.'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11
+dependencies:
+  - entypa:entypa

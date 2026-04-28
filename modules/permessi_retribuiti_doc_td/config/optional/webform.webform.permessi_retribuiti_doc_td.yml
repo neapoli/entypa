@@ -1,0 +1,803 @@
+langcode: it
+status: open
+dependencies:
+  module:
+    - webform_entity_print
+third_party_settings:
+  webform_entity_print:
+    template:
+      header: '<h2>Permessi retribuiti (Personale DOCENTE Tempo determinato)</h2>'
+      footer: ''
+      css: ''
+    export_types:
+      pdf:
+        enabled: true
+        link_text: ''
+        link_attributes: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: permessi_retribuiti_doc_td
+title: 'Permessi retribuiti art. 19 (DOCENTE Tempo determinato)'
+description: '<p>Form per la Modulistica del Personale</p>'
+categories: {  }
+elements: |-
+  informazioni:
+    '#type': webform_more
+    '#more_title': 'Informazioni CCNL (art. 19 Permessi retribuiti)'
+    '#more': '<ol><li data-list-item-id="e91a3af2c06950fe385be27ad8cd3f8f2">Al personale assunto a tempo determinato, al personale di cui all''art. 3, comma 6, del D.P.R. n. 399 del 1988 e al personale non licenziabile di cui agli artt. 43 e 44 della legge 20 maggio 1982 n. 270, si applicano, nei limiti della durata del rapporto di lavoro, le disposizioni in materia di ferie, permessi ed assenze stabilite dal presente contratto per il personale assunto a tempo indeterminato, con le precisazioni di cui ai seguenti commi.</li><li data-list-item-id="e5e2e6159da7bc89ca42aebc445cde805">(omissis)</li><li data-list-item-id="e3e8bf1ee8dc15b7219efae178be173dc">(omissis)</li><li data-list-item-id="e6dbcea28186e64c063ed9cd880589497">(omissis)</li><li data-list-item-id="e25c65f7b6efacfa60d6742877c225393">(omissis)</li><li data-list-item-id="e1f46107f2f5f61d8cb0aaad25a542ec0">(omissis)</li><li data-list-item-id="e3e33edab9dd4be5c2fa5954f110cc392">Al personale docente, educativo ed ATA assunto a tempo determinato, ivi compreso quello di cui al precedente comma 5, sono concessi permessi non retribuiti, per la partecipazione a concorsi od esami, nel limite di otto giorni complessivi per anno scolastico, ivi compresi quelli eventualmente richiesti per il viaggio. Sono, inoltre, attribuiti permessi non retribuiti, fino ad un massimo di sei giorni, per i motivi previsti dall''art. 15, comma 2.</li><li data-list-item-id="e9b35c3a0201bca86b8444099ad0c15b7">I periodi di assenza senza assegni interrompono la maturazione dell''anzianità di servizio a tutti gli effetti.</li><li data-list-item-id="ef05be7125c00a597c99de87b1371ae07">Il dipendente di cui al presente articolo ha diritto a tre giorni di permesso retribuito per lutti per perdita del coniuge, di parenti entro il secondo grado, del convivente o di soggetto componente la famiglia anagrafica e di affini di primo grado.</li><li data-list-item-id="eedc9a3f1bff8585acbb2825748f10f51">(omissis)</li><li data-list-item-id="e55ddad7d1b4e7ca69b3a3e990d753c41">(omissis)</li><li data-list-item-id="e26370db055c6c86c8c0c9cf3bb026c9c">Il personale docente ed ATA assunto a tempo determinato ha diritto entro i limiti di durata del rapporto, ad un permesso retribuito di 15 giorni consecutivi in occasione del matrimonio.</li><li data-list-item-id="ebc64bce8429b119bcd5134cac9ca55b1">I permessi di cui ai commi 9 e 12 sono computati nell''anzianità di servizio a tutti gli effetti.</li><li data-list-item-id="e837a1e094f289ecaf49f1c355506c376">Al personale di cui al presente articolo si applicano le norme relative ai congedi parentali come disciplinati dall''art. 12.</li><li data-list-item-id="e6a3478d9af4fbc9cddf9d9aebc8fd6c1">Al personale di cui al presente articolo si applicano le disposizioni relative alle gravi patologie, di cui all''art. 17, comma 9.</li></ol>'
+    '#attributes':
+      style: 'margin: 20px 0px 50px 0px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  dati_anagrafici:
+    '#type': webform_flexbox
+    '#align_items': center
+    markup:
+      '#type': webform_markup
+      '#flex': 0
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#markup': '<p>Il/La sottoscritto/a</p>'
+    cognome:
+      '#type': textfield
+      '#title': Cognome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    nome:
+      '#type': textfield
+      '#title': Nome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice Fiscale'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  flexbox:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    sede_di_servizio:
+      '#type': textfield
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 3
+      '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    in_qualita_di_:
+      '#type': textfield
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 2
+      '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    a_tempo:
+      '#type': textfield
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  tipologia_richiesta:
+    '#type': radios
+    '#title': 'Tipologia di permesso'
+    '#description_display': tooltip
+    '#options':
+      'Lutto familiare': 'Lutto familiare'
+      Matrimonio: Matrimonio
+      'Donazione di sangue e/o emocomponenti': 'Donazione di sangue e/o emocomponenti'
+      'Donazione midollo osseo': 'Donazione midollo osseo'
+      'Ricoprire Cariche Pubbliche Elettive': 'Ricoprire Cariche Pubbliche Elettive'
+      "Citazione a testimoniare a favore dell'Amministrazione": "Citazione a testimoniare a favore dell'Amministrazione"
+    '#options_display': two_columns
+    '#required': true
+    '#flex': 0
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  giorni:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    data_inizio:
+      '#type': date
+      '#title': Dal
+      '#required': true
+      '#format': bootstrap_italia_short_date
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_min': '-2 days'
+      '#date_date_format': ''
+    data_fine:
+      '#type': date
+      '#title': Al
+      '#required': true
+      '#format': bootstrap_italia_short_date
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_min': today
+      '#date_date_format': ''
+    numero_giorni:
+      '#type': number
+      '#title': 'Numero Giorni'
+      '#placeholder': Automatico
+      '#readonly': true
+      '#required': true
+      '#flex': 0
+      '#default_value': Automatico
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  lutto_familiare:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Lutto familiare'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Lutto familiare</strong> - Perdita del coniuge, di parenti entro il secondo grado, di soggetto componente la famiglia anagrafica o convivente stabile e di affini di primo grado: gg. 3 per evento, anche non continuativi.</p>
+    '#format': bootstrap_italia_2
+  matrimonio:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: Matrimonio
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Matrimonio </strong>- Permesso retribuito di quindici giorni consecutivi in occasione del matrimonio, con decorrenza indicata dal dipendente medesimo ma comunque fruibili da una settimana prima a due mesi successivi al matrimonio stesso. Il personale, che intende usufruire dei 15 giorni di permesso per matrimonio, deve presentare la richiesta al dirigente scolastico con ragionevole anticipo (eccetto i casi in cui vi siano motivi urgenti e imprevedibili). Il dipendente dovrà produrre, a giustificazione dell’assenza, il certificato del matrimonio rilasciato dall’ufficiale di stato o una dichiarazione sostitutiva di certificazione comprovante l’avvenuto matrimonio</p>
+    '#format': bootstrap_italia_2
+  donazione_sangue:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Donazione di sangue e/o emocomponenti'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Donazione di sangue e/o emocomponenti</strong> - Il dipendente è tenuto a comunicare preventivamente l’assenza e a produrre, al suo rientro in servizio, idonea certificazione rilasciata dalla struttura sanitaria autorizzata dal Ministero della Sanità. Il dipendente, una volta effettuata la donazione, dovrà farsi rilasciare, dal medico che ha effettuato il prelievo, un certificato, che presenterà a scuola, su carta intestata del centro (ricordiamo che la struttura sanitaria dev’essere autorizzata dal Ministero della Sanità) presso il quale è stato effettuato il prelievo a titolo gratuito dal quale risultino i dati anagrafici del donatore, gli estremi di un documento di riconoscimento, data e ora del prelievo, quantitativo prelevato (almeno 250 grammi). Detto quantitativo dovrà risultare necessariamente dalla certificazione rilasciata dal centro trasfusionale. I donatori di sangue e di emocomponenti hanno diritto ad astenersi dal lavoro per l’intera giornata in cui effettuano la donazione, conservando la normale retribuzione per l’intera giornata lavorativa. La giornata di riposo viene computata in 24 ore a partire dal momento in cui il lavoratore si è assentato dal lavoro per l’operazione di prelievo del sangue”. È fissato in 250 grammi il limite quantitativo minimo che la donazione di sangue deve raggiungere per il diritto alla giornata di riposo e alla relativa retribuzione. La donazione del sangue deve essere gratuita e il prelievo dev’essere effettuato presso Centri autorizzati (Centro di raccolta fisso o mobile oppure presso un Centro trasfusionale, oppure presso un Centro di produzione di emoderivati regolarmente autorizzati dal Ministero della Sanità). Il dipendente non può usufruire della giornata di riposo il lunedì se il prelievo è stato effettuato alla domenica. Nel caso venga riscontrata la non idoneità alla donazione il permesso viene corrisposto limitatamente al tempo necessario all’accertamento dell’idoneità. Nel caso quindi in cui il lavoratore si sia recato al centro per donare il proprio sangue e la donazione, per motivi di ordine sanitario, non abbia potuto essere effettuata, o sia stata effettuata solo parzialmente, il medico addetto al prelievo dovrà rilasciare al lavoratore un certificato, con l’indicazione del giorno e dell’ora, in cui si attesta la mancata o parziale donazione. In quest’ipotesi (inidoneità alla donazione) la retribuzione dei donatori lavoratori dipendenti è garantita limitatamente al tempo necessario all’accertamento dell’idoneità e alle relative procedure. Pertanto, in questi casi il dipendente deve recuperare le ore di assenza in quanto non giustificate da alcuna donazione. Solo nel caso il dipendente fornisse una certificazione attestante il tempo trascorso nel centro in attesa della donazione poi non effettuata, e questo tempo coprisse totalmente l'orario di servizio previsto per quel giorno, tale periodo non andrà recuperato e l'intera giornata di assenza dal lavoro si ritiene "giustificata".</p>
+    '#format': bootstrap_italia_2
+  donazione_midollo:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Donazione midollo osseo'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Donazione midollo osseo</strong> - L’art. 5 della legge 52/2001 riconosce al lavoratore dipendente, il diritto a conservare la “normale retribuzione” per le giornate di degenza ospedaliera occorrenti al prelievo del sangue midollare nonché per le successive giornate di convalescenza che l’équipe medica che ha effettuato il trapianto ritenga necessarie ai fini del completo ripristino dello stato fisico del donatore stesso. La legge prevede inoltre il diritto a conservare la normale retribuzione anche per i permessi orari concessi al lavoratore per il tempo occorrente all’espletamento dei seguenti atti preliminari alla donazione (art. 5, comma 1):</p>
+
+      <ul>
+      	<li>prelievo finalizzato all’individuazione dei dati genetici (definizione del sistema genetico HLA);</li>
+      	<li>prelievi necessari all’approfondimento della compatibilità con i pazienti in attesa di trapianto;</li>
+      	<li>accertamento dell’idoneità alla donazione.</li>
+      </ul>
+
+      <p>Rientreranno nei permessi eventuali giorni necessari a raggiungere la sede degli accertamenti e della donazione.</p>
+    '#format': bootstrap_italia_2
+  citazione_testimone:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: "Citazione a testimoniare a favore dell'Amministrazione"
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Citazione a testimoniare a favore dell'Amministrazione</strong> - Il dipendente della scuola (docente e ATA assunto a tempo indeterminato e determinato anche per supplenza breve) chiamato a rendere testimonianza in un giudizio civile o penale non può sottrarsi all’assolvimento di tale compito pena l’incorrere nelle sanzioni previste dalla legge (art. 255 Codice di procedura civile; artt. 132 e 133 Codice di procedura penale). L’ARAN con pareri dell’8 luglio 2004 e 1 aprile 2005 per il Comparto Ministeri afferma che: “Nel caso in cui il dipendente chieda di assentarsi dal servizio per rendere una testimonianza svolta nell’interesse dell’Amministrazione, tale assenza verrà giustificata o per l’intera giornata o per il tempo necessario all’assolvimento di tale compito. Nel caso in cui l’assenza sia dovuta per rendere una testimonianza giudiziale ed essa non è svolta nell’interesse dell’Amministrazione, essa sarà imputata a ferie, permesso a recupero o permesso per particolari motivi personali”.</p>
+    '#format': bootstrap_italia_2
+  cariche_elettive:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Ricoprire Cariche Pubbliche Elettive'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Art. 38 - CCNL Contratto scuola - Permessi ed Assenze del Personale Docente Chiamato a Ricoprire Cariche Pubbliche Elettive</strong></p>
+
+      <ol>
+      	<li>Nei confronti del personale docente chiamato a ricoprire cariche elettive, si applicano le norme di cui al d.lgs 18.08.2000, n. 267 e di cui all'art. 68 del d.lgs. 30 marzo 2001, n. 165. Il personale che si avvalga del regime delle assenze e dei permessi di cui alle leggi predette, è tenuto a presentare, ogni trimestre, a partire dall'inizio dell'anno scolastico, alla scuola in cui presta servizio, apposita dichiarazione circa gli impegni connessi alla carica ricoperta, da assolvere nel trimestre successivo, nonché a comunicare mensilmente alla stessa scuola la conferma o le eventuali variazioni degli impegni già dichiarati.</li>
+      	<li>Nel caso in cui il docente presti servizio in più scuole, la predetta dichiarazione va presentata a tutte le scuole interessate.</li>
+      	<li>Qualora le assenze dal servizio derivanti dall'assolvimento degli impegni dichiarati non consentano al docente di assicurare la necessaria continuità didattica nella classe o nelle classi cui sia assegnato può farsi luogo alla nomina di un supplente per il periodo strettamente indispensabile e, comunque, sino al massimo di un mese, durata prorogabile soltanto ove se ne ponga l'esigenza in relazione a quanto dichiarato nella comunicazione mensile di cui al comma 1, sempreché non sia possibile provvedere con altro personale docente in soprannumero o a disposizione.</li>
+      	<li>Per tutta la durata della nomina del supplente il docente, nei periodi in cui non sia impegnato nell'assolvimento dei compiti connessi alla carica ricoperta, è utilizzato nell'ambito della scuola e per le esigenze di essa, nei limiti dell'orario obbligatorio di servizio. prioritariamente per le supplenze e per i corsi di recupero.</li>
+      	<li>La programmazione delle assenze di cui ai precedenti commi 1 e 2 non ha alcun valore sostitutivo della documentazione espressamente richiesta dal D.lgs. n. 267/2000, che dovrà essere prodotta tempestivamente dall'interessato.</li>
+      </ol>
+
+      <p>&nbsp;</p>
+    '#format': bootstrap_italia_2
+  note:
+    '#type': textarea
+    '#title': 'Autocertificazione Permesso retribuito'
+    '#description': '<p><em><strong>Inserisci qui Autocertificazione ai sensi degli articoli 46 e 47 del DPR 28/12/2000 n°445.</strong></em><br>&nbsp;</p>'
+    '#required': true
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  documento_allegato:
+    '#type': managed_file
+    '#title': 'Allegato/i (Non obbligatorio)'
+    '#multiple': 5
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#max_filesize': '2'
+    '#file_extensions': 'jpg jpeg png rtf pdf'
+    '#file_name': 'permesso-retribuito-td-doc-[current-user:field_cognome]'
+    '#sanitize': true
+  data_firma:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 100px'
+    data_compilazione:
+      '#type': date
+      '#title': 'Data compilazione'
+      '#title_display': inline
+      '#disabled': true
+      '#default_value': today
+      '#format': bootstrap_italia_short_date
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    firma_digitale:
+      '#type': textarea
+      '#title': FIRMA
+      '#rows': 3
+      '#disabled': true
+      '#flex': 0
+      '#default_value': |-
+        [current-user:field_cognome] [current-user:field_nome]
+        C.F. [current-user:field_codice_fiscale]
+        E-mail: [current-user:mail]
+      '#format': raw
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  file_pdf:
+    '#type': 'webform_entity_print_attachment:pdf'
+    '#title': 'File PDF'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+  email_referenti_plesso:
+    '#type': webform_email_multiple
+    '#title': 'Email Referenti Plesso'
+    '#wrapper_attributes':
+      class:
+        - referenti-plesso
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  istituto:
+    '#type': hidden
+    '#title': Istituto
+    '#default_value': '[site:name]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_user:
+    '#type': hidden
+    '#title': 'Mail user'
+    '#default_value': '[current-user:mail]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': toic8aj00t@istruzione.it
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  richiesta_annullamento:
+    '#type': number
+    '#title': 'Richiesta Annullamento'
+    '#default_value': '0'
+    '#access': false
+css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
+javascript: ''
+settings:
+  ajax: false
+  ajax_scroll_top: ''
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: true
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_file_limit_message: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: '[webform_submission:submitted-to]: [webform_submission:values:cognome]'
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements:
+    email_referenti_plesso: email_referenti_plesso
+    istituto: istituto
+    mail_user: mail_user
+    mail_istituto: mail_istituto
+    richiesta_annullamento: richiesta_annullamento
+  submission_exclude_empty: true
+  submission_exclude_empty_checkbox: true
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - element__cognome
+    - element__nome
+    - element__codice_fiscale
+    - element__sede_di_servizio
+    - element__in_qualita_di_
+    - element__a_tempo
+    - element__tipologia_richiesta
+    - element__data_inizio
+    - element__data_fine
+    - element__numero_giorni
+    - completed
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: '< Precedente'
+  wizard_next_button_label: ''
+  wizard_toggle: true
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
+  preview: 2
+  preview_label: Anteprima
+  preview_title: '[webform:title]: Anteprima'
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
+  preview_attributes: {  }
+  preview_excluded_elements:
+    file_pdf: file_pdf
+    email_referenti_plesso: email_referenti_plesso
+    istituto: istituto
+    mail_user: mail_user
+    mail_istituto: mail_istituto
+    richiesta_annullamento: richiesta_annullamento
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: url_message
+  confirmation_url: /modulistica-online/le-mie-istanze
+  confirmation_title: ''
+  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
+  confirmation_attributes: {  }
+  confirmation_back: false
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: true
+  confirmation_exclude_token: true
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: false
+access:
+  create:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles:
+      - amministratore
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers:
+  e_mail:
+    id: email
+    handler_id: e_mail
+    label: E-mail
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -50
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_istituto:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      reply_to: '[webform_submission:values:mail_user:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
+      excluded_elements:
+        email_referenti_plesso: email_referenti_plesso
+        istituto: istituto
+        mail_user: mail_user
+        mail_istituto: mail_istituto
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_conferma_ricezione:
+    id: email
+    handler_id: e_mail_conferma_ricezione
+    label: 'E-mail conferma ricezione'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -49
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_user:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[site:name]'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      excluded_elements:
+        email_referenti_plesso: email_referenti_plesso
+        istituto: istituto
+        mail_user: mail_user
+        mail_istituto: mail_istituto
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_referenti_di_plesso:
+    id: email
+    handler_id: e_mail_referenti_di_plesso
+    label: 'E-mail: Referenti di Plesso'
+    notes: ''
+    status: true
+    conditions:
+      enabled:
+        ':input[name="in_qualita_di_"]':
+          value: Docente
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome:raw]'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Comunicazione assenza'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>\r\n\r\n<p>I Dati inseriti sono i seguenti:.</p>\r\n\r\n\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
+      excluded_elements:
+        markup: markup
+        codice_fiscale: codice_fiscale
+        tipologia_richiesta: tipologia_richiesta
+        lutto_familiare: lutto_familiare
+        matrimonio: matrimonio
+        donazione_sangue: donazione_sangue
+        donazione_midollo: donazione_midollo
+        citazione_testimone: citazione_testimone
+        note: note
+        documento_allegato: documento_allegato
+        data_compilazione: data_compilazione
+        firma_digitale: firma_digitale
+        file_pdf: file_pdf
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+variants: {  }
