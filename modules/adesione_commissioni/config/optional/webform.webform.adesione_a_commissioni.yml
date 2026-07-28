@@ -22,7 +22,7 @@ template: false
 archive: false
 id: adesione_a_commissioni
 title: 'Adesione a Commissioni'
-description: 'Form per la Modulistica del Personale'
+description: '<p>Modulo per inviare la propria adesione ad una o più commissioni</p>'
 categories: {  }
 elements: |-
   dati_anagrafici:
@@ -139,15 +139,15 @@ elements: |-
       - authenticated
   note:
     '#type': textarea
-    '#title': Note
+    '#title': 'Inserire eventuali note aggiuntive'
+    '#wrapper_attributes':
+      style: 'margin-top: 50px'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#wrapper_attributes':
-      style: 'margin-top: 50px'
   data_firma:
     '#type': webform_flexbox
     '#attributes':
@@ -201,7 +201,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#default_value': info@softwebadvice.com
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -264,6 +264,7 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_file_limit_message: ''
   form_attributes: {  }
   form_method: ''
   form_action: ''
