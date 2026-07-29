@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * Registers the entity_print template suggestion for the "libera_professione"
+ * webform so entity_print can find the file in this submodule's templates directory.
+ */
+function libera_professione_theme_registry_alter(&$theme_registry) {
+  if (!isset($theme_registry['entity_print'])) {
+    return;
+  }
+  $module_path = \Drupal::service('extension.list.module')->getPath('libera_professione');
+  $theme_registry['entity_print__webform_submission__libera_professione'] = [
+    'base hook' => 'entity_print',
+    'path' => $module_path . '/templates/entity_print',
+    'template' => 'entity-print--webform-submission--libera-professione',
+    'type' => 'module',
+    'theme path' => $module_path,
+    'variables' => $theme_registry['entity_print']['variables'] ?? [],
+    'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
+  ];
+}
