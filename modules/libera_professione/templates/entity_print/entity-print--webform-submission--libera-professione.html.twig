@@ -1,0 +1,97 @@
+{#
+/**
+ * @file
+ * Default theme implementation for webform submission data.
+ *
+ * Available variables:
+ * - webform_submission: The webform submission.
+ * - webform: The webform.
+ *
+ * @see template_preprocess_webform_submission_data()
+ *
+ * @ingroup themeable
+ */
+#}
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  {{ entity_print_css }}
+</head>
+<body>
+
+  {# The footer is repeated on all pages and must be printed first. #}
+  <div id="footer">
+    <p class="page">Pagina </p>
+  </div>
+
+  <div id="header">
+  </div>
+
+  <div id="content">
+    <div class="content_header">
+      <p>Al Dirigente scolastico<br />
+        {{ data.istituto }} <br />
+        {{ data.mail_istituto }}
+      </p>
+    </div>
+    <div>
+      <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Autorizzazione allo svolgimento libera professione - {{ data.cognome }} {{ data.nome }}</strong></p>
+    </div>
+    <div class="corpo">
+      <p>
+        Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
+        in servizio presso {{ data.sede_di_servizio }}
+        in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }},<br>
+        con tipologia di contratto: {{ webform_token('[webform_submission:values:tipologia_contratto]', webform_submission, [], options) }}</p>
+      {% if data.iscrizione_albo_professionale=="No" %}
+        <p>non iscritto all'albo professionale e/o elenco speciale</p>
+      {% else %}
+        <p>iscritto al seguente albo professionale e/o elenco speciale: {{ data.albo_professionale }} dal {{ data.albo_professionale_dal|date('d.m.Y') }}
+          con numero tessera {{ data.numero_tessera }} presso l'ordine regionale/provinciale di {{ data.ordine_regionale_provinciale }}
+        </p>
+      {% endif %}
+      <div>{{ elements.processed_text['#text']|raw }}</div>
+      <div class="text-align-center">{{ data.tipo_professione }}</div>
+      <div>{{ elements.processed_text_01['#text']|raw }}</div>
+      <p><strong>Dichiarazione di conferibilità all'esercizio</strong><br />
+        {{ elements.dichiarazione_di_conferibilita_all_esercizio['#description']|striptags|raw }}
+      </p>
+      <p><strong>Dichiarazione di compatibilità all'esercizio</strong><br />
+        {{ elements.dichiarazione_di_compatibilita_all_esercizio['#description']|striptags|raw }}
+      </p>
+      <p><strong>Impegno di comunicazione variazione stato</strong><br />
+        {{ elements.impegno_di_comunicazione_variazione_stato['#description']|striptags|raw }}
+      </p>
+      <div style="margin-top: 20px;">
+        {% if data.note %}
+          <p>Note<br /> {{ data.note }}</p>
+        {% endif %}
+      </div>
+      <div class="data_invio">
+        <p>Data {{ data.data_compilazione|date('d.m.Y') }}</p>
+      </div>
+      <div class="firma_docente">
+        <div class="firma">
+          <strong>Firma</strong><br>
+          {{ data.cognome }} {{ data.nome }}<br />
+          {{ data.codice_fiscale }}<br />
+          {{ data.mail_user }}
+        </div>
+      </div>
+    </div>
+    {#  <p style="page-break-before: always;">the second page</p>#}
+    <div class="autorizzazione">
+      <p>
+      </p>
+      <div class="firma_ata"></div>
+      <div class="firma_ds"></div>
+    </div>
+  </div>
+    {#
+    {{ kint(data) }}
+     {{ kint(elements) }}
+    {{ kint(content) }}
+    #}
+  </body>
+</html>
