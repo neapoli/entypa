@@ -22,7 +22,7 @@ template: false
 archive: false
 id: adesione_a_commissioni
 title: 'Adesione a Commissioni'
-description: '<p>Modulo per inviare la propria adesione ad una o più commissioni</p>'
+description: "<p>Form per aderire alle varie commissioni di lavoro dell'Istituto.</p>"
 categories: {  }
 elements: |-
   dati_anagrafici:
@@ -328,7 +328,7 @@ settings:
   preview: 2
   preview_label: Anteprima
   preview_title: '[webform:title]: Anteprima'
-  preview_message: "<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>\r\n\r\n<p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>"
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
   preview_attributes: {  }
   preview_excluded_elements:
     file_pdf: file_pdf
@@ -346,9 +346,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: url_message
-  confirmation_url: /modulistica-online/le-mie-istanze
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
   confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
-  confirmation_message: 'La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.'
+  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]&nbsp;</p>'
   confirmation_attributes: {  }
   confirmation_back: true
   confirmation_back_label: ''
