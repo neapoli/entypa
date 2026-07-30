@@ -2,10 +2,12 @@ langcode: it
 status: true
 dependencies:
   config:
+    - field.field.node.modulistica_online.field_destinatari
     - field.field.node.modulistica_online.webform
     - node.type.modulistica_online
   module:
     - path
+    - term_reference_tree
     - webform
 id: node.modulistica_online.default
 targetEntityType: node
@@ -14,40 +16,52 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_destinatari:
+    type: term_reference_tree
+    weight: 1
+    region: content
+    settings:
+      start_minimized: true
+      leaves_only: false
+      select_parents: false
+      select_all: false
+      cascading_selection: 0
+      max_depth: 0
+    third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   path:
     type: path
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 8
+    weight: 9
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
@@ -62,7 +76,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
@@ -72,7 +86,7 @@ content:
     third_party_settings: {  }
   webform:
     type: webform_entity_reference_select
-    weight: 1
+    weight: 2
     region: content
     settings:
       default_data: true

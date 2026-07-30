@@ -2,25 +2,18 @@ langcode: it
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.full
     - field.field.node.modulistica_online.field_destinatari
     - field.field.node.modulistica_online.webform
     - node.type.modulistica_online
   module:
     - user
     - webform
-id: node.modulistica_online.default
+id: node.modulistica_online.full
 targetEntityType: node
 bundle: modulistica_online
-mode: default
+mode: full
 content:
-  field_destinatari:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 1
-    region: content
   links:
     settings: {  }
     third_party_settings: {  }
@@ -28,16 +21,17 @@ content:
     region: content
   webform:
     type: webform_entity_reference_entity_view
-    label: above
+    label: hidden
     settings:
       source_entity: true
       lazy: false
     third_party_settings: {  }
-    weight: 2
+    weight: 1
     region: content
 hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_destinatari: true
   langcode: true
   search_api_excerpt: true

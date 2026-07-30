@@ -24,7 +24,7 @@ id: libera_professione
 title: 'Autorizzazione allo svolgimento della libera professione'
 description: '<p>Form per la richiesta di libera professione</p>'
 categories:
-  - 'Docenti & Ata'
+  - Docenti
 elements: |-
   dati_anagrafici:
     '#type': webform_flexbox
@@ -472,11 +472,9 @@ settings:
 access:
   create:
     roles:
-      - collaboratore
-      - direttore_amministrativo_dsga_
-      - personale_amministrativo
-      - personale_tecnico
       - amministratore
+      - capo_redattore
+      - redattore
       - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
@@ -485,7 +483,6 @@ access:
     permissions: {  }
   view_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -494,7 +491,6 @@ access:
     permissions: {  }
   update_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -503,7 +499,6 @@ access:
     permissions: {  }
   delete_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -516,9 +511,10 @@ access:
     permissions: {  }
   view_own:
     roles:
-      - collaboratore
-      - personale_amministrativo
-      - personale_tecnico
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
