@@ -24,7 +24,7 @@ id: libera_professione
 title: 'Autorizzazione allo svolgimento della libera professione'
 description: '<p>Form per la richiesta di libera professione</p>'
 categories:
-  - 'Modulistica DOCENTI e ATA'
+  - 'Docenti & Ata'
 elements: |-
   dati_anagrafici:
     '#type': webform_flexbox
@@ -292,14 +292,10 @@ elements: |-
     '#title': 'File PDF'
     '#access_create_roles':
       - authenticated
-    '#access_update_roles':
-      - administrator
-      - dirigente
-      - dsga
-      - vicario_ds
-      - uff_personale
+    '#access_update_roles': {  }
     '#access_view_roles':
       - authenticated
+    '#display_on': view
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
   istituto:
     '#type': hidden
@@ -472,7 +468,7 @@ settings:
   token_view: false
   token_update: false
   token_delete: false
-  serial_disabled: false
+  serial_disabled: true
 access:
   create:
     roles:

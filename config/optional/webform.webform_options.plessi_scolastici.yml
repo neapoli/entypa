@@ -6,9 +6,9 @@ label: 'Plessi scolastici'
 category: Scuola
 likert: false
 options: |-
-  'Infanzia PETER PAN': 'Infanzia PETER PAN'
-  'Infanzia APRIERO': 'Infanzia APRIERO'
-  'Primaria GRAMSCI': 'Primaria GRAMSCI'
-  'Primaria RODARI': 'Primaria RODARI'
-  'Secondaria primo grado DA VINCI': 'Secondaria primo grado DA VINCI'
+  'Infanzia1': 'Infanzia1'
+  'Infanzia2': 'Infanzia2'
+  'Primaria1': 'Primaria1'
+  'Primaria2': 'Primaria2'
+  'Secondaria1': 'Secondaria1'
   Direzione: Direzione
