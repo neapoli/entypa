@@ -1,0 +1,8 @@
+name: "Incarico retribuito"
+description: 'Webform per la richiesta di "Incarico retribuito".'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11
+dependencies:
+  - entypa:entypa

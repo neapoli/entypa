@@ -1,0 +1,696 @@
+langcode: it
+status: open
+dependencies:
+  module:
+    - webform_entity_print
+third_party_settings:
+  webform_entity_print:
+    template:
+      header: '<h2>Autorizzazione allo svolgimento di incarico retribuito</h2>'
+      footer: ''
+      css: ''
+    export_types:
+      pdf:
+        enabled: true
+        link_text: ''
+        link_attributes: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: incarico_retribuito
+title: 'Autorizzazione allo svolgimento di incarico retribuito'
+description: '<p>Form per la richiesta di incarico retribuito</p>'
+categories:
+  - Docenti
+elements: |-
+  dati_anagrafici:
+    '#type': webform_flexbox
+    '#align_items': center
+    markup:
+      '#type': webform_markup
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+      '#markup': 'Il/La sottoscritto/a<br />&nbsp;'
+    cognome:
+      '#type': textfield
+      '#title': Cognome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+    nome:
+      '#type': textfield
+      '#title': Nome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+    codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice Fiscale'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+  flexbox:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    sede_di_servizio:
+      '#type': textfield
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 3
+      '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+    in_qualita_di_:
+      '#type': textfield
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 2
+      '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+    a_tempo:
+      '#type': textfield
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+  tipologia_contratto:
+    '#type': radios
+    '#title': 'Tipologia contratto'
+    '#options':
+      'Full time': 'Full time'
+      'Part-time superiore al 50% dell’orario normale': 'Part-time superiore al 50% dell’orario normale'
+      'Part-time pari o inferiore al 50% dell’orario normale ': 'Part-time pari o inferiore al 50% dell’orario normale '
+    '#options_display': side_by_side
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles': {  }
+    '#access_view_roles':
+      - authenticated
+  iscrizione_albo_professionale:
+    '#type': radios
+    '#title': 'Iscrizione Albo Professionale e/o elenco speciale'
+    '#options': yes_no
+    '#options_display': side_by_side
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles': {  }
+    '#access_view_roles':
+      - authenticated
+  dati_albo_professionale:
+    '#type': webform_flexbox
+    '#states':
+      visible:
+        ':input[name="iscrizione_albo_professionale"]':
+          value: 'Yes'
+      required:
+        ':input[name="iscrizione_albo_professionale"]':
+          value: 'Yes'
+    '#justify_content': justify-space-around
+    '#align_items': center
+    albo_professionale:
+      '#type': textfield
+      '#title': 'Albo Professionale e/o elenco speciale'
+    albo_professionale_dal:
+      '#type': date
+      '#title': Dal
+    numero_tessera:
+      '#type': textfield
+      '#title': 'Numero tessera'
+    ordine_regionale_provinciale:
+      '#type': textfield
+      '#title': "Presso l'ordine regionale/provinciale di"
+  processed_text:
+    '#type': processed_text
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>ai sensi dell’art. 508 del D.Lgs 297/94, per l’anno scolastico in corso, l’autorizzazione per il seguente incarico retribuito:</p>'
+    '#format': bootstrap_italia_2
+  periodo_e_qualita:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 50px'
+    data_inizio:
+      '#type': date
+      '#title': Dal
+      '#required': true
+      '#date_date_format': ''
+    al:
+      '#type': date
+      '#title': Al
+      '#required': true
+      '#date_date_format': ''
+    in_qualita_di:
+      '#type': textfield
+      '#title': 'in qualità di'
+      '#required': true
+  dati_conferimento:
+    '#type': webform_flexbox
+    conferito_da:
+      '#type': textfield
+      '#title': 'conferito da'
+      '#required': true
+    conferito_da_codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice fiscale'
+      '#required': true
+    partita_iva:
+      '#type': textfield
+      '#title': 'Partita iva'
+      '#required': true
+  dati_conferimento_1:
+    '#type': webform_flexbox
+    sede_legale:
+      '#type': textfield
+      '#title': 'Sede legale'
+      '#required': true
+      '#flex': 2
+    mail_ditta_pa:
+      '#type': email
+      '#title': 'mail ditta/pa'
+      '#required': true
+  dati_conferimento_2:
+    '#type': webform_flexbox
+    descrizione_attivita:
+      '#type': textfield
+      '#title': 'Descrizione attività'
+      '#required': true
+      '#flex': 3
+    importo_presunto:
+      '#type': number
+      '#title': 'Importo presunto'
+      '#required': true
+      '#min': 0
+    ammontare_ore:
+      '#type': number
+      '#title': 'Ammontare ore'
+      '#required': true
+      '#min': 0
+  processed_text_01:
+    '#type': processed_text
+    '#text': '<p class="text-align-center"><strong>DICHIARA CHE</strong></p>'
+    '#format': bootstrap_italia_2
+  dichiarazione_di_conferibilita_all_esercizio:
+    '#type': checkboxes
+    '#title': "Dichiarazione di conferibilità all'esercizio"
+    '#description': |-
+      <blockquote>
+      <p><strong>l&#39;incarico non si trova in alcuna delle condizioni di inconferibilit&agrave; e incompatibilit&agrave; di cui al decreto legislativo 8 aprile 2013, n. 39 &ldquo;Disposizioni in materia di inconferibilit&agrave; e incompatibilit&agrave; di incarichi presso le pubbliche amministrazioni e presso gli enti privati in controllo pubblico, a norma dell&rsquo;art. 1, commi 49 e 50, della legge 6 novembre 2012, n. 190&rdquo;;</strong></p>
+      </blockquote>
+    '#description_display': before
+    '#options':
+      si: Conferma
+    '#required': true
+  dichiarazione_di_compatibilita_all_esercizio:
+    '#type': checkboxes
+    '#title': "Dichiarazione di compatibilità all'esercizio"
+    '#description': |-
+      <blockquote>
+      <p><strong>L&#39;incarico non sar&agrave; in alcun modo di alcun pregiudizio all&#39;assolvimento di tutti i miei obblighi di lavoro, ivi comprese eventuali attivit&agrave; aggiuntive e sar&agrave; pienamente compatibile con l&#39;orario di insegnamento, di servizio e complessivamente con tutte le attivit&agrave; della scuola.</strong></p>
+      </blockquote>
+    '#description_display': before
+    '#options':
+      si: Conferma
+    '#required': true
+  impegno_di_comunicazione_compensi:
+    '#type': checkboxes
+    '#title': 'Impegno di comunicazione compensi '
+    '#description': |-
+      <blockquote>
+      <p><strong>dichiaro di comunicare tempestivamente la certificazione dei compensi percepiti per ogni singolo contratto/incarico </strong></p>
+      </blockquote>
+    '#description_display': before
+    '#options':
+      si: Conferma
+    '#required': true
+  impegno_di_comunicazione_variazione_stato:
+    '#type': checkboxes
+    '#title': 'Impegno di comunicazione variazione stato'
+    '#description': |-
+      <blockquote>
+      <p><strong>Mi impegno formalmente a comunicare tempestivamentea per iscritto a codesta dirigenza ogni eventuale variazione di tipologia e caratteristiche rispetto a quelle caratterizzaanti la presente richiesta di autorizzazione. </strong></p>
+      </blockquote>
+    '#description_display': before
+    '#options':
+      si: Conferma
+    '#required': true
+  impegno_di_invio_contratto_incarico:
+    '#type': checkboxes
+    '#title': 'Impegno di invio contratto/incarico'
+    '#description': |-
+      <blockquote>
+      <p><strong>dichiaro di inviare copia di ogni singolo contratto/incarico tempestivamente </strong></p>
+      </blockquote>
+    '#description_display': before
+    '#options':
+      si: Conferma
+    '#required': true
+  note:
+    '#type': textarea
+    '#title': 'Inserire eventuali note aggiuntive'
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles': {  }
+    '#access_view_roles':
+      - authenticated
+  data_firma:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    data_compilazione:
+      '#type': date
+      '#title': 'Data compilazione'
+      '#title_display': inline
+      '#disabled': true
+      '#default_value': today
+      '#format': bootstrap_italia_short_date
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    firma_digitale:
+      '#type': textarea
+      '#title': FIRMA
+      '#rows': 3
+      '#disabled': true
+      '#flex': 0
+      '#default_value': |-
+        [current-user:field_cognome] [current-user:field_nome]
+        C.F. [current-user:field_codice_fiscale]
+        E-mail: [current-user:mail]
+      '#format': raw
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - administrator
+        - dirigente
+        - direttore
+      '#access_view_roles':
+        - authenticated
+  file_pdf:
+    '#type': 'webform_entity_print_attachment:pdf'
+    '#title': 'File PDF'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles': {  }
+    '#access_view_roles':
+      - authenticated
+    '#display_on': view
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+  istituto:
+    '#type': hidden
+    '#title': Istituto
+    '#default_value': '[site:name]'
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': info@softwebadvice.com
+  mail_user:
+    '#type': hidden
+    '#title': 'Mail user'
+    '#default_value': '[current-user:mail]'
+  richiesta_annullamento:
+    '#type': number
+    '#title': 'Richiesta Annullamento'
+    '#default_value': '0'
+    '#access': false
+css: ''
+javascript: ''
+settings:
+  ajax: false
+  ajax_scroll_top: ''
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: true
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_file_limit_message: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: '[webform_submission:submitted-to]: [webform_submission:values:cognome]'
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements:
+    istituto: istituto
+    mail_istituto: mail_istituto
+    mail_user: mail_user
+    richiesta_annullamento: richiesta_annullamento
+  submission_exclude_empty: true
+  submission_exclude_empty_checkbox: false
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - element__cognome
+    - element__nome
+    - element__codice_fiscale
+    - element__sede_di_servizio
+    - element__in_qualita_di_
+    - element__a_tempo
+    - element__data_inizio
+    - completed
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: '< Precedente'
+  wizard_next_button_label: ''
+  wizard_toggle: true
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
+  preview: 2
+  preview_label: Anteprima
+  preview_title: '[webform:title]: Anteprima'
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
+  preview_attributes: {  }
+  preview_excluded_elements:
+    file_pdf: file_pdf
+    istituto: istituto
+    mail_istituto: mail_istituto
+    mail_user: mail_user
+    richiesta_annullamento: richiesta_annullamento
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: url_message
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p style="-webkit-text-stroke-width:0px;caret-color:rgb(0, 0, 0);color:rgb(0, 0, 0);font-style:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;orphans:2;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-thickness:auto;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;">La sua richiesta&nbsp;è stata inviata alla segreteria.</p><p style="-webkit-text-stroke-width:0px;caret-color:rgb(0, 0, 0);color:rgb(0, 0, 0);font-style:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;orphans:2;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-thickness:auto;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;">A breve riceverà una mail con i dati inseriti.</p><p style="-webkit-text-stroke-width:0px;caret-color:rgb(0, 0, 0);color:rgb(0, 0, 0);font-style:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;orphans:2;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-thickness:auto;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;">-- Il team di [site:name]&nbsp;</p>'
+  confirmation_attributes: {  }
+  confirmation_back: false
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: true
+  confirmation_exclude_token: true
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: true
+access:
+  create:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers:
+  e_mail:
+    id: email
+    handler_id: e_mail
+    label: E-mail
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_istituto:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      reply_to: '[webform_submission:values:mail_user:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_conferma_ricezione:
+    id: email
+    handler_id: e_mail_conferma_ricezione
+    label: 'E-mail conferma ricezione'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 4
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_user:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[site:name]'
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+variants: {  }
