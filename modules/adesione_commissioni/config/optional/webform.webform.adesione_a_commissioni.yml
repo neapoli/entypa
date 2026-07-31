@@ -385,6 +385,8 @@ access:
       - personale_amministrativo
       - personale_tecnico
       - amministratore
+      - capo_redattore
+      - redattore
       - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
@@ -425,8 +427,13 @@ access:
   view_own:
     roles:
       - collaboratore
+      - direttore_amministrativo_dsga_
       - personale_amministrativo
       - personale_tecnico
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
