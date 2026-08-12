@@ -21,22 +21,11 @@ uid: 1
 template: false
 archive: false
 id: assenza_per_malattia_doc
-title: 'Assenza per malattia - DOCENTI'
-description: '<p>Form per la Modulistica del Personale</p>'
-categories: {  }
+title: 'Malattia - DOCENTI'
+description: '<p>Form per la richiesta di malattia DOCENTI</p>'
+categories:
+  - Docenti
 elements: |-
-  informazioni:
-    '#type': webform_more
-    '#more_title': 'Informazioni CCNL (art. 17 - Assenze per malattia)'
-    '#more': '<ol><li data-list-item-id="ef17b0500c00cafaf721f3f078085f43f">Il dipendente assente per malattia ha diritto alla conservazione del posto per un periodo di diciotto mesi. Ai fini della maturazione del predetto periodo, si sommano, alle assenze dovute all''ultimo episodio morboso, le assenze per malattia verificatesi nel triennio precedente.</li><li data-list-item-id="e57afa3de6ffa0533283abfef2edb1351">Superato il periodo previsto dal comma 1, al lavoratore che ne faccia richiesta è concesso di assentarsi per un ulteriore periodo di 18 mesi in casi particolarmente gravi, senza diritto ad alcun trattamento retributivo.</li><li data-list-item-id="e2cba35b15de76126c980aaf1bfdb4ea4">Prima di concedere su richiesta del dipendente l''ulteriore periodo di assenza di cui al comma 2 l''amministrazione procede all''accertamento delle sue condizioni di salute, per il tramite del competente organo sanitario ai sensi delle vigenti disposizioni, al fine di stabilire la sussistenza di eventuali cause di assoluta e permanente inidoneità fisica a svolgere qualsiasi proficuo lavoro.</li><li data-list-item-id="ed0ea1e215d1e35ba26859590925e072c">Superati i periodi di conservazione del posto previsti dai commi 1 e 2, oppure nel caso che, a seguito dell''accertamento disposto ai sensi del comma 3, il dipendente sia dichiarato permanentemente inidoneo a svolgere qualsiasi proficuo lavoro, l''amministrazione può procedere, salvo quanto previsto dal successivo comma 5, alla risoluzione del rapporto corrispondendo al dipendente l''indennità sostitutiva del preavviso.</li><li data-list-item-id="e5868e20e4fb5162320b1777c2da9c863">Il personale docente dichiarato inidoneo alla sua funzione per motivi di salute può a domanda essere collocato fuori ruolo e/o utilizzato in altri compiti tenuto conto della sua preparazione culturale e professionale. Tale utilizzazione è disposta dal Direttore regionale sulla base di criteri definiti in sede di contrattazione integrativa nazionale.</li><li data-list-item-id="eab8a7bd05a1a6e5efdd94450e65179cb">I periodi di assenza per malattia, salvo quelli previsti dal comma 2 del presente articolo, non interrompono la maturazione dell''anzianità di servizio a tutti gli effetti.</li><li data-list-item-id="e29281d287599f66a64650d6f9abc15da">Sono fatte salve le vigenti disposizioni di legge a tutela degli affetti da TBC, nonché quanto previsto dalla legge 26 giugno 1990, n. 162 e dal D.P.R. 9 ottobre 1990, n. 309.</li><li data-list-item-id="e11a703c551523afab1607d0777415ea9">Il trattamento economico spettante al dipendente, nel caso di assenza per malattia nel triennio di cui al comma 1, è il seguente:<ul><li data-list-item-id="eb75b08fb9a26b946e002c39a62003b1e">intera retribuzione fissa mensile, ivi compresa la retribuzione professionale docenti ed il compenso individuale accessorio, con esclusione di ogni altro compenso accessorio, comunque denominato, per i primi nove mesi di assenza. Nell''ambito di tale periodo per le malattie superiori a 15 gg. lavorativi o in caso di ricovero ospedaliero e per il successivo periodo di convalescenza post-ricovero, al dipendente compete anche ogni trattamento economico accessorio a carattere fisso e continuativo;</li><li data-list-item-id="e60980b8e706496bdd4023074de40c7c4">90% della retribuzione di cui alla lett. a) per i successivi 3 mesi di assenza;</li><li data-list-item-id="e1f117cdf99e68a684168d1b6249033ee">50% della retribuzione di cui alla lett. a) per gli ulteriori 6 mesi del periodo di conservazione del posto previsto nel comma 1.</li></ul></li><li data-list-item-id="edf612c0666c772a080efffeb5302cacb">In caso di gravi patologie che richiedano terapie temporaneamente e/o parzialmente invalidanti sono esclusi dal computo dei giorni di assenza per malattia, di cui ai commi 1 e 8 del presente articolo, oltre ai giorni di ricovero ospedaliero o di day hospital anche quelli di assenza dovuti alle conseguenze certificate delle terapie. Pertanto per i giorni anzidetti di assenza spetta l''intera retribuzione.</li><li data-list-item-id="ebe33d480c7b335df7366c047dc3b3eec">L''assenza per malattia, salva l''ipotesi di comprovato impedimento, deve essere comunicata all''istituto scolastico o educativo in cui il dipendente presta servizio, tempestivamente e comunque non oltre l''inizio dell''orario di lavoro del giorno in cui essa si verifica, anche nel caso di eventuale prosecuzione di tale assenza.</li><li data-list-item-id="e44e40c30d2c5bef6fc7f5a019e223840">Il dipendente, salvo comprovato impedimento, è tenuto a recapitare o spedire a mezzo raccomandata con avviso di ricevimento il certificato medico di giustificazione dell''assenza con indicazione della sola prognosi entro i cinque giorni successivi all''inizio della malattia o alla eventuale prosecuzione della stessa, comunicando per le vie brevi la presumibile durata della prognosi. Qualora tale termine scada in giorno festivo esso è prorogato al primo giorno lavorativo successivo.</li><li data-list-item-id="e0f5557b45ad8df61b20a7a647302a872">L''istituzione scolastica o educativa, oppure l''amministrazione di appartenenza o di servizio può disporre, sin dal primo giorno, il controllo della malattia, ai sensi delle vigenti disposizioni di legge, attraverso il competente organo sanitario. Il controllo non è disposto se il dipendente è ricoverato in strutture ospedaliere, pubbliche o private.</li><li data-list-item-id="ef4289522de76ae0ae4c9116dfc3e3a93">Il dipendente, che durante l''assenza, per particolari motivi, dimori in luogo diverso da quello di residenza o del domicilio dichiarato all''amministrazione deve darne immediata comunicazione, precisando l''indirizzo dove può essere reperito.</li><li data-list-item-id="e174da8a2b5af41d2fd7c78e44e1178ef">Il dipendente assente per malattia, pur in presenza di espressa autorizzazione del medico curante ad uscire, è tenuto a farsi trovare nel domicilio comunicato all''amministrazione, in ciascun giorno, anche se domenicale o festivo, dalle ore 10 alle ore 12 e dalle ore 17 alle ore 19.</li><li data-list-item-id="eed8df81a2fae609e3b469367896d6cec">La permanenza del dipendente nel proprio domicilio durante le fasce orarie come sopra definite può essere verificata nell''ambito e nei limiti delle vigenti disposizioni di legge.</li><li data-list-item-id="e517a1e11e86a914ebe39ffa1b526f191">Qualora il dipendente debba allontanarsi, durante le fasce di reperibilità, dall''indirizzo comunicato per visite mediche, prestazioni o accertamenti specialistici o per altri giustificati motivi, che devono essere, a richiesta, documentati, è tenuto a darne preventiva comunicazione all''amministrazione con l''indicazione della diversa fascia oraria di reperibilità da osservare.</li><li data-list-item-id="ea73ff41b8b0578c56393071e3e8e557b">Nel caso in cui l''infermità sia causata da colpa di un terzo, il risarcimento del danno da mancato guadagno effettivamente liquidato da parte del terzo responsabile - qualora comprensivo anche della normale retribuzione - è versato dal dipendente all''amministrazione fino a concorrenza di quanto dalla stessa erogato durante il periodo di assenza ai sensi del comma 8, lettere a), b) e c), compresi gli oneri riflessi inerenti. La presente disposizione non pregiudica l''esercizio, da parte dell''amministrazione, di eventuali azioni dirette nei confronti del terzo responsabile.</li><li data-list-item-id="eace118ecd28f597c222d8eb97ade0937">Le disposizioni di cui al presente articolo sono comunque adottate nel rispetto dell''art. 35 della legge 27.12.2002, n. 289 e successive modifiche.</li></ol><p>&nbsp;</p>'
-    '#attributes':
-      style: 'margin-top: 20px'
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
   dati_anagrafici:
     '#type': webform_flexbox
     '#align_items': center
@@ -314,7 +303,7 @@ elements: |-
     '#sanitize': true
   note:
     '#type': textarea
-    '#title': Note
+    '#title': 'Inserire eventuali note aggiuntive'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -390,7 +379,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#default_value': info@softwebadvice.com
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -403,7 +392,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ''
-javascript: "(function ($) {  \r\n  $('input[name=\"data_inizio\"]').change(function(){\r\n    Controllo();\r\n  });\r\n  $('input[name=\"data_fine\"]').change(function(){\r\n    Controllo();\r\n  });\r\n  function Controllo() {\r\n    var date1 = document.getElementById(\"edit-data-inizio\").value;\r\n    var date2 = document.getElementById(\"edit-data-fine\").value;\r\n    //alert(date1);\r\n    //alert(date2);\r\n    dt1 = new Date(date1);\r\n    dt2 = new Date(date2);\r\n    giorni = Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));\r\n    //alert (prova);\r\n    document.getElementById(\"edit-numero-giorni\").value = giorni + 1;\r\n  }\r\n}(jQuery));"
+javascript: "(function ($) {\r\n  'use strict';\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function controllo($campo) {\r\n    var $form   = $campo.closest('form');\r\n    var $inizio = $form.find('[name=\"data_inizio\"]');\r\n    var $fine   = $form.find('[name=\"data_fine\"]');\r\n    var $giorni = $form.find('[name=\"numero_giorni\"]');\r\n\r\n    if (!$giorni.length) { return; }\r\n\r\n    var dInizio = toData($inizio.val());\r\n    var dFine   = toData($fine.val());\r\n    var errore  = '';\r\n\r\n    if (dInizio === null || dFine === null) {\r\n      $giorni.val('');\r\n    }\r\n    else if (dFine < dInizio) {\r\n      $giorni.val('');\r\n      errore = \"La data di fine non può precedere quella di inizio.\";\r\n    }\r\n    else {\r\n      $giorni.val(Math.round((dFine - dInizio) / 86400000) + 1);\r\n    }\r\n\r\n    if ($fine[0] && $fine[0].setCustomValidity) {\r\n      $fine[0].setCustomValidity(errore);\r\n    }\r\n  }\r\n\r\n  $(document).on(\r\n    'change.giorniSingolo input.giorniSingolo',\r\n    '[name=\"data_inizio\"], [name=\"data_fine\"]',\r\n    function () {\r\n      controllo($(this));\r\n    }\r\n  );\r\n\r\n}(jQuery));"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -521,7 +510,7 @@ settings:
     mail_istituto: mail_istituto
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty_checkbox: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -530,9 +519,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: url_message
-  confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: ''
-  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -560,11 +549,10 @@ settings:
   token_view: false
   token_update: false
   token_delete: false
-  serial_disabled: false
+  serial_disabled: true
 access:
   create:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -576,7 +564,6 @@ access:
     permissions: {  }
   view_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -585,7 +572,6 @@ access:
     permissions: {  }
   update_any:
     roles:
-      - direttore_amministrativo_dsga_
       - amministratore
       - capo_redattore
       - redattore
@@ -593,7 +579,11 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles: {  }
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
     users: {  }
     permissions: {  }
   purge_any:
@@ -603,6 +593,8 @@ access:
   view_own:
     roles:
       - amministratore
+      - capo_redattore
+      - redattore
       - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
@@ -649,7 +641,7 @@ handlers:
       cc_options: {  }
       from_mail: _default
       from_options: {  }
-      from_name: '[webform_submission:values:cognome:raw]'
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
       reply_to: '[webform_submission:values:mail_user:raw]'
       return_path: ''
       sender_mail: ''
@@ -692,7 +684,7 @@ handlers:
       from_mail: _default
       from_options: {  }
       from_name: '[site:name]'
-      reply_to: ''
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
       return_path: ''
       sender_mail: ''
       sender_name: ''
