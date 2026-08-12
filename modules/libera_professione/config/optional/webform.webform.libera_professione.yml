@@ -374,7 +374,7 @@ settings:
     mail_user: mail_user
     richiesta_annullamento: richiesta_annullamento
   submission_exclude_empty: true
-  submission_exclude_empty_checkbox: false
+  submission_exclude_empty_checkbox: true
   submission_views: {  }
   submission_views_replace: {  }
   submission_user_columns:
@@ -429,7 +429,7 @@ settings:
     mail_user: mail_user
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty_checkbox: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -440,7 +440,7 @@ settings:
   confirmation_type: url_message
   confirmation_url: /admin/modulistica-online/le-mie-istanze
   confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
-  confirmation_message: '<p style="-webkit-text-stroke-width:0px;caret-color:rgb(0, 0, 0);color:rgb(0, 0, 0);font-style:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;orphans:2;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-thickness:auto;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;">La sua richiesta&nbsp;è stata inviata alla segreteria.</p><p style="-webkit-text-stroke-width:0px;caret-color:rgb(0, 0, 0);color:rgb(0, 0, 0);font-style:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;orphans:2;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-thickness:auto;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;">A breve riceverà una mail con i dati inseriti.</p><p style="-webkit-text-stroke-width:0px;caret-color:rgb(0, 0, 0);color:rgb(0, 0, 0);font-style:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;orphans:2;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-thickness:auto;text-indent:0px;text-transform:none;white-space:normal;widows:2;word-spacing:0px;">-- Il team di [site:name]&nbsp;</p>'
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
