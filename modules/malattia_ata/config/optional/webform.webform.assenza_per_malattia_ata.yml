@@ -14,9 +14,9 @@ third_party_settings:
         enabled: true
         link_text: ''
         link_attributes: {  }
-weight: 0
 open: null
 close: null
+weight: 0
 uid: 1
 template: false
 archive: false
@@ -630,9 +630,9 @@ access:
 handlers:
   e_mail:
     id: email
-    handler_id: e_mail
     label: E-mail
     notes: ''
+    handler_id: e_mail
     status: true
     conditions: {  }
     weight: -50
@@ -672,9 +672,9 @@ handlers:
       debug: false
   e_mail_conferma_ricezione:
     id: email
-    handler_id: e_mail_conferma_ricezione
     label: 'E-mail conferma ricezione'
     notes: ''
+    handler_id: e_mail_conferma_ricezione
     status: true
     conditions: {  }
     weight: -49
