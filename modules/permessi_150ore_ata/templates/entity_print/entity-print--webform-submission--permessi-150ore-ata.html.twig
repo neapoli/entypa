@@ -35,7 +35,7 @@
         </p>
       </div>
       <div>
-        <p>Oggetto: <strong>Richiesta permessi straordinari per diritto allo studio (150 ore) - {{ data.cognome }} {{ data.nome }}</strong></p>
+        <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Permessi straordinari per diritto allo studio (150 ore) ATA - {{ data.cognome }} {{ data.nome }}</strong></p>
       </div>
       <div class="corpo">
         <p>
@@ -45,16 +45,17 @@
 		      residente in {{ data.indirizzo }}, iscritto presso: {{ data.iscrizione_presso }}
         </p>
         <div>{{ elements.processed_text['#text']|raw }}</div>
-		    <table style="width:70%;">
+        {{ elements.permesso_orario }}
+		    <table style="width:90%; border: 1px #ccc solid;">
 		      <thead>
-		      </thead>
-          <tbody>
             <tr>
               <th>Giorno</th>
               <th>Dalle Ore</th>
               <th>Alle Ore</th>
               <th>Totale ore giorno</th>
             </tr>
+		      </thead>
+          <tbody class="text-align-center">
             {% for item in data.permesso_orario %}
               <tr>
                 <td>{{ item.giorno|date('d/m/Y') }}</td>
@@ -67,32 +68,34 @@
 		    </table>
         <p>Per un totale di ore <strong>{{ data.per_un_totale_di_ore }}</strong></p>
         {% if data.note %}
-          <p>Note<br /> {{ data.note }}</p>
+          <div style="margin-top: 20px;">
+            <p>Note<br /> {{ data.note }}</p>
+          </div>
         {% endif %}
         <div class="data_invio">
-          <p>Data,  {{ data.data_compilazione|date('d/m/Y') }}</p>
+          <p>Data,  {{ data.data_compilazione|date('d.m.Y') }}</p>
         </div>
         <div class="firma_docente">
           <div class="firma">
             <strong>Firma</strong><br>
             {{ data.cognome }} {{ data.nome }}<br />
-            codice fiscale {{ data.codice_fiscale }}<br />
+            {{ data.codice_fiscale }}<br />
             {{ data.mail_user }}
           </div>
         </div>
       </div>
-    </div>
-    {#  <p style="page-break-before: always;">the second page</p>#}
-    <div class="autorizzazione">
-      <p>
-      </p>
-      <div class="firma_ata"></div>
-      <div class="firma_ds"></div>
+      {#  <p style="page-break-before: always;">the second page</p>#}
+      <div class="autorizzazione">
+        <p>
+        </p>
+        <div class="firma_ata"></div>
+        <div class="firma_ds"></div>
+      </div>
     </div>
     {#
     {{ kint(data) }}
-     {{ kint(elements) }}
+    {{ kint(elements) }}
     {{ kint(content) }}
-#}
+    #}
   </body>
 </html>
