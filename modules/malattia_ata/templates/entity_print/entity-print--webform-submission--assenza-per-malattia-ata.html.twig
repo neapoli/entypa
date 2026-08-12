@@ -35,20 +35,19 @@
         </p>
       </div>
       <div>
-        <p>Oggetto: <strong>Richiesta Assenza Per Malattia - {{ data.cognome }} {{ data.nome }}</strong></p>
+        <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Assenza per malattia ATA - {{ data.cognome }} {{ data.nome }}</strong></p>
       </div>
       <div class="corpo">
         <p>
           Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
           in servizio presso {{ data.sede_di_servizio }}
-          in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}
-          <em>ai sensi del C.C.N.L. comparto scuola del 29.11.2007,</em><br>
+          in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}
+          <em>{{ elements.processed_text['#text']|raw }}</em><br>
         </p>
-        <p class="center">COMUNICA</p>
         <p>
-            di doversi assentare per il seguente motivo: <strong>{{ data.tipologia_richiesta }}</strong><br>
+            di potersi assentare per il seguente motivo: <strong>{{ data.tipologia_richiesta }}</strong>
             dal: <strong>{{ data.data_inizio|date('d.m.Y') }}</strong> al: <strong>{{ data.data_fine|date('d.m.Y') }}</strong>
-            per un numero totale di giorni pari a: <strong>{{ data.numero_giorni }}</strong>
+            per un numero totale di <strong>{{ data.numero_giorni }}</strong> giorni.
         </p>
         {% if data.certificato_medico %}
           <p>
@@ -66,11 +65,11 @@
 			      numero telefonico : {{ data.telefono}}
           </p>
         {% endif %}
-        {% if data.note %}
-          <p><strong>Note</strong><br />
-            {{ data.note}}
-          </p>
-        {% endif %}
+        <div style="margin-top: 20px;">
+          {% if data.note %}
+            <p>Note<br /> {{ data.note }}</p>
+          {% endif %}
+        </div>
         <div class="data_invio">
           <p>Data {{ data.data_compilazione|date('d.m.Y') }}</p>
         </div>
@@ -78,7 +77,7 @@
           <div class="firma">
             <strong>Firma</strong><br>
             {{ data.cognome }} {{ data.nome }}<br />
-			      codice fiscale {{ data.codice_fiscale }}<br />
+			      {{ data.codice_fiscale }}<br />
 			      {{ data.mail_user }}
           </div>
         </div>
