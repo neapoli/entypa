@@ -1,0 +1,774 @@
+langcode: it
+status: open
+dependencies:
+  module:
+    - webform_entity_print
+third_party_settings:
+  webform_entity_print:
+    template:
+      header: '<h2>Cambio turno - DOCENTI</h2>'
+      footer: ''
+      css: ''
+    export_types:
+      pdf:
+        enabled: true
+        link_text: ''
+        link_attributes: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: cambio_turno_doc
+title: 'Cambio turno - DOCENTI'
+description: '<p>Form per la richiesta di cambio turno DOCENTI</p>'
+categories: {  }
+elements: |-
+  dati_anagrafici:
+    '#type': webform_flexbox
+    '#align_items': center
+    markup:
+      '#type': webform_markup
+      '#flex': 0
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#markup': '<p>Il/La sottoscritto/a</p>'
+    cognome:
+      '#type': textfield
+      '#title': Cognome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    nome:
+      '#type': textfield
+      '#title': Nome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice Fiscale'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  flexbox:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    sede_di_servizio:
+      '#type': textfield
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 3
+      '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    in_qualita_di_:
+      '#type': textfield
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 2
+      '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    a_tempo:
+      '#type': textfield
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  processed_text:
+    '#type': processed_text
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#display_on': both
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p class="text-align-center">l''autorizzazione ad effettuare il seguente cambio turno:</p>'
+    '#format': bootstrap_italia_2
+  turno_previsto_tabella:
+    '#type': webform_table
+    '#title': 'Turno previsto'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    turno_previsto:
+      '#type': webform_table_row
+      '#title': 'Turno previsto'
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      turno_previsto_plesso_interessato:
+        '#type': select
+        '#title': 'Plesso interessato'
+        '#options': plessi_scolastici
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_giorno:
+        '#type': date
+        '#title': Giorno
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format': bootstrap_italia_short_date
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_dalle_ore:
+        '#type': webform_time
+        '#title': 'dalle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_alle_ore:
+        '#type': webform_time
+        '#title': 'alle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_previsto_totale_ore:
+        '#type': webform_time
+        '#title': 'Totale ore'
+        '#description': '<p>Automatico</p>'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format_items': comma
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+        '#min': '00:01:00'
+        '#max': '06:00:00'
+  turno_modificato_tabella:
+    '#type': webform_table
+    '#title': 'Turno modificato'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    turno_modificato:
+      '#type': webform_table_row
+      '#title': 'Turno modificato'
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      turno_modificato_plesso_interessato:
+        '#type': select
+        '#title': 'Plesso interessato'
+        '#options': plessi_scolastici
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_giorno:
+        '#type': date
+        '#title': Giorno
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format': bootstrap_italia_short_date
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_dalle_ore:
+        '#type': webform_time
+        '#title': 'dalle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format_items': comma
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_alle_ore:
+        '#type': webform_time
+        '#title': 'alle ore'
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+      turno_modificato_totale_ore:
+        '#type': webform_time
+        '#title': 'Totale ore'
+        '#description': '<p>Automatico</p>'
+        '#description_display': after
+        '#required': true
+        '#attributes':
+          style: 'margin-top: 20px'
+        '#format_items': comma
+        '#access_create_roles':
+          - authenticated
+        '#access_update_roles':
+          - authenticated
+        '#access_view_roles':
+          - authenticated
+        '#min': '00:01:00'
+        '#max': '06:00:00'
+  collega:
+    '#type': textfield
+    '#title': 'Nome del collega con cui si effettua il cambio turno:'
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  collega_accetta:
+    '#type': checkbox
+    '#title': 'Il personale coinvolto nella modifica è stato informato e acconsente al cambio '
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  motivo_della_richiesta:
+    '#type': textarea
+    '#title': 'Motivo della richiesta'
+    '#title_display': before
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#required': true
+  il_servizio_giornaliero_sara_cosi_riorganizzato:
+    '#type': textarea
+    '#title': 'Il servizio giornaliero sarà così riorganizzato'
+    '#title_display': before
+    '#placeholder': "Precisare in modo dettagliato l'orario di servizio di tutte le persone coinvolte nella modifica."
+    '#attributes':
+      style: 'margin-top: 20px'
+    '#label_attributes':
+      style: 'margin-top: 20px'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#required': true
+  documento_allegato:
+    '#type': managed_file
+    '#title': 'Allegati (non obbligatorio)'
+    '#multiple': 5
+    '#format_items': comma
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#max_filesize': '2'
+    '#file_extensions': ''
+    '#file_name': 'cambio-turno-doc-[current-user:field_cognome]'
+    '#sanitize': true
+  data_firma:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 100px'
+    data_compilazione:
+      '#type': date
+      '#title': 'Data compilazione'
+      '#title_display': inline
+      '#disabled': true
+      '#default_value': today
+      '#format': bootstrap_italia_short_date
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    firma_digitale:
+      '#type': textarea
+      '#title': FIRMA
+      '#rows': 3
+      '#disabled': true
+      '#flex': 0
+      '#default_value': |-
+        [current-user:field_cognome] [current-user:field_nome]
+        C.F. [current-user:field_codice_fiscale]
+        E-mail: [current-user:mail]
+      '#format': raw
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  file_pdf:
+    '#type': 'webform_entity_print_attachment:pdf'
+    '#title': 'File PDF'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#display_on': both
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
+  istituto:
+    '#type': hidden
+    '#title': Istituto
+    '#default_value': '[site:name]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': toic8aj00t@istruzione.it
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_user:
+    '#type': hidden
+    '#title': 'Mail user'
+    '#default_value': '[current-user:mail]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  richiesta_annullamento:
+    '#type': number
+    '#title': 'Richiesta Annullamento'
+    '#default_value': '0'
+    '#access': false
+css: ''
+javascript: "(function ($) {\r\n  'use strict';\r\n\r\n  /* ---------- utility ---------- */\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function formatta(minuti) {\r\n    var h = Math.floor(minuti / 60);\r\n    var m = minuti % 60;\r\n    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    // input type=\"date\" → \"YYYY-MM-DD\", confrontabile come stringa\r\n    if (/^\\d{4}-\\d{2}-\\d{2}$/.test(valore)) { return valore; }\r\n    // eventuale datepicker con formato gg/mm/aaaa\r\n    var m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) {\r\n      return m[3] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);\r\n    }\r\n    return null;\r\n  }\r\n\r\n  /* ---------- calcolo totale ore ---------- */\r\n\r\n  function calcola($campo) {\r\n    var prefisso = $campo.attr('name').replace(/_(dalle|alle)_ore$/, '');\r\n    var $form = $campo.closest('form');\r\n    var $alle = $form.find('[name=\"' + prefisso + '_alle_ore\"]');\r\n    var $tot  = $form.find('[name=\"' + prefisso + '_totale_ore\"]');\r\n\r\n    if (!$tot.length) { return; }\r\n\r\n    var dalle = toMinuti($form.find('[name=\"' + prefisso + '_dalle_ore\"]').val());\r\n    var alle  = toMinuti($alle.val());\r\n\r\n    if ($alle[0] && $alle[0].setCustomValidity) {\r\n      $alle[0].setCustomValidity('');\r\n    }\r\n\r\n    if (dalle === null || alle === null) {\r\n      $tot.val('');\r\n      return;\r\n    }\r\n\r\n    var diff = alle - dalle;\r\n\r\n    if (diff <= 0) {\r\n      $tot.val('');\r\n      if ($alle[0] && $alle[0].setCustomValidity) {\r\n        $alle[0].setCustomValidity(\"L'ora di fine deve essere successiva all'ora di inizio.\");\r\n      }\r\n      return;\r\n    }\r\n\r\n    $tot.val(formatta(diff));\r\n  }\r\n\r\n  /* ---------- controllo date ---------- */\r\n\r\n  function controllaDate($campo) {\r\n    var $form = $campo.closest('form');\r\n    var $prev = $form.find('[name=\"turno_previsto_giorno\"]');\r\n    var $mod  = $form.find('[name=\"turno_modificato_giorno\"]');\r\n\r\n    if (!$prev.length || !$mod.length) { return; }\r\n\r\n    var prev = toData($prev.val());\r\n    var mod  = toData($mod.val());\r\n    var errore = '';\r\n\r\n    if (prev && mod && prev > mod) {\r\n      errore = \"La data del turno modificato non può essere precedente a quella del turno previsto.\";\r\n    }\r\n\r\n    if ($mod[0] && $mod[0].setCustomValidity) {\r\n      $mod[0].setCustomValidity(errore);\r\n    }\r\n  }\r\n\r\n  /* ---------- eventi ---------- */\r\n\r\n  $(document).on(\r\n    'change.turniOre input.turniOre',\r\n    '[name$=\"_dalle_ore\"], [name$=\"_alle_ore\"]',\r\n    function () {\r\n      calcola($(this));\r\n    }\r\n  );\r\n\r\n  $(document).on(\r\n    'change.turniData',\r\n    '[name=\"turno_previsto_giorno\"], [name=\"turno_modificato_giorno\"]',\r\n    function () {\r\n      controllaDate($(this));\r\n    }\r\n  );\r\n\r\n}(jQuery));"
+settings:
+  ajax: false
+  ajax_scroll_top: ''
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: true
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_file_limit_message: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: '[webform_submission:submitted-to]: [webform_submission:values:cognome]'
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements:
+    istituto: istituto
+    mail_istituto: mail_istituto
+    mail_user: mail_user
+    richiesta_annullamento: richiesta_annullamento
+  submission_exclude_empty: true
+  submission_exclude_empty_checkbox: true
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - element__cognome
+    - element__nome
+    - element__codice_fiscale
+    - element__sede_di_servizio
+    - element__in_qualita_di_
+    - element__a_tempo
+    - completed
+    - element__documento_allegato
+    - element__data_compilazione
+    - element__firma_digitale
+    - element__file_pdf
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: '< Precedente'
+  wizard_next_button_label: ''
+  wizard_toggle: true
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
+  preview: 2
+  preview_label: Anteprima
+  preview_title: '[webform:title]: Anteprima'
+  preview_message: "<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>\r\n\r\n<p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>"
+  preview_attributes: {  }
+  preview_excluded_elements:
+    file_pdf: file_pdf
+    istituto: istituto
+    mail_istituto: mail_istituto
+    mail_user: mail_user
+    richiesta_annullamento: richiesta_annullamento
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: url_message
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
+  confirmation_attributes: {  }
+  confirmation_back: false
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: true
+  confirmation_exclude_token: true
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: true
+  form_remote_addr: true
+access:
+  create:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers:
+  e_mail:
+    id: email
+    handler_id: e_mail
+    label: E-mail
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_istituto:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      reply_to: '[webform_submission:values:mail_user:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_conferma_ricezione:
+    id: email
+    handler_id: e_mail_conferma_ricezione
+    label: 'E-mail conferma ricezione'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: 4
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_user:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[site:name]'
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_istituto: mail_istituto
+        mail_user: mail_user
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+variants: {  }
