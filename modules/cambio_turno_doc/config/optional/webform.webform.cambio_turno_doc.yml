@@ -23,7 +23,8 @@ archive: false
 id: cambio_turno_doc
 title: 'Cambio turno - DOCENTI'
 description: '<p>Form per la richiesta di cambio turno DOCENTI</p>'
-categories: {  }
+categories:
+  - Docenti
 elements: |-
   dati_anagrafici:
     '#type': webform_flexbox
