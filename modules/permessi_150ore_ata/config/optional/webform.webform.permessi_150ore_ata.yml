@@ -22,8 +22,9 @@ template: false
 archive: false
 id: permessi_150ore_ata
 title: 'Permessi straordinari per diritto allo studio (150 ore) - ATA'
-description: '<p>Form per la Modulistica del Personale</p>'
-categories: {  }
+description: '<p>Form per la richiesta dei permessi straordinari per diritto allo studio (150 ore) ATA</p>'
+categories:
+  - Ata
 elements: |-
   dati_anagrafici:
     '#type': webform_flexbox
@@ -126,28 +127,30 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-  indirizzo:
-    '#type': textfield
-    '#title': 'Residente in'
-    '#placeholder': 'Inserire Via, numero - CAP Città (sigla Provincia)'
-    '#required': true
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
-  iscrizione_presso:
-    '#type': textfield
-    '#title': 'Iscrizione presso:'
-    '#placeholder': 'Precisare la sede di iscrizione dello studio'
-    '#required': true
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
+  flexbox_01:
+    '#type': webform_flexbox
+    indirizzo:
+      '#type': textfield
+      '#title': 'Residente in'
+      '#placeholder': 'Inserire Via, numero - CAP Città (sigla Provincia)'
+      '#required': true
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    iscrizione_presso:
+      '#type': textfield
+      '#title': 'Iscrizione presso:'
+      '#placeholder': 'Precisare la sede di iscrizione dello studio'
+      '#required': true
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
   processed_text:
     '#type': processed_text
     '#access_create_roles':
@@ -165,6 +168,7 @@ elements: |-
     '#required': true
     '#multiple__sorting': false
     '#multiple__add_more': false
+    '#format_items': table
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -176,6 +180,7 @@ elements: |-
         '#type': date
         '#required': true
         '#title': Giorno
+        '#format': bootstrap_italia_short_date
       ora_inizio:
         '#type': webform_time
         '#required': true
@@ -210,7 +215,7 @@ elements: |-
       - authenticated
   note:
     '#type': textarea
-    '#title': Note
+    '#title': 'Inserire eventuali note aggiuntive'
     '#title_display': before
     '#attributes':
       style: 'margin-top: 20px'
@@ -309,7 +314,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#default_value': info@softwebadvice.com
   mail_user:
     '#type': hidden
     '#title': 'Mail user'
@@ -326,7 +331,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
-javascript: "(function ($) {                                                                                                                                                                     \r\n  function toMin(t) {\r\n    if (!t) return 0;                                                                                                                                                               \r\n    var p = t.split(':');                                                                                                                                                         \r\n    return p.length < 2 ? 0 : parseInt(p[0], 10) * 60 + parseInt(p[1], 10);                                                                                                         \r\n  }\r\n  function formatOre(min) {                                                                                                                                                         \r\n    if (min <= 0) return '';\r\n    var h = Math.floor(min / 60);                                                                                                                                                   \r\n    var m = min % 60;                                                                                                                                                               \r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n  function calcTotaleOre($row) {\r\n    var diff = toMin($row.find('input[name*=\"[ora_fine]\"]').val()) - toMin($row.find('input[name*=\"[ora_inizio]\"]').val());                                                                   $row.find('input[name*=\"[totale_ore]\"]').val(formatOre(diff));                                                                                                                  \r\n  }\r\n  function calcTotaleGenerale() {                                                                                                                                                   \r\n    var totMin = 0;\r\n    $('input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"]').each(function () {                                                                                                    \r\n      var $row = $(this).closest('tr');                                                                                                                                             \r\n      var diff = toMin($row.find('input[name*=\"[ora_fine]\"]').val()) - toMin($(this).val());\r\n      if (diff > 0) totMin += diff;                                                                                                                                                 \r\n    });                                                                                                                                                                           \r\n    $('input[name=\"per_un_totale_di_ore\"]').val(formatOre(totMin));                                                                                                                 \r\n  }\r\n  $(document).on(                                                                                                                                                                   \r\n    'change',                                                                                                                                                                     \r\n    'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]',\r\n    function () {                                                                                                                                                                   \r\n      calcTotaleOre($(this).closest('tr'));\r\n      calcTotaleGenerale();                                                                                                                                                         \r\n    }                                                                                                                                                                             \r\n  );                                                                                                                                                                                \r\n}(jQuery));"
+javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  var SEL_ORE = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_PESO   = 'select[name*=\"permesso_orario\"][name*=\"[weight]\"]';\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Il giorno deve essere successivo a quello della riga precedente.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno <= giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' deve essere successivo a quello della riga precedente.';\r\n      }\r\n\r\n      // 2. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dGiorno !== null && !errGiorno) {\r\n        giornoPrecedente = dGiorno;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"per_un_totale_di_ore\"]')\r\n      .val(totale ? formatOre(totale) : '');\r\n  }\r\n\r\n  function formConPermessi(context) {\r\n    return $(context).find('form').addBack('form').has(SEL_GIORNO);\r\n  }\r\n\r\n  $(document).on('change.permessiOre input.permessiOre',\r\n    SEL_ORE + ', ' + SEL_GIORNO, function () {\r\n      var $form = $(this).closest('form');\r\n      if ($form.length) { validaForm($form); }\r\n    });\r\n\r\n  // Riordino righe via drag & drop.\r\n  $(document).on('change.permessiOre', SEL_PESO, function () {\r\n    var $form = $(this).closest('form');\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.permessiOre', function () {\r\n    formConPermessi(document).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.permessiOrariTotale = {\r\n    attach: function (context) {\r\n      formConPermessi(context).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -448,7 +453,7 @@ settings:
     mail_user: mail_user
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty_checkbox: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -457,9 +462,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: url_message
-  confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: ''
-  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -487,7 +492,7 @@ settings:
   token_view: false
   token_update: false
   token_delete: false
-  serial_disabled: false
+  serial_disabled: true
   form_remote_addr: true
 access:
   create:
@@ -521,7 +526,12 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles: {  }
+    roles:
+      - direttore_amministrativo_dsga_
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
     users: {  }
     permissions: {  }
   purge_any:
@@ -531,9 +541,13 @@ access:
   view_own:
     roles:
       - collaboratore
+      - direttore_amministrativo_dsga_
       - personale_amministrativo
       - personale_tecnico
       - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
     users: {  }
     permissions: {  }
   update_own:
@@ -576,7 +590,7 @@ handlers:
       cc_options: {  }
       from_mail: _default
       from_options: {  }
-      from_name: '[webform_submission:values:cognome:raw]'
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
       reply_to: '[webform_submission:values:mail_user:raw]'
       return_path: ''
       sender_mail: ''
@@ -620,66 +634,13 @@ handlers:
       from_mail: _default
       from_options: {  }
       from_name: '[site:name]'
-      reply_to: ''
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
       return_path: ''
       sender_mail: ''
       sender_name: ''
       subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
       body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
       excluded_elements:
-        email_referenti_plesso: email_referenti_plesso
-        istituto: istituto
-        mail_istituto: mail_istituto
-        mail_user: mail_user
-        richiesta_annullamento: richiesta_annullamento
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: true
-      exclude_attachments: false
-      html: true
-      attachments: true
-      twig: true
-      theme_name: ''
-      langcode: ''
-      parameters: {  }
-      debug: false
-  e_mail_referenti_di_plesso:
-    id: email
-    handler_id: e_mail_referenti_di_plesso
-    label: 'E-mail: Referenti di Plesso'
-    notes: ''
-    status: true
-    conditions: {  }
-    weight: 5
-    settings:
-      states:
-        - completed
-      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
-      to_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      from_mail: _default
-      from_options: {  }
-      from_name: '[webform_submission:values:cognome:raw]'
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
-      subject: 'Comunicazione assenza'
-      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>\r\n\r\n<p>I Dati inseriti sono i seguenti:.</p>\r\n\r\n\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
-      excluded_elements:
-        markup: markup
-        codice_fiscale: codice_fiscale
-        indirizzo: indirizzo
-        iscrizione_presso: iscrizione_presso
-        processed_text: processed_text
-        note: note
-        documento_allegato: documento_allegato
-        data_compilazione: data_compilazione
-        firma_digitale: firma_digitale
-        file_pdf: file_pdf
         email_referenti_plesso: email_referenti_plesso
         istituto: istituto
         mail_istituto: mail_istituto
