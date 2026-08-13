@@ -1,0 +1,6 @@
+entypa.settings:
+  title: 'Entýpa'
+  description: "Configurazione delle istanze del personale: indirizzo email dell'istituto usato da tutti i formulari."
+  parent: system.admin_config_system
+  route_name: entypa.settings
+  weight: 11

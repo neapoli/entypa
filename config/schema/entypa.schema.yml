@@ -1,0 +1,7 @@
+entypa.settings:
+  type: config_object
+  label: 'Entýpa settings'
+  mapping:
+    mail_istituto:
+      type: string
+      label: "Indirizzo email dell'istituto"

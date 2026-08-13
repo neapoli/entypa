@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\webform\WebformSubmissionInterface;
+
 /**
  * Implements hook_preprocess_entity_print().
  */
@@ -11,4 +13,52 @@ function entypa_preprocess_entity_print(array &$variables) {
   $webform = $webform_submission->getWebform();
   $variables['data'] = $webform_submission->getData();
   $variables['elements'] = $webform->getElementsDecodedAndFlattened();
+}
+
+/**
+ * Restituisce l'email dell'istituto usata dalle istanze.
+ *
+ * Il valore è quello configurato in entypa.settings; se non impostato viene
+ * usata l'email del sito, così ogni scuola ha un unico punto di configurazione.
+ *
+ * @return string
+ *   L'indirizzo email dell'istituto.
+ */
+function entypa_get_mail_istituto() {
+  $mail = trim((string) \Drupal::config('entypa.settings')->get('mail_istituto'));
+  if ($mail === '') {
+    $mail = trim((string) \Drupal::config('system.site')->get('mail'));
+  }
+  return $mail;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for webform_submission entities.
+ *
+ * Valorizza l'elemento "mail_istituto" con l'email configurata per l'istituto,
+ * in modo da non doverla impostare formulario per formulario. Le istanze già
+ * inviate non vengono modificate.
+ */
+function entypa_webform_submission_presave(WebformSubmissionInterface $webform_submission) {
+  if (!$webform_submission->isNew()) {
+    return;
+  }
+
+  $webform = $webform_submission->getWebform();
+  if (!$webform || !$webform->getElement('mail_istituto')) {
+    return;
+  }
+
+  $mail = entypa_get_mail_istituto();
+  if ($mail === '') {
+    return;
+  }
+
+  $data = $webform_submission->getData();
+  if (($data['mail_istituto'] ?? '') === $mail) {
+    return;
+  }
+
+  $data['mail_istituto'] = $mail;
+  $webform_submission->setData($data);
 }

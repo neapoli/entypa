@@ -1,0 +1,7 @@
+entypa.settings:
+  path: '/admin/config/system/entypa'
+  defaults:
+    _form: '\Drupal\entypa\Form\EntypaSettingsForm'
+    _title: 'Entýpa - Istanze del personale'
+  requirements:
+    _permission: 'administer webform'

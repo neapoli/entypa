@@ -201,7 +201,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': info@softwebadvice.com
+    '#default_value': '[entypa:mail-istituto]'
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
