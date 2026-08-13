@@ -1,0 +1,100 @@
+{#
+/**
+ * @file
+ * Default theme implementation for webform submission data.
+ *
+ * Available variables:
+ * - webform_submission: The webform submission.
+ * - webform: The webform.
+ *
+ * @see template_preprocess_webform_submission_data()
+ *
+ * @ingroup themeable
+ */
+#}
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    {{ entity_print_css }}
+  </head>
+  <body>
+
+    {# The footer is repeated on all pages and must be printed first. #}
+    <div id="footer">
+      <p class="page">Pagina </p>
+    </div>
+
+    <div id="header">
+    </div>
+
+    <div id="content">
+      <div class="content_header">
+        <p>Al Dirigente scolastico<br />
+          {{ data.istituto }} <br />
+          {{ data.mail_istituto }}
+        </p>
+      </div>
+      <div class="oggetto">
+        <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Assenza per Festività soppresse DOCENTI - {{ data.cognome }} {{ data.nome }}</strong></p>
+      </div>
+      <div class="corpo">
+        <p>
+          Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
+          in servizio presso {{ data.sede_di_servizio }}
+          in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}
+          {{ elements.processed_text['#text']|raw }}
+        </p>
+        {{ elements.periodi_richiesti }}
+        <table style="width:100%; border: 1px #ccc solid;">
+          <thead>
+          <tr>
+            <th>Dal</th>
+            <th>Al</th>
+            <th>Numero giorni</th>
+          </tr>
+          </thead>
+          <tbody class="text-align-center">
+          {% for item in data.periodi_richiesti %}
+            <tr>
+              <td>{{ item.data_inizio|date('d.m.Y') }}</td>
+              <td>{{ item.data_fine|date('d.m.Y') }}</td>
+              <td>{{ item.numero_giorni }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <p>Per un totale di giorni: <strong>{{ data.totale_giorni }}</strong></p>
+        <div style="margin-top: 20px;">
+          {% if data.note %}
+            <strong>Note</strong><br />
+            {{ data.note }}
+          {% endif %}
+        </div>
+        <div class="data_invio">
+          <p>Data, {{ data.data_compilazione|date('d.m.Y') }}</p>
+        </div>
+        <div class="firma_docente">
+          <div class="firma">
+            <strong>Firma</strong><br>
+            {{ data.cognome }} {{ data.nome }}<br />
+            {{ data.codice_fiscale }}<br />
+            {{ data.mail_user }}
+          </div>
+        </div>
+      </div>
+      {#  <p style="page-break-before: always;">the second page</p>#}
+      <div class="autorizzazione">
+        <p>
+        </p>
+        <div class="firma_ata"></div>
+        <div class="firma_ds"></div>
+      </div>
+    </div>
+    {#
+    {{ kint(data) }}
+    {{ kint(elements) }}
+    {{ kint(content) }}
+    #}
+  </body>
+</html>

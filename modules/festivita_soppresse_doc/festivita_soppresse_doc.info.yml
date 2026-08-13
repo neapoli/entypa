@@ -1,0 +1,8 @@
+name: "Festività soppresse (L.937/77) - DOCENTI"
+description: 'Webform per la richiesta di "Festività soppresse (L.937/77) - DOCENTI".'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11 || ^12
+dependencies:
+  - entypa:entypa
