@@ -1,8 +1,8 @@
-name: "Permessi retribuiti art. 19 - (Docenti Tempo Determinato)"
-description: 'This module install "Permessi retribuiti art. 19 - (Docenti Tempo Determinato)" form for School.'
+name: "Permessi retribuiti art. 19 - (DOCENTI Tempo Determinato)"
+description: 'Webform per la richiesta di "Permessi retribuiti art. 19 - (DOCENTI Tempo Determinato)" form for School.'
 package: "Modulistica OnLine"
 
 type: module
-core_version_requirement: ^10 || ^11
+core_version_requirement: ^10 || ^11 || ^12
 dependencies:
   - entypa:entypa

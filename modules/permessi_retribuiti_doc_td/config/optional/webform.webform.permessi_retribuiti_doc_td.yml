@@ -22,21 +22,10 @@ template: false
 archive: false
 id: permessi_retribuiti_doc_td
 title: 'Permessi retribuiti art. 19 (DOCENTE Tempo determinato)'
-description: '<p>Form per la Modulistica del Personale</p>'
-categories: {  }
+description: '<p>Form per la richiesta di permessi retribuiti art. 19 (DOCENTE Tempo determinato)</p>'
+categories:
+  - Docenti
 elements: |-
-  informazioni:
-    '#type': webform_more
-    '#more_title': 'Informazioni CCNL (art. 19 Permessi retribuiti)'
-    '#more': '<ol><li data-list-item-id="e91a3af2c06950fe385be27ad8cd3f8f2">Al personale assunto a tempo determinato, al personale di cui all''art. 3, comma 6, del D.P.R. n. 399 del 1988 e al personale non licenziabile di cui agli artt. 43 e 44 della legge 20 maggio 1982 n. 270, si applicano, nei limiti della durata del rapporto di lavoro, le disposizioni in materia di ferie, permessi ed assenze stabilite dal presente contratto per il personale assunto a tempo indeterminato, con le precisazioni di cui ai seguenti commi.</li><li data-list-item-id="e5e2e6159da7bc89ca42aebc445cde805">(omissis)</li><li data-list-item-id="e3e8bf1ee8dc15b7219efae178be173dc">(omissis)</li><li data-list-item-id="e6dbcea28186e64c063ed9cd880589497">(omissis)</li><li data-list-item-id="e25c65f7b6efacfa60d6742877c225393">(omissis)</li><li data-list-item-id="e1f46107f2f5f61d8cb0aaad25a542ec0">(omissis)</li><li data-list-item-id="e3e33edab9dd4be5c2fa5954f110cc392">Al personale docente, educativo ed ATA assunto a tempo determinato, ivi compreso quello di cui al precedente comma 5, sono concessi permessi non retribuiti, per la partecipazione a concorsi od esami, nel limite di otto giorni complessivi per anno scolastico, ivi compresi quelli eventualmente richiesti per il viaggio. Sono, inoltre, attribuiti permessi non retribuiti, fino ad un massimo di sei giorni, per i motivi previsti dall''art. 15, comma 2.</li><li data-list-item-id="e9b35c3a0201bca86b8444099ad0c15b7">I periodi di assenza senza assegni interrompono la maturazione dell''anzianità di servizio a tutti gli effetti.</li><li data-list-item-id="ef05be7125c00a597c99de87b1371ae07">Il dipendente di cui al presente articolo ha diritto a tre giorni di permesso retribuito per lutti per perdita del coniuge, di parenti entro il secondo grado, del convivente o di soggetto componente la famiglia anagrafica e di affini di primo grado.</li><li data-list-item-id="eedc9a3f1bff8585acbb2825748f10f51">(omissis)</li><li data-list-item-id="e55ddad7d1b4e7ca69b3a3e990d753c41">(omissis)</li><li data-list-item-id="e26370db055c6c86c8c0c9cf3bb026c9c">Il personale docente ed ATA assunto a tempo determinato ha diritto entro i limiti di durata del rapporto, ad un permesso retribuito di 15 giorni consecutivi in occasione del matrimonio.</li><li data-list-item-id="ebc64bce8429b119bcd5134cac9ca55b1">I permessi di cui ai commi 9 e 12 sono computati nell''anzianità di servizio a tutti gli effetti.</li><li data-list-item-id="e837a1e094f289ecaf49f1c355506c376">Al personale di cui al presente articolo si applicano le norme relative ai congedi parentali come disciplinati dall''art. 12.</li><li data-list-item-id="e6a3478d9af4fbc9cddf9d9aebc8fd6c1">Al personale di cui al presente articolo si applicano le disposizioni relative alle gravi patologie, di cui all''art. 17, comma 9.</li></ol>'
-    '#attributes':
-      style: 'margin: 20px 0px 50px 0px'
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
   dati_anagrafici:
     '#type': webform_flexbox
     '#align_items': center
@@ -386,7 +375,9 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
+    '#display_on': view
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
   email_referenti_plesso:
     '#type': webform_email_multiple
     '#title': 'Email Referenti Plesso'
@@ -422,7 +413,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#default_value': info@softwebadvice.com
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -435,7 +426,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
-javascript: ''
+javascript: "(function ($) {\r\n  'use strict';\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function calcola($campo) {\r\n    var $form   = $campo.closest('form');\r\n    var $inizio = $form.find('[name=\"data_inizio\"]');\r\n    var $fine   = $form.find('[name=\"data_fine\"]');\r\n    var $giorni = $form.find('[name=\"numero_giorni\"]');\r\n\r\n    if (!$giorni.length) { return; }\r\n\r\n    var dInizio = toData($inizio.val());\r\n    var dFine   = toData($fine.val());\r\n    var errore  = '';\r\n\r\n    if (dInizio === null || dFine === null) {\r\n      $giorni.val('');\r\n    }\r\n    else if (dFine < dInizio) {\r\n      $giorni.val('');\r\n      errore = \"La data di fine non può precedere quella di inizio.\";\r\n    }\r\n    else {\r\n      $giorni.val(Math.round((dFine - dInizio) / 86400000) + 1);\r\n    }\r\n\r\n    if ($fine[0] && $fine[0].setCustomValidity) {\r\n      $fine[0].setCustomValidity(errore);\r\n    }\r\n  }\r\n\r\n  $(document).on(\r\n    'change.calcoloGiorni input.calcoloGiorni',\r\n    '[name=\"data_inizio\"], [name=\"data_fine\"]',\r\n    function () {\r\n      calcola($(this));\r\n    }\r\n  );\r\n\r\n}(jQuery));"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -555,7 +546,7 @@ settings:
     mail_istituto: mail_istituto
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty_checkbox: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -564,9 +555,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: url_message
-  confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: ''
-  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -594,7 +585,7 @@ settings:
   token_view: false
   token_update: false
   token_delete: false
-  serial_disabled: false
+  serial_disabled: true
 access:
   create:
     roles:
@@ -624,7 +615,11 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles: {  }
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
     users: {  }
     permissions: {  }
   purge_any:
@@ -634,6 +629,9 @@ access:
   view_own:
     roles:
       - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
@@ -723,7 +721,7 @@ handlers:
       from_mail: _default
       from_options: {  }
       from_name: '[site:name]'
-      reply_to: ''
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
       return_path: ''
       sender_mail: ''
       sender_name: ''
@@ -735,60 +733,6 @@ handlers:
         mail_user: mail_user
         mail_istituto: mail_istituto
         richiesta_annullamento: richiesta_annullamento
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: true
-      exclude_attachments: false
-      html: true
-      attachments: true
-      twig: true
-      theme_name: ''
-      langcode: ''
-      parameters: {  }
-      debug: false
-  e_mail_referenti_di_plesso:
-    id: email
-    handler_id: e_mail_referenti_di_plesso
-    label: 'E-mail: Referenti di Plesso'
-    notes: ''
-    status: true
-    conditions:
-      enabled:
-        ':input[name="in_qualita_di_"]':
-          value: Docente
-    weight: 0
-    settings:
-      states:
-        - completed
-      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
-      to_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      from_mail: _default
-      from_options: {  }
-      from_name: '[webform_submission:values:cognome:raw]'
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
-      subject: 'Comunicazione assenza'
-      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>\r\n\r\n<p>I Dati inseriti sono i seguenti:.</p>\r\n\r\n\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
-      excluded_elements:
-        markup: markup
-        codice_fiscale: codice_fiscale
-        tipologia_richiesta: tipologia_richiesta
-        lutto_familiare: lutto_familiare
-        matrimonio: matrimonio
-        donazione_sangue: donazione_sangue
-        donazione_midollo: donazione_midollo
-        citazione_testimone: citazione_testimone
-        note: note
-        documento_allegato: documento_allegato
-        data_compilazione: data_compilazione
-        firma_digitale: firma_digitale
-        file_pdf: file_pdf
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: true
