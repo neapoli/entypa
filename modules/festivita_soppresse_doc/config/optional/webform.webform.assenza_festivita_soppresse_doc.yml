@@ -22,7 +22,7 @@ template: false
 archive: false
 id: assenza_festivita_soppresse_doc
 title: 'Festività soppresse (L.937/77) - DOCENTI'
-description: '<p>Form per la richesta di assenza per festività soppresse (L.937/77) - DOCENTI</p>'
+description: '<p>Form per la richesta di assenza per festività soppresse DOCENTI</p>'
 categories:
   - Docenti
 elements: |-
@@ -241,7 +241,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': '[site:mail]'
+    '#default_value': info@softwebadvice.com
   mail_user:
     '#type': hidden
     '#title': 'Mail user'
