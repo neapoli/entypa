@@ -35,40 +35,42 @@
         </p>
       </div>
       <div>
-        <p>Oggetto: <strong>Richiesta Permesso breve - DOCENTI {{ data.cognome }} {{ data.nome }}</strong></p>
+        <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Permesso breve art.16 Docenti - {{ data.cognome }} {{ data.nome }}</strong></p>
       </div>
       <div class="corpo">
         <p>
           Il/La sottoscritto/a {{ data.cognome }} {{ data.nome }}
           in servizio presso {{ data.sede_di_servizio }}
-          in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}
+          in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}
         </p>
         <div>{{ elements.processed_text['#text']|raw }}</div>
         {% if data.permesso_orario %}
           <strong>Permesso Orario:</strong>
-          <table class="text-align-center" style="width:80%;">
+          <table style="width:100%; border: 1px #ccc solid;">
             <thead>
+            <tr>
+              <th>Giorno</th>
+              <th>Dalle Ore</th>
+              <th>Alle Ore</th>
+              <th>Plesso</th>
+              <th>Classe</th>
+              <th>Ore</th>
+            </tr>
             </thead>
             <tbody>
+            {% for item in data.permesso_orario %}
               <tr>
-                <th>Giorno</th>
-                <th>Dalle Ore</th>
-                <th>Alle Ore</th>
-                <th>Plesso</th>
-                <th>Classe</th>
+                <td>{{ item.giorno|date('d/m/Y') }}</td>
+                <td>{{ item.ora_inizio|date('H:i') }}</td>
+                <td>{{ item.ora_fine|date('H:i') }}</td>
+                <td>{{ item.plesso }}</td>
+                <td>{{ item.classe }}</td>
+                <td>{{ item.totale_ore }}</td>
               </tr>
-              {% for item in data.permesso_orario %}
-                <tr>
-                  <td>{{ item.giorno|date('d/m/Y') }}</td>
-                  <td>{{ item.ora_inizio|date('H:i') }}</td>
-                  <td>{{ item.ora_fine|date('H:i') }}</td>
-                  <td>{{ item.plesso }}</td>
-                  <td>{{ item.classe }}</td>
-                </tr>
-              {% endfor %}
+            {% endfor %}
             </tbody>
           </table>
-          <p>Per un totale di ore: <strong>{{ data.totale_ore }}</strong></p>
+          <p>Per un totale di: <strong>{{ data.per_un_totale_di_ore }}</strong></p>
         {% endif %}
         {{ elements.processed_text_01 }}{{ data.dichiarazione }}<br />
         <p><strong>Descrizione modalità di recupero</strong><br />
@@ -81,18 +83,18 @@
           <div class="firma">
             <strong>Firma</strong><br>
             {{ data.cognome }} {{ data.nome }}<br />
-            codice fiscale {{ data.codice_fiscale }}<br />
+            {{ data.codice_fiscale }}<br />
             {{ data.mail_user }}
           </div>
         </div>
       </div>
-    </div>
-    {#  <p style="page-break-before: always;">the second page</p>#}
-    <div class="autorizzazione">
-      <p>
-      </p>
-      <div class="firma_ata"></div>
-      <div class="firma_ds"></div>
+      {#  <p style="page-break-before: always;">the second page</p>#}
+      <div class="autorizzazione">
+        <p>
+        </p>
+        <div class="firma_ata"></div>
+        <div class="firma_ds"></div>
+      </div>
     </div>
     {#
     {{ kint(data) }}

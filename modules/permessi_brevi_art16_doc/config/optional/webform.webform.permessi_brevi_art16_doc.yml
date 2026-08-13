@@ -22,21 +22,10 @@ template: false
 archive: false
 id: permessi_brevi_art16_doc
 title: 'Permessi brevi art. 16 - DOCENTI'
-description: '<p>Form per la Modulistica del Personale</p>'
-categories: {  }
+description: '<p>Form per la richiesta di permesso breve art. 16 - DOCENTI</p>'
+categories:
+  - Docenti
 elements: |-
-  informazioni:
-    '#type': webform_more
-    '#more_title': 'Informazioni CCNL (art. 16 Permessi brevi)'
-    '#more': '<ol><li data-list-item-id="ed60f0893a4c60ec8e3356e644d1baa5b">Compatibilmente con le esigenze di servizio, al dipendente con contratto a tempo indeterminato e al personale con contratto a tempo determinato, sono attribuiti, per esigenze personali e a domanda, brevi permessi di durata non superiore alla metà dell''orario giornaliero individuale di servizio e, comunque, per il personale docente fino ad un massimo di due ore. Per il personale docente i permessi brevi si riferiscono ad unità minime che siano orarie di lezione.</li><li data-list-item-id="e22c175e6142e025f9eda3bff6b4d3fe1">I permessi complessivamente fruiti non possono eccedere 36 ore nel corso dell''anno scolastico per il personale A.T.A.; per il personale docente il limite corrisponde al rispettivo orario settimanale di insegnamento.</li><li data-list-item-id="ef27bf82800ec75aec37b2c9ec8c05f9e">Entro i due mesi lavorativi successivi a quello della fruizione del permesso, il dipendente è tenuto a recuperare le ore non lavorate in una o più soluzioni in relazione alle esigenze di servizio. Il recupero da parte del personale docente avverrà prioritariamente con riferimento alle supplenze o allo svolgimento di interventi didattici integrativi, con precedenza nella classe dove avrebbe dovuto prestare servizio il docente in permesso.</li><li data-list-item-id="ea5b7262f714aa4d9c5f8f0bd1f2105f7">Nei casi in cui non sia possibile il recupero per fatto imputabile al dipendente, l''Amministrazione provvede a trattenere una somma pari alla retribuzione spettante al dipendente stesso per il numero di ore non recuperate.</li><li data-list-item-id="eafae3f1da9edf3634bfa091ae09ee1f0">Per il personale docente l''attribuzione dei permessi è subordinata alla possibilità della sostituzione con personale in servizio.</li></ol>'
-    '#attributes':
-      style: 'margin: 20px 0px 50px 0px'
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
   dati_anagrafici:
     '#type': webform_flexbox
     '#align_items': center
@@ -155,6 +144,7 @@ elements: |-
     '#multiple__sorting': false
     '#multiple__add_more': false
     '#multiple__add_more_input': false
+    '#format_items': table
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -166,6 +156,7 @@ elements: |-
         '#type': date
         '#required': true
         '#title': Giorno
+        '#format': bootstrap_italia_short_date
       ora_inizio:
         '#type': webform_time
         '#required': true
@@ -183,37 +174,21 @@ elements: |-
         '#type': textfield
         '#required': true
         '#title': Classe
-  totale_ore:
-    '#type': webform_computed_twig
-    '#title': 'Totale Ore'
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
-    '#template': |-
-      {% for item in data.permesso_orario %}
-      {# USO ('U') equivalente di strtotime #}
-      {% set startTime = item.ora_inizio|date('U') %}
-      {% set endTime = item.ora_fine|date('U') %}
-      {% set difference = endTime - startTime %}
-      {% set sum = difference + sum ?? 0 %}
-      {# USO ('UTC') per evitare che aggiunga un'ora per ora legale #}
-      {% if loop.last %}{{ sum|date('H:i', 'UTC') }}{% endif %}
-      {% endfor %}
-    '#store': true
-  processed_text_02:
-    '#type': processed_text
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
-    '#text': |
-      <p><span style="color: red;"><strong>Attenzione</strong></span>: la somma delle ore di permesso richieste verrà <strong>calcolata/aggiornata in automatico</strong> nella pagina di <strong>ANTEPRIMA</strong></p>
-    '#format': bootstrap_italia_2
+        '#size': 21
+      totale_ore:
+        '#type': textfield
+        '#title': Ore
+        '#readonly': true
+        '#size': 6
+        '#attributes':
+          readonly: readonly
+          class:
+            - totale-ore-row
+  per_un_totale_di_ore:
+    '#type': textfield
+    '#title': 'Tot. ore'
+    '#size': 10
+    '#readonly': true
   recupero_permesso:
     '#type': radios
     '#title': 'Recupero permesso'
@@ -299,6 +274,7 @@ elements: |-
       - authenticated
     '#display_on': view
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
   email_referenti_plesso:
     '#type': webform_email_multiple
     '#title': 'Email Referenti Plesso'
@@ -334,7 +310,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#default_value': info@softwebadvice.com
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -347,7 +323,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
-javascript: ''
+javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  var SEL_ORE = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_PESO   = 'select[name*=\"permesso_orario\"][name*=\"[weight]\"]';\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Il giorno deve essere successivo a quello della riga precedente.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno <= giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' deve essere successivo a quello della riga precedente.';\r\n      }\r\n\r\n      // 2. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dGiorno !== null && !errGiorno) {\r\n        giornoPrecedente = dGiorno;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"per_un_totale_di_ore\"]')\r\n      .val(totale ? formatOre(totale) : '');\r\n  }\r\n\r\n  function formConPermessi(context) {\r\n    return $(context).find('form').addBack('form').has(SEL_GIORNO);\r\n  }\r\n\r\n  $(document).on('change.permessiOre input.permessiOre',\r\n    SEL_ORE + ', ' + SEL_GIORNO, function () {\r\n      var $form = $(this).closest('form');\r\n      if ($form.length) { validaForm($form); }\r\n    });\r\n\r\n  // Riordino righe via drag & drop.\r\n  $(document).on('change.permessiOre', SEL_PESO, function () {\r\n    var $form = $(this).closest('form');\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.permessiOre', function () {\r\n    formConPermessi(document).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.permessiOrariTotale = {\r\n    attach: function (context) {\r\n      formConPermessi(context).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -387,6 +363,7 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_file_limit_message: ''
   form_attributes: {  }
   form_method: ''
   form_action: ''
@@ -452,10 +429,7 @@ settings:
   preview: 2
   preview_label: Anteprima
   preview_title: '[webform:title]: Anteprima'
-  preview_message: |-
-    <p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p>
-
-    <p>L&#39;invio <strong>NON E&#39; COMPLETO</strong> finch&eacute; non si preme il pulsante &quot;<strong>INVIA</strong>&quot; in fondo alla pagina!</p>
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
   preview_attributes: {  }
   preview_excluded_elements:
     file_pdf: file_pdf
@@ -465,7 +439,7 @@ settings:
     mail_istituto: mail_istituto
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty_checkbox: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -474,9 +448,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: url_message
-  confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: ''
-  confirmation_message: '<p>La sua richiesta&nbsp;&egrave; stata inviata alla segreteria.</p>'
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -535,7 +509,11 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles: {  }
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
     users: {  }
     permissions: {  }
   purge_any:
@@ -544,6 +522,10 @@ access:
     permissions: {  }
   view_own:
     roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
@@ -613,65 +595,6 @@ handlers:
       langcode: ''
       parameters: {  }
       debug: false
-  e_mail_1:
-    id: email
-    handler_id: e_mail_1
-    label: 'E-mail: Referenti di Plesso'
-    notes: ''
-    status: false
-    conditions:
-      enabled:
-        ':input[name="in_qualita_di_"]':
-          value: Docente
-    weight: -48
-    settings:
-      states:
-        - completed
-      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
-      to_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      from_mail: '[current-user:mail]'
-      from_options: {  }
-      from_name: '[webform_submission:values:cognome:raw]'
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
-      subject: 'Comunicazione assenza'
-      body: |-
-        <p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>
-
-        <p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>
-
-        <p>I Dati inseriti sono i seguenti:.</p>
-
-
-        {{ webform_token('[webform_submission:values]', webform_submission, [], options) }}
-      excluded_elements:
-        processed_text_01: processed_text_01
-        markup: markup
-        codice_fiscale: codice_fiscale
-        processed_text: processed_text
-        indirizzo: indirizzo
-        telefono: telefono
-        note: note
-        data_compilazione: data_compilazione
-        firma_digitale: firma_digitale
-        file_pdf: file_pdf
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: true
-      exclude_attachments: false
-      html: true
-      attachments: true
-      twig: true
-      theme_name: ''
-      langcode: ''
-      parameters: {  }
-      debug: false
   e_mail_conferma_ricezione:
     id: email
     handler_id: e_mail_conferma_ricezione
@@ -697,14 +620,7 @@ handlers:
       sender_mail: ''
       sender_name: ''
       subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
-      body: |-
-        <p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>
-        <p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>
-        <p>Di seguito sono riportati i dati acquisiti dal sistema:</p>
-        <hr />
-        {{ webform_token('[webform_submission:values]', webform_submission, [], options) }}
-        <hr />
-        <p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
       excluded_elements:
         email_referenti_plesso: email_referenti_plesso
         istituto: istituto

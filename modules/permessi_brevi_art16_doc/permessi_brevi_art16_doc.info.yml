@@ -1,8 +1,8 @@
-name: "Permessi brevi art. 16 - Docenti"
-description: 'This module install "Permessi brevi art. 16 - Docenti" form for School.'
+name: "Permessi brevi art. 16 - DOCENTI"
+description: 'Webform per la richiesta di "Permessi brevi art. 16 - DOCENTI".'
 package: "Modulistica OnLine"
 
 type: module
-core_version_requirement: ^10 || ^11
+core_version_requirement: ^10 || ^11 || ^12
 dependencies:
   - entypa:entypa

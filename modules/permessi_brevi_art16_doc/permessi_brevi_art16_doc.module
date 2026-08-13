@@ -14,7 +14,7 @@ function permessi_brevi_art16_doc_theme_registry_alter(&$theme_registry) {
   $theme_registry['entity_print__webform_submission__permessi_brevi_art16_doc'] = [
     'base hook' => 'entity_print',
     'path' => $module_path . '/templates/entity_print',
-    'template' => 'entity-print--webform-submission--ppermessi-brevi-art16-doc',
+    'template' => 'entity-print--webform-submission--permessi-brevi-art16-doc',
     'type' => 'module',
     'theme path' => $module_path,
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
