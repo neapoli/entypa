@@ -1,0 +1,8 @@
+name: "Permessi retribuiti art. 19 - (ATA Tempo Determinato)"
+description: 'Webform per la richiesta di "Permessi retribuiti art. 19 - (ATA Tempo Determinato)".'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11 || ^12
+dependencies:
+  - entypa:entypa
