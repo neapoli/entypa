@@ -22,21 +22,10 @@ template: false
 archive: false
 id: permessi_retribuiti_doc_ti
 title: 'Permessi retribuiti art. 15 (DOCENTE Tempo indeterminato)'
-description: '<p>Form per la Modulistica del Personale</p>'
-categories: {  }
+description: '<p>Form per la richiesta di permessi retribuiti art. 15 (DOCENTE Tempo indeterminato)</p>'
+categories:
+  - Docenti
 elements: |-
-  informazioni:
-    '#type': webform_more
-    '#more_title': 'Informazioni CCNL (art. 15 Permessi retribuiti)'
-    '#more': '<ol><li data-list-item-id="e8206dca2d42c66ed5af14dab38c3ee13"><p>Il dipendente della scuola con contratto di lavoro a tempo indeterminato, ha diritto, sulla base di idonea documentazione anche autocertificata, a permessi retribuiti per i seguenti casi:</p><ul><li data-list-item-id="e8d119e6150260bebe19aea8aa0158e66">partecipazione a concorsi od esami: gg. 8 complessivi per anno scolastico, ivi compresi quelli eventualmente richiesti per il viaggio;</li><li data-list-item-id="e00896f2ce781ffd298c64459da5468fa">lutti per perdita del coniuge, di parenti entro il secondo grado, di soggetto componente la famiglia anagrafica o convivente stabile e di affini di primo grado: gg. 3 per evento, anche non continuativi.</li></ul><p>I permessi sono erogati a domanda, da presentarsi al dirigente scolastico da parte del personale docente ed ATA.</p></li><li data-list-item-id="e081956f38330f5ff4a15844b5aacf00f">Il dipendente, inoltre, ha diritto, a domanda, nell''anno scolastico, a tre giorni di permesso retribuito per motivi personali o familiari documentati anche mediante autocertificazione. Per gli stessi motivi e con le stesse modalità, sono fruiti i sei giorni di ferie durante i periodi di attività didattica di cui all''<a href="https://www.contrattoscuola.it/art-13-ferie" data-entity-substitution="canonical" data-entity-type="node" data-entity-uuid="d2f19cdb-f7f6-4d3d-94ba-9acc8b333915" title="Art. 13 - Ferie">art. 13</a>, comma 9, prescindendo dalle condizioni previste in tale norma.</li><li data-list-item-id="e3a61a3fc18ff0e6c2c53b1ba1077d318">Il dipendente ha, altresì, diritto ad un permesso retribuito di quindici giorni consecutivi in occasione del matrimonio, con decorrenza indicata dal dipendente medesimo ma comunque fruibili da una settimana prima a due mesi successivi al matrimonio stesso.</li><li data-list-item-id="ed8e349ff39afb899bd2f891901269a34">I permessi dei commi 1, 2 e 3 possono essere fruiti cumulativamente nel corso di ciascun anno scolastico, non riducono le ferie e sono valutati agli effetti dell''anzianità di servizio.</li><li data-list-item-id="e3a52a5ebfd830c4fa9febeff8963ab15">Durante i predetti periodi al dipendente spetta l''intera retribuzione, esclusi i compensi per attività aggiuntive e le indennità di direzione, di lavoro notturno/festivo, di bilinguismo e di trilinguismo.</li><li data-list-item-id="e214d1b8b5622af1b76bf67105bf49600">I permessi di cui all''art. 33, comma 3, della legge 5 febbraio 1992, n. 104 sono retribuiti come previsto dall''art. 2, comma 3 ter, del decreto legge 27 agosto 1993, n. 324, convertito dalla legge 27 ottobre 1993 n. 423, e non sono computati ai fini del raggiungimento del limite fissato dai precedenti commi nè riducono le ferie; essi devono essere possibilmente fruiti dai docenti in giornate non ricorrenti.</li><li data-list-item-id="e9c973c4d47a7be54c3ba06726936cfbf">Il dipendente ha diritto, inoltre, ove ne ricorrano le condizioni, ad altri permessi retribuiti previsti da specifiche disposizioni di legge.</li></ol>'
-    '#attributes':
-      style: 'margin: 20px 0px 50px 0px'
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
   dati_anagrafici:
     '#type': webform_flexbox
     '#align_items': center
@@ -176,7 +165,6 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#date_date_min': '-2 days'
       '#date_date_format': ''
     data_fine:
       '#type': date
@@ -190,7 +178,6 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#date_date_min': today
       '#date_date_format': ''
     numero_giorni:
       '#type': number
@@ -417,7 +404,9 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
+    '#display_on': view
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
   email_referenti_plesso:
     '#type': webform_email_multiple
     '#title': 'Email Referenti Plesso'
@@ -453,14 +442,14 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': toic8aj00t@istruzione.it
+    '#default_value': info@softwebadvice.com
   richiesta_annullamento:
     '#type': number
     '#title': 'Richiesta Annullamento'
     '#default_value': '0'
     '#access': false
 css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
-javascript: ''
+javascript: "(function ($) {\r\n  'use strict';\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function calcola($campo) {\r\n    var $form   = $campo.closest('form');\r\n    var $inizio = $form.find('[name=\"data_inizio\"]');\r\n    var $fine   = $form.find('[name=\"data_fine\"]');\r\n    var $giorni = $form.find('[name=\"numero_giorni\"]');\r\n\r\n    if (!$giorni.length) { return; }\r\n\r\n    var dInizio = toData($inizio.val());\r\n    var dFine   = toData($fine.val());\r\n    var errore  = '';\r\n\r\n    if (dInizio === null || dFine === null) {\r\n      $giorni.val('');\r\n    }\r\n    else if (dFine < dInizio) {\r\n      $giorni.val('');\r\n      errore = \"La data di fine non può precedere quella di inizio.\";\r\n    }\r\n    else {\r\n      $giorni.val(Math.round((dFine - dInizio) / 86400000) + 1);\r\n    }\r\n\r\n    if ($fine[0] && $fine[0].setCustomValidity) {\r\n      $fine[0].setCustomValidity(errore);\r\n    }\r\n  }\r\n\r\n  $(document).on(\r\n    'change.calcoloGiorni input.calcoloGiorni',\r\n    '[name=\"data_inizio\"], [name=\"data_fine\"]',\r\n    function () {\r\n      calcola($(this));\r\n    }\r\n  );\r\n\r\n}(jQuery));"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -580,7 +569,7 @@ settings:
     mail_istituto: mail_istituto
     richiesta_annullamento: richiesta_annullamento
   preview_exclude_empty: true
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty_checkbox: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -589,9 +578,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: url_message
-  confirmation_url: /modulistica-online/le-mie-istanze
-  confirmation_title: ''
-  confirmation_message: '<p>La sua richiesta&nbsp;è stata inviata alla segreteria.</p>'
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -619,7 +608,7 @@ settings:
   token_view: false
   token_update: false
   token_delete: false
-  serial_disabled: false
+  serial_disabled: true
 access:
   create:
     roles:
@@ -649,7 +638,11 @@ access:
     users: {  }
     permissions: {  }
   delete_any:
-    roles: {  }
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
     users: {  }
     permissions: {  }
   purge_any:
@@ -659,6 +652,9 @@ access:
   view_own:
     roles:
       - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
@@ -748,7 +744,7 @@ handlers:
       from_mail: _default
       from_options: {  }
       from_name: '[site:name]'
-      reply_to: ''
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
       return_path: ''
       sender_mail: ''
       sender_name: ''
@@ -760,62 +756,6 @@ handlers:
         mail_user: mail_user
         mail_istituto: mail_istituto
         richiesta_annullamento: richiesta_annullamento
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: true
-      exclude_attachments: false
-      html: true
-      attachments: true
-      twig: true
-      theme_name: ''
-      langcode: ''
-      parameters: {  }
-      debug: false
-  e_mail_referenti_di_plesso:
-    id: email
-    handler_id: e_mail_referenti_di_plesso
-    label: 'E-mail: Referenti di Plesso'
-    notes: ''
-    status: true
-    conditions:
-      enabled:
-        ':input[name="in_qualita_di_"]':
-          value: Docente
-    weight: 0
-    settings:
-      states:
-        - completed
-      to_mail: '[webform_submission:values:email_referenti_plesso:raw]'
-      to_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      from_mail: _default
-      from_options: {  }
-      from_name: '[webform_submission:values:cognome:raw]'
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
-      subject: 'Comunicazione assenza'
-      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente <strong>Comunicazione di assenza</strong></p>\r\n\r\n<p>I Dati inseriti sono i seguenti:.</p>\r\n\r\n\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}"
-      excluded_elements:
-        markup: markup
-        codice_fiscale: codice_fiscale
-        tipologia_richiesta: tipologia_richiesta
-        concorso_esami: concorso_esami
-        lutto_familiare: lutto_familiare
-        matrimonio: matrimonio
-        donazione_sangue: donazione_sangue
-        donazione_midollo: donazione_midollo
-        citazione_testimone: citazione_testimone
-        cariche_elettive: cariche_elettive
-        note: note
-        documento_allegato: documento_allegato
-        data_compilazione: data_compilazione
-        firma_digitale: firma_digitale
-        file_pdf: file_pdf
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: true

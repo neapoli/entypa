@@ -1,8 +1,8 @@
-name: "Permessi retribuiti art. 15 - (Docenti Tempo Indeterminato)"
-description: 'This module install "Permessi retribuiti art. 15 - (Docenti Tempo Indeterminato)" form for School.'
+name: "Permessi retribuiti art. 15 - (DOCENTI Tempo Indeterminato)"
+description: 'Webform per la richiesta di "Permessi retribuiti art. 15 - (DOCENTI Tempo Indeterminato)".'
 package: "Modulistica OnLine"
 
 type: module
-core_version_requirement: ^10 || ^11
+core_version_requirement: ^10 || ^11 || ^12
 dependencies:
   - entypa:entypa
