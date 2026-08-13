@@ -1,0 +1,8 @@
+name: "Permessi retribuiti art. 15 - (ATA Tempo Indeterminato)"
+description: 'Webform per la richiesta di "Permessi retribuiti art. 15 - (ATA Tempo Indeterminato)" form for School.'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11 || ^12
+dependencies:
+  - entypa:entypa
