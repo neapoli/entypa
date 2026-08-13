@@ -163,7 +163,6 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#date_date_min': '-2 days'
       '#date_date_format': ''
     data_fine:
       '#type': date
@@ -177,7 +176,6 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
-      '#date_date_min': today
       '#date_date_format': ''
     numero_giorni:
       '#type': number
