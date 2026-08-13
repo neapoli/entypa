@@ -314,7 +314,7 @@ elements: |-
   mail_istituto:
     '#type': hidden
     '#title': 'Mail Istituto'
-    '#default_value': info@softwebadvice.com
+    '#default_value': '[entypa:mail-istituto]'
   mail_user:
     '#type': hidden
     '#title': 'Mail user'
