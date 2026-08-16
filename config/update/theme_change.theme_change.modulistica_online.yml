@@ -1,0 +1,9 @@
+langcode: it
+status: true
+dependencies: {  }
+id: modulistica_online
+label: 'Modulistica OnLine'
+type: path
+path: '/modulistica-online/*'
+route: ''
+theme: gin

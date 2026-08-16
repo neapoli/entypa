@@ -2,5 +2,104 @@
 
 /**
  * @file
- * The Bootstrap Italia news install file.
+ * Install, update and uninstall functions for Entýpa.
  */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Nome macchina del menù in cui pubblicare la voce "Modulistica del personale".
+ */
+const ENTYPA_MENU_NAME = 'azioni-principali';
+
+/**
+ * URI della pagina della modulistica, nelle varianti salvabili da interfaccia.
+ *
+ * La voce di menù vera e propria è definita in entypa.links.menu.yml: qui
+ * servono solo per riconoscere ed eliminare eventuali link creati a mano.
+ */
+const ENTYPA_MENU_LINK_URIS = [
+  'internal:/admin/modulistica-online',
+  'base:admin/modulistica-online',
+  'route:view.modulistica_online.page_1',
+];
+
+/**
+ * Implements hook_install().
+ */
+function entypa_install() {
+  _entypa_install_config_update();
+  _entypa_delete_manual_menu_links();
+}
+
+/**
+ * Crea, alla prima installazione, le configurazioni di config/update.
+ *
+ * A regime quella cartella viene riallineata a ogni "drush updb" (vedi
+ * src/Drush/Commands/EntypaCommands.php), ma su un sito nuovo l'aggiornamento
+ * non è ancora passato: senza questo passaggio le viste e i display del
+ * contenuto "Modulistica online" non esisterebbero fino al primo updb.
+ * Le configurazioni già presenti non vengono toccate.
+ */
+function _entypa_install_config_update() {
+  $source = DRUPAL_ROOT . '/' . \Drupal::service('extension.list.module')->getPath('entypa') . '/config/update';
+
+  if (!is_dir($source)) {
+    return;
+  }
+
+  \Drupal::service('config.installer')->installOptionalConfig(new FileStorage($source));
+}
+
+/**
+ * Elimina le voci di menù create a mano verso la modulistica online.
+ *
+ * La voce è fornita dal modulo (entypa.links.menu.yml), quindi ogni link
+ * equivalente creato manualmente nel menù sarebbe un doppione.
+ *
+ * @return int
+ *   Il numero di voci eliminate.
+ */
+function _entypa_delete_manual_menu_links() {
+  if (!\Drupal::moduleHandler()->moduleExists('menu_link_content')) {
+    return 0;
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+  $deleted = 0;
+
+  foreach (ENTYPA_MENU_LINK_URIS as $uri) {
+    $links = $storage->loadByProperties([
+      'menu_name' => ENTYPA_MENU_NAME,
+      'link.uri' => $uri,
+    ]);
+
+    if ($links) {
+      $storage->delete($links);
+      $deleted += count($links);
+    }
+  }
+
+  if ($deleted) {
+    \Drupal::logger('entypa')->notice(
+      'Rimosse @count voci di menù duplicate verso la modulistica online: la voce è ora fornita dal modulo.',
+      ['@count' => $deleted]
+    );
+  }
+
+  return $deleted;
+}
+
+/**
+ * Aggiunge la voce "Modulistica del personale" al menù "Azioni principali".
+ */
+function entypa_update_10001() {
+  $deleted = _entypa_delete_manual_menu_links();
+
+  // Ricostruisce l'albero dei menù per rendere subito visibile la nuova voce.
+  \Drupal::service('plugin.manager.menu.link')->rebuild();
+
+  return $deleted
+    ? t('Voce di menù aggiunta; rimosse @count voci duplicate create manualmente.', ['@count' => $deleted])
+    : t('Voce di menù aggiunta al menù "Azioni principali".');
+}

@@ -333,22 +333,21 @@ display:
         options: {  }
       empty: {  }
       sorts:
-        created:
-          id: created
+        title:
+          id: title
           table: node_field_data
-          field: created
+          field: title
           relationship: none
           group_type: group
           admin_label: ''
           entity_type: node
-          entity_field: created
-          plugin_id: date
-          order: DESC
+          entity_field: title
+          plugin_id: standard
+          order: ASC
           expose:
             label: ''
             field_identifier: ''
           exposed: false
-          granularity: second
       arguments: {  }
       filters:
         status:
@@ -454,7 +453,7 @@ display:
           field: area
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'Torna alla dashboard'
           plugin_id: text
           empty: true
           content:
@@ -469,7 +468,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: text
-          empty: false
+          empty: true
           content:
             value: "Questa sezione raccoglie <strong>esclusivamente</strong> i moduli che possono essere compilati e inviati direttamente tramite il gestionale, relativi a <strong>servizi non disponibili nel registro elettronico o in altri applicativi adottati dall'Istituto.</strong> \r\n<br />\r\nPer le richieste già gestibili attraverso tali strumenti, utilizzare le procedure dedicate."
             format: bootstrap_italia_2

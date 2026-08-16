@@ -4,3 +4,13 @@ entypa.settings:
   parent: system.admin_config_system
   route_name: entypa.settings
   weight: 11
+
+# Voce nel menù "Azioni principali" del sito della scuola.
+# È definita qui (e non come menu_link_content) perché deve restare allineata
+# su tutte le scuole: titolo e destinazione si aggiornano con il modulo.
+entypa.modulistica_online:
+  title: 'Modulistica del personale'
+  description: "Elenco della modulistica online a disposizione del personale scolastico."
+  url: 'internal:/admin/modulistica-online'
+  menu_name: azioni-principali
+  weight: 0
