@@ -1,0 +1,8 @@
+name: "Assenza L.104 ATA: Assistenza a familiare disabile"
+description: 'Webform per la richiesta di "Assenza L.104 - Assistenza a familiare disabile - ATA"'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11 || ^12
+dependencies:
+  - entypa:entypa
