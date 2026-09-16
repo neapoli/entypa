@@ -141,7 +141,7 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#text': '<div class="text-align-center"><strong>CHIEDE</strong></div><div>ai sensi dell’articolo 3, comma 3 della Legge 5 febbraio 1992, n. 104:</div>'
+    '#text': '<div class="text-align-center"><strong>CHIEDE</strong></div><div class="text-align-center">&nbsp;</div><div class="text-align-center">ai sensi dell’articolo 3, comma 3 della Legge 5 febbraio 1992, n. 104:</div><div>&nbsp;</div>'
     '#format': bootstrap_italia_2
   scelta:
     '#type': radios
@@ -370,14 +370,10 @@ elements: |-
     '#title': 'File PDF'
     '#access_create_roles':
       - authenticated
-    '#access_update_roles':
-      - administrator
-      - dirigente
-      - dsga
-      - vicario_ds
-      - uff_personale
+    '#access_update_roles': {  }
     '#access_view_roles':
       - authenticated
+    '#display_on': view
     '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
   istituto:
     '#type': hidden
