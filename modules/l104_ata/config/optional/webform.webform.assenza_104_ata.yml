@@ -243,65 +243,11 @@ elements: |-
         - or
         - ':input[name="scelta"]':
             value: entrambi
-  flexbox_01:
-    '#type': webform_flexbox
-    markup_02:
-      '#type': webform_markup
-      '#flex': 0
-      '#display_on': both
-      '#markup': '<p>per il seguente familiare:</p>'
-    cognome_familiare:
-      '#type': textfield
-      '#title': 'Cognome familiare'
-      '#required': true
-    nome_familiare:
-      '#type': textfield
-      '#title': 'Nome familiare'
-      '#required': true
-    grado_parentela:
-      '#type': textfield
-      '#title': 'Grado di parentela'
-      '#required': true
   processed_text_01:
     '#type': processed_text
     '#display_on': both
-    '#text': '<p>Ai sensi della L.15/68, il/la sottoscritto/a</p><p class="text-align-center"><strong>DICHIARA</strong></p><p>sotto la propria responsabilità di non trovarsi nelle situazioni ostative di seguito elencate:</p>'
+    '#text': '<p>ai sensi della L.15/68 il/la sottoscritto/a&nbsp;</p><p class="text-align-center"><strong>DICHIARA</strong></p><p>sotto la propria responsabilità:</p><ul><li class="ck-list-marker-bold" data-list-item-id="e5c26b1d57f3b448b2485bd365d13f27e"><strong>che necessita delle agevolazioni per le esigenze legate alla propria situazione di disabilità</strong></li><li data-list-item-id="ef7138e40e900b64300850cd049f87701"><strong>di impegnarsi</strong> a comunicare tempestivamente ogni variazione della situazione di fatto e di diritto da cui consegua la perdita della legittimazione alle agevolazioni (revoca del riconoscimento dello stato di disabilità grave in caso di rivedibilità)</li><li data-list-item-id="eb973a999471eb4c023ccef61bee8c53a"><strong>di essere consapevole</strong> che la possibilità di fruire delle agevolazioni comporta un onere per l''amministrazione e un impegno di spesa pubblica che lo Stato e la collettività sopportano per l''effettiva tutela dei disabili.</li></ul>'
     '#format': bootstrap_italia_2
-  dichiarazione_1:
-    '#type': radios
-    '#title': 'Familiare assistito non ricoverato a tempo pieno'
-    '#options':
-      'Familiare assistito non ricoverato a tempo pieno': SI
-    '#required': true
-  dichiarazione_2:
-    '#type': radios
-    '#title': 'Assistenza continuativa'
-    '#options':
-      'Assistenza continuativa': SI
-    '#required': true
-  dichiarazione_3:
-    '#type': radios
-    '#title': "Assenza di altri lavoratori nel nucleo familiare dell'assistito che fruiscono del permesso."
-    '#options':
-      "Assenza di altri lavoratori nel nucleo familiare dell'assistito che fruiscono del permesso.": SI
-    '#required': true
-  dichiarazione_4:
-    '#type': radios
-    '#title': 'Assistenza esclusiva offerta è stata accettata dal soggetto sotto indicato.'
-    '#options':
-      'Assistenza esclusiva offerta è stata accettata dal soggetto sotto indicato.': SI
-    '#required': true
-  markup_01:
-    '#type': webform_markup
-    '#display_on': both
-    '#markup': |-
-      <p><strong>Il/La sottoscritto/a:</strong></p>
-
-      <ul>
-      	<li><strong>&egrave; consapevole</strong> che le agevolazioni sono uno strumento di assistenza del disabile e, pertanto il riconoscimento delle stesse comporta la confema dell&#39;impegno - morale oltre che giuridico - a prestare effettivamente la propria opera id assistenza</li>
-      	<li><strong>&egrave; consapevole</strong> che la possibilit&agrave; di fruire delle agevolazioni comporta un onere per l&#39;amministrazione e un impegno di spesa pubblica che lo Stato e la collettivit&agrave; sopportano per l&#39;effettiva tutela dei disabili</li>
-      	<li><strong>si impegna</strong> a comunicare tempestivamente ogni variazione della situazione di fatto e di diritto da cui consegua la perdita della legittimazione alle agevolazioni (decesso, revoca del riconoscimento dello stato di disabilit&agrave; grave in caso di rivedibilit&agrave;, ricovero a tempo pieno).</li>
-      </ul>
   note:
     '#type': textarea
     '#title': Note
