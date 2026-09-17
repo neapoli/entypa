@@ -1,0 +1,8 @@
+name: "Legge 104 ATA"
+description: 'Webform per la richiesta di "Assenza L.104 - ATA"'
+package: "Modulistica OnLine"
+
+type: module
+core_version_requirement: ^10 || ^11 || ^12
+dependencies:
+  - entypa:entypa
