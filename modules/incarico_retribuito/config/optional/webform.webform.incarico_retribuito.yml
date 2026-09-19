@@ -25,6 +25,7 @@ title: 'Autorizzazione allo svolgimento di incarico retribuito'
 description: '<p>Form per la richiesta di incarico retribuito</p>'
 categories:
   - Docenti
+  - Ata
 elements: |-
   dati_anagrafici:
     '#type': webform_flexbox
@@ -34,8 +35,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
       '#markup': 'Il/La sottoscritto/a<br />&nbsp;'
@@ -51,8 +51,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     nome:
@@ -67,8 +66,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     codice_fiscale:
@@ -81,8 +79,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
   flexbox:
@@ -100,8 +97,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     in_qualita_di_:
@@ -115,8 +111,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     a_tempo:
@@ -129,8 +124,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
   tipologia_contratto:
@@ -183,7 +177,7 @@ elements: |-
       '#title': "Presso l'ordine regionale/provinciale di"
   processed_text:
     '#type': processed_text
-    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>ai sensi dell’art. 508 del D.Lgs 297/94, per l’anno scolastico in corso, l’autorizzazione per il seguente incarico retribuito:</p>'
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>ai sensi dell’art. 53 del D.Lgs 165/2001 e, per il personale docente, dell’art. 508 del D.Lgs 297/94, l’autorizzazione allo svolgimento del seguente incarico retribuito:</p>'
     '#format': bootstrap_italia_2
   periodo_e_qualita:
     '#type': webform_flexbox
@@ -203,6 +197,14 @@ elements: |-
       '#type': textfield
       '#title': 'in qualità di'
       '#required': true
+  natura_del_conferente:
+    '#type': radios
+    '#title': 'Il soggetto che conferisce l''incarico è'
+    '#description': '<p>Il dato non è formale: decorsi i termini senza pronuncia, l''autorizzazione si intende accordata se l''incarico è conferito da un''amministrazione pubblica, mentre in ogni altro caso si intende definitivamente negata (art. 53, comma 10, del D.Lgs 165/2001).</p>'
+    '#options':
+      'amministrazione pubblica': 'un''amministrazione pubblica'
+      'soggetto privato': 'un soggetto privato (impresa, ente, persona fisica)'
+    '#required': true
   dati_conferimento:
     '#type': webform_flexbox
     conferito_da:
@@ -213,10 +215,14 @@ elements: |-
       '#type': textfield
       '#title': 'Codice fiscale'
       '#required': true
+      '#pattern': '^([A-Za-z]{6}[0-9]{2}[A-Za-z][0-9]{2}[A-Za-z][0-9]{3}[A-Za-z]|[0-9]{11})$'
+      '#pattern_error': 'Indicare un codice fiscale di 16 caratteri o una partita IVA di 11 cifre.'
     partita_iva:
       '#type': textfield
       '#title': 'Partita iva'
       '#required': true
+      '#pattern': '^[0-9]{11}$'
+      '#pattern_error': 'La partita IVA è composta da 11 cifre.'
   dati_conferimento_1:
     '#type': webform_flexbox
     sede_legale:
@@ -287,7 +293,7 @@ elements: |-
     '#title': 'Impegno di comunicazione variazione stato'
     '#description': |-
       <blockquote>
-      <p><strong>Mi impegno formalmente a comunicare tempestivamentea per iscritto a codesta dirigenza ogni eventuale variazione di tipologia e caratteristiche rispetto a quelle caratterizzaanti la presente richiesta di autorizzazione. </strong></p>
+      <p><strong>Mi impegno formalmente a comunicare tempestivamente per iscritto a codesta dirigenza ogni eventuale variazione di tipologia e caratteristiche rispetto a quelle caratterizzanti la presente richiesta di autorizzazione. </strong></p>
       </blockquote>
     '#description_display': before
     '#options':
@@ -304,6 +310,18 @@ elements: |-
     '#options':
       si: Conferma
     '#required': true
+  avvertenza_termini:
+    '#type': webform_markup
+    '#display_on': both
+    '#markup': |-
+      <p><strong>Termini del procedimento e obblighi successivi</strong> (art. 53 del D.Lgs 165/2001)</p>
+
+      <ul>
+        <li>L'istituto si pronuncia entro <strong>trenta giorni</strong> dalla ricezione della richiesta, che salgono a quarantacinque per chi presta servizio presso un'amministrazione diversa da quella di appartenenza (comma 10). La domanda va quindi presentata con il dovuto anticipo rispetto all'inizio dell'incarico.</li>
+        <li>Decorso il termine senza pronuncia, l'autorizzazione <strong>si intende accordata</strong> se l'incarico è conferito da un'amministrazione pubblica; in ogni altro caso <strong>si intende definitivamente negata</strong> (comma 10).</li>
+        <li>Entro <strong>quindici giorni</strong> dall'erogazione del compenso, è il <strong>soggetto conferente</strong> a dover comunicare all'istituto l'ammontare erogato (comma 11). L'impegno assunto qui sopra dal richiedente si aggiunge a quell'obbligo, non lo sostituisce.</li>
+        <li>L'istituto comunica l'incarico autorizzato al Dipartimento della funzione pubblica entro quindici giorni (comma 12).</li>
+      </ul>
   note:
     '#type': textarea
     '#title': 'Inserire eventuali note aggiuntive'
@@ -330,8 +348,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
       '#date_date_format': ''
@@ -349,9 +366,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
-        - direttore
+        - authenticated
       '#access_view_roles':
         - authenticated
   file_pdf:
@@ -547,6 +562,10 @@ access:
       - doc_infanzia
       - doc_primaria
       - doc_secondaria
+      - collaboratore
+      - direttore_amministrativo_dsga_
+      - personale_amministrativo
+      - personale_tecnico
     users: {  }
     permissions: {  }
   view_any:

@@ -45,6 +45,12 @@
           in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}
         </p>
         <div>{{ elements.processed_text['#text']|raw }}</div>
+        {% set minuti_previsto = data.turno_previsto_totale_ore
+          ? data.turno_previsto_totale_ore|split(':')[0] * 60 + data.turno_previsto_totale_ore|split(':')[1]
+          : 0 %}
+        {% set minuti_modificato = data.turno_modificato_totale_ore
+          ? data.turno_modificato_totale_ore|split(':')[0] * 60 + data.turno_modificato_totale_ore|split(':')[1]
+          : 0 %}
         {{ elements.turno_previsto_tabella }}
         <table style="width:90%; border: 1px #ccc solid;">
           <thead>
@@ -62,10 +68,13 @@
               <td>{{ data.turno_previsto_giorno|date('d.m.Y') }}</td>
               <td>{{ data.turno_previsto_dalle_ore|date('H:i') }}</td>
               <td>{{ data.turno_previsto_alle_ore|date('H:i') }}</td>
-              <td>{{ data.turno_previsto_totale_ore|date('H:i') }}</td>
+              <td>{{ data.turno_previsto_totale_ore }}</td>
             </tr>
           </tbody>
         </table>
+        {% if minuti_previsto > 432 %}
+          <p style="margin: 2px 0 12px; font-size: 0.9em;">Turno superiore a 7 ore e 12 minuti: pausa di almeno 30 minuti obbligatoria (art. 51, comma 3, CCNL 29/11/2007). Il totale indicato non la scomputa.</p>
+        {% endif %}
         {{ elements.turno_modificato_tabella }}
         <table style="width:90%; border: 1px #ccc solid;">
           <thead>
@@ -83,10 +92,19 @@
               <td>{{ data.turno_modificato_giorno|date('d.m.Y') }}</td>
               <td>{{ data.turno_modificato_dalle_ore|date('H:i') }}</td>
               <td>{{ data.turno_modificato_alle_ore|date('H:i') }}</td>
-              <td>{{ data.turno_modificato_totale_ore|date('H:i') }}</td>
+              <td>{{ data.turno_modificato_totale_ore }}</td>
             </tr>
           </tbody>
         </table>
+        {% if minuti_modificato > 432 %}
+          <p style="margin: 2px 0 12px; font-size: 0.9em;">Turno superiore a 7 ore e 12 minuti: pausa di almeno 30 minuti obbligatoria (art. 51, comma 3, CCNL 29/11/2007). Il totale indicato non la scomputa.</p>
+        {% endif %}
+        {% if minuti_previsto and minuti_modificato and minuti_previsto != minuti_modificato %}
+          {% set divario = (minuti_modificato - minuti_previsto)|abs %}
+          {% set ore = divario // 60 %}
+          {% set resto = divario % 60 %}
+          <p style="margin: 2px 0 12px; font-size: 0.9em;">Differenza fra i due turni: {{ ore ? ore ~ (ore == 1 ? ' ora' : ' ore') : '' }}{{ ore and resto ? ' e ' : '' }}{{ resto ? resto ~ ' minuti' : '' }} {{ minuti_modificato > minuti_previsto ? 'in più' : 'in meno' }}. {{ minuti_modificato > minuti_previsto ? 'Le ore eccedenti sono soggette ad autorizzazione (art. 51, comma 4, CCNL 29/11/2007).' : 'Le ore non prestate sono soggette a recupero (art. 54 del CCNL 29/11/2007).' }}</p>
+        {% endif %}
         <p><strong>Motivo della richiesta</strong><br /> {{ data.motivo_della_richiesta }}</p>
         <p>Nome del collega con cui si effettua il cambio turno:<strong> {{ data.collega }}</strong></p>
         <p>Il personale coinvolto nella modifica è stato informato e acconsente al cambio</p>

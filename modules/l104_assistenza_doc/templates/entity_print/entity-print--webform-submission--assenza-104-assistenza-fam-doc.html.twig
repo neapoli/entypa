@@ -45,8 +45,9 @@
           in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}
           {{ elements.processed_text['#text']|raw }}
         </p>
+        <p>Tipo di permesso richiesto: <strong>{{ data.scelta|replace({'_': ' '}) }}</strong></p>
         {% if data.periodi_richiesti %}
-          {{ elements.periodi_richiesti }}
+          <p><strong>{{ elements.periodi_richiesti['#title'] }}</strong></p>
           <table style="width:100%; border: 1px #ccc solid;">
             <thead>
               <tr>
@@ -68,7 +69,7 @@
           <p>Per un totale di giorni: <strong>{{ data.totale_giorni }}</strong></p>
         {% endif %}
         {% if data.permesso_orario %}
-          {{ elements.permesso_orario }}
+          <p><strong>{{ elements.permesso_orario['#title'] }}</strong></p>
           <table style="width:100%; border: 1px #ccc solid;">
             <thead>
               <tr>
@@ -94,6 +95,7 @@
 
         <div>
           Cognome: {{ data.cognome_familiare }} - Nome: {{ data.nome_familiare }} - Grado parentela: {{ data.grado_parentela }}
+          <br />Codice fiscale: {{ data.codice_fiscale_familiare }} - Verbale di accertamento: {{ data.verbale_accertamento }}
         </div>
 
         <p>{{ elements.processed_text_01['#text']|raw }}</p>
@@ -101,7 +103,11 @@
           <li>{{ data.dichiarazione_1 }}</li>
           <li>{{ data.dichiarazione_2 }}</li>
           <li>{{ data.dichiarazione_3 }}</li>
-          <li>{{ data.dichiarazione_4 }}</li>
+        </ul>
+        {% if data.altri_aventi_diritto %}
+          <p>Altri lavoratori che fruiscono dei permessi per lo stesso familiare, in alternanza:<br />{{ data.altri_aventi_diritto }}</p>
+        {% endif %}
+        <ul style="list-style: none; padding: 0;">
         </ul>
 
         <p style="page-break-before: always;"></p>

@@ -34,8 +34,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
       '#markup': 'Il/La sottoscritto/a<br />&nbsp;'
@@ -51,8 +50,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     nome:
@@ -67,8 +65,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     codice_fiscale:
@@ -81,8 +78,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
   flexbox:
@@ -100,8 +96,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     in_qualita_di_:
@@ -115,8 +110,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     a_tempo:
@@ -129,8 +123,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
   tipologia_contratto:
@@ -183,6 +176,26 @@ elements: |-
     ordine_regionale_provinciale:
       '#type': textfield
       '#title': "Presso l'ordine regionale/provinciale di"
+  avvertenza_part_time:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="tipologia_contratto"]':
+          value: 'Part-time pari o inferiore al 50% dell’orario normale '
+    '#markup': |-
+      <p>Per i rapporti a tempo parziale con prestazione non superiore al 50% di quella a tempo pieno, l'art. 53, comma 6, del D.Lgs 165/2001 esclude l'applicazione del regime autorizzatorio dei commi da 7 a 13, e l'art. 1, commi 56 e seguenti, della legge 662/1996 detta per essi una disciplina propria. Resta però ferma, per il personale docente, la disciplina dell'art. 508 del D.Lgs 297/94, espressamente salvaguardata dall'art. 53, comma 1. La richiesta viene quindi comunque istruita dall'istituto.</p>
+  avvertenza_albo_part_time:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="tipologia_contratto"]':
+          value: 'Part-time pari o inferiore al 50% dell’orario normale '
+        ':input[name="iscrizione_albo_professionale"]':
+          value: 'Yes'
+    '#markup': |-
+      <p>Per questi rapporti l'art. 1, comma 56, della legge 662/1996 dispone che «le disposizioni di legge e di regolamento che vietano l'iscrizione in albi professionali non si applicano ai dipendenti delle pubbliche amministrazioni con rapporto di lavoro a tempo parziale, con prestazione lavorativa non superiore al 50% di quella a tempo pieno». Indicare comunque gli estremi dell'iscrizione: l'istituto li valuta ai fini della compatibilità con l'orario di insegnamento e di servizio.</p>
   processed_text:
     '#type': processed_text
     '#access_create_roles':
@@ -191,7 +204,7 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>ai sensi dell’art. 508 del D.Lgs 297/94, per l’anno scolastico in corso, l’autorizzazione ad esercitare la libera professione di:</p>'
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>ai sensi dell’art. 508, comma 15, del D.Lgs 297/94, per l’anno scolastico in corso, l’autorizzazione ad esercitare la libera professione di:</p>'
     '#format': bootstrap_italia_2
   tipo_professione:
     '#type': textfield
@@ -237,6 +250,11 @@ elements: |-
     '#options':
       si: Conferma
     '#required': true
+  avvertenza_ricorso:
+    '#type': webform_markup
+    '#display_on': both
+    '#markup': |-
+      <p>L'esercizio della libera professione è consentito al personale docente previa autorizzazione del dirigente scolastico, purché non sia di pregiudizio all'assolvimento delle attività inerenti alla funzione docente e sia compatibile con l'orario di insegnamento e di servizio (art. 508, comma 15). Avverso il diniego di autorizzazione è ammesso ricorso (art. 508, comma 16).</p>
   note:
     '#type': textarea
     '#title': 'Inserire eventuali note aggiuntive'
@@ -263,8 +281,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
       '#date_date_format': ''
@@ -282,9 +299,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
-        - direttore
+        - authenticated
       '#access_view_roles':
         - authenticated
   file_pdf:

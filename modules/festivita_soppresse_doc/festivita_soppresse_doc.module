@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\WebformSubmissionInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +23,101 @@ function festivita_soppresse_doc_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for webform_submission entities.
+ *
+ * Ricalcola i giorni di ogni periodo e il totale. Il JavaScript del
+ * modulo fa lo stesso conto mentre si compila, ma i campi sono readonly e
+ * quindi modificabili dagli strumenti di sviluppo, e restano vuoti se lo
+ * script non gira: il numero che finisce sull'istanza firmata deve nascere
+ * qui, dove nessuno può toccarlo.
+ */
+function festivita_soppresse_doc_webform_submission_presave(WebformSubmissionInterface $webform_submission) {
+  $webform = $webform_submission->getWebform();
+  if (!$webform || $webform->id() !== 'assenza_festivita_soppresse_doc') {
+    return;
+  }
+
+  $data = $webform_submission->getData();
+  $periodi = $data['periodi_richiesti'] ?? [];
+  if (!is_array($periodi)) {
+    return;
+  }
+
+  $totale = 0;
+  $conteggiate = FALSE;
+  foreach ($periodi as $indice => $periodo) {
+    $giorni = entypa_giorni_lavorativi(
+      $periodo['data_inizio'] ?? '',
+      $periodo['data_fine'] ?? ''
+    );
+    $periodi[$indice]['numero_giorni'] = ($giorni === NULL) ? '' : (string) $giorni;
+    if ($giorni !== NULL) {
+      $totale += $giorni;
+      $conteggiate = TRUE;
+    }
+  }
+
+  // Zero è un risultato: un periodo di sole domeniche non consuma giornate, e
+  // dirlo è diverso dal lasciare il campo in bianco.
+  $data['periodi_richiesti'] = $periodi;
+  $data['totale_giorni'] = $conteggiate ? (string) $totale : '';
+  $webform_submission->setData($data);
+}
+
+/**
+ * Le giornate di riposo attribuite dall'art. 14, comma 1, del CCNL 29/11/2007.
+ */
+const FESTIVITA_SOPPRESSE_DOC_GIORNATE_SPETTANTI = 4;
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ *
+ * Aggiunge il controllo sul tetto delle quattro giornate. Il conteggio va
+ * rifatto qui e non ci si può fidare del totale arrivato dal browser, che è
+ * un campo readonly e quindi modificabile.
+ */
+function festivita_soppresse_doc_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if ($webform && $webform->id() === 'assenza_festivita_soppresse_doc') {
+    entypa_aggiungi_validazione($form, 'totale_giorni', 'festivita_soppresse_doc_valida_giornate');
+  }
+}
+
+/**
+ * Validazione: la domanda non può eccedere le giornate spettanti.
+ *
+ * Il controllo riguarda la singola domanda. Quante giornate siano già state
+ * fruite nell'anno scolastico non è dato che il formulario conosca da sé:
+ * quello resta un riscontro della segreteria.
+ */
+function festivita_soppresse_doc_valida_giornate(array &$elemento, FormStateInterface $form_state) {
+  $periodi = $form_state->getValue('periodi_richiesti');
+  if (!is_array($periodi)) {
+    return;
+  }
+
+  $totale = 0;
+  foreach ($periodi as $periodo) {
+    $totale += (int) entypa_giorni_lavorativi(
+      $periodo['data_inizio'] ?? '',
+      $periodo['data_fine'] ?? ''
+    );
+  }
+
+  if ($totale > FESTIVITA_SOPPRESSE_DOC_GIORNATE_SPETTANTI) {
+    // L'errore va su un campo foglia, non sul contenitore della tabella:
+    // FormState::getError() risale i #parents, quindi un errore su
+    // "periodi_richiesti" verrebbe ereditato e ristampato da ogni sottocampo
+    // di ogni riga. Il totale è il valore che eccede ed è subito sotto.
+    $form_state->setErrorByName('totale_giorni', t(
+      'La domanda chiede @richieste giornate, ma le giornate di riposo spettanti sono @spettanti per anno scolastico (art. 14, comma 1, del CCNL 29/11/2007).',
+      [
+        '@richieste' => $totale,
+        '@spettanti' => FESTIVITA_SOPPRESSE_DOC_GIORNATE_SPETTANTI,
+      ]
+    ));
+  }
 }

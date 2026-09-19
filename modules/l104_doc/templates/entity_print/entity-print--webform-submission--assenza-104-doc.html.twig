@@ -45,8 +45,11 @@
           in qualità di {{ data.in_qualita_di_ }} a tempo {{ data.a_tempo }}
           {{ elements.processed_text['#text']|raw }}
         </p>
+        <p>Regime prescelto: <strong>{{ data.scelta|replace({'_': ' '}) }}</strong><br />
+          Verbale di accertamento: <strong>{{ data.verbale_accertamento }}</strong>
+        </p>
         {% if data.periodi_richiesti %}
-          {{ elements.periodi_richiesti }}
+          <p><strong>{{ elements.periodi_richiesti['#title'] }}</strong></p>
           <table style="width:100%; border: 1px #ccc solid;">
             <thead>
               <tr>
@@ -68,7 +71,7 @@
           <p>Per un totale di giorni: <strong>{{ data.totale_giorni }}</strong></p>
         {% endif %}
         {% if data.permesso_orario %}
-          {{ elements.permesso_orario }}
+          <p><strong>{{ elements.permesso_orario['#title'] }}</strong></p>
           <table style="width:100%; border: 1px #ccc solid;">
             <thead>
               <tr>

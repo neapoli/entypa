@@ -64,6 +64,7 @@
           {{ elements.impegno_di_comunicazione_variazione_stato['#description']|striptags|raw }}
         </p>
         <div style="margin-top: 20px;">
+          <div style="margin-top: 12px; font-size: 0.9em;">{{ elements.avvertenza_ricorso['#markup']|raw }}</div>
           {% if data.note %}
             <p>Note<br /> {{ data.note }}</p>
           {% endif %}

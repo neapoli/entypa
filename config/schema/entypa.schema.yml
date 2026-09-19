@@ -5,3 +5,6 @@ entypa.settings:
     mail_istituto:
       type: string
       label: "Indirizzo email dell'istituto"
+    patrono:
+      type: string
+      label: 'Ricorrenza del santo patrono (mm-gg)'

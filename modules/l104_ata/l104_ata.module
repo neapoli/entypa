@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\WebformSubmissionInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +23,115 @@ function l104_ata_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Tetto mensile dei permessi giornalieri: tre giorni.
+ *
+ * Chi ha la disabilità sceglie alternativamente fra due ore di permesso
+ * giornaliero e tre giorni mensili (art. 33, comma 6, che rinvia ai commi 2
+ * e 3): i due regimi non si cumulano, e la scelta nel formulario li rende
+ * esclusivi. Il vincolo delle due ore è per singola giornata e sta nella
+ * validazione della tabella oraria.
+ *
+ * @see art. 33, commi 3 e 6, della L. 104/1992
+ */
+const L104_ATA_GIORNI_AL_MESE = 3;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for webform_submission entities.
+ *
+ * Ricalcola i giorni di ciascun periodo e il totale. I campi sono readonly e
+ * li riempie il JavaScript, quindi il valore che finisce sull'istanza firmata
+ * deve nascere qui.
+ */
+function l104_ata_webform_submission_presave(WebformSubmissionInterface $webform_submission) {
+  $webform = $webform_submission->getWebform();
+  if (!$webform || $webform->id() !== 'assenza_104_ata') {
+    return;
+  }
+
+  $data = $webform_submission->getData();
+  $periodi = $data['periodi_richiesti'] ?? [];
+  if (!is_array($periodi)) {
+    return;
+  }
+
+  $totale = 0;
+  $conteggiati = FALSE;
+  foreach ($periodi as $indice => $periodo) {
+    $giorni = entypa_giorni_lavorativi(
+      $periodo['data_inizio'] ?? '',
+      $periodo['data_fine'] ?? ''
+    );
+    $periodi[$indice]['numero_giorni'] = ($giorni === NULL) ? '' : (string) $giorni;
+    if ($giorni !== NULL) {
+      $totale += $giorni;
+      $conteggiati = TRUE;
+    }
+  }
+
+  $data['periodi_richiesti'] = $periodi;
+  $data['totale_giorni'] = $conteggiati ? (string) $totale : '';
+  $webform_submission->setData($data);
+}
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function l104_ata_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if (!$webform || $webform->id() !== 'assenza_104_ata') {
+    return;
+  }
+
+  // Una validazione per tetto, agganciata al totale cui si riferisce: così il
+  // messaggio esce accanto al numero giusto, e quando la scelta nasconde una
+  // delle due tabelle Webform sopprime la validazione del suo totale.
+  entypa_aggiungi_validazione($form, 'totale_giorni', 'l104_ata_valida_giorni');
+}
+
+/**
+ * Validazione del tetto mensile dei giorni.
+ */
+function l104_ata_valida_giorni(array &$elemento, FormStateInterface $form_state) {
+  $perMese = [];
+  foreach ((array) $form_state->getValue('periodi_richiesti') as $periodo) {
+    $inizio = $periodo['data_inizio'] ?? '';
+    $conteggio = entypa_giorni_lavorativi($inizio, $periodo['data_fine'] ?? '');
+    if ($conteggio === NULL) {
+      continue;
+    }
+    $mese = substr((string) $inizio, 0, 7);
+    $perMese[$mese] = ($perMese[$mese] ?? 0) + $conteggio;
+  }
+
+  _l104_ata_segnala(
+    $form_state, 'totale_giorni', $perMese, L104_ATA_GIORNI_AL_MESE,
+    'giorni', 'I permessi spettano nella misura di tre giorni al mese (art. 33, commi 3 e 6, della L. 104/1992).'
+  );
+}
+
+/**
+ * Segnala i mesi che eccedono il tetto, su un campo semplice.
+ *
+ * L'errore non va mai sul composite: FormState::getError() risale i #parents,
+ * e ogni sottocampo di ogni riga ristamperebbe lo stesso messaggio.
+ */
+function _l104_ata_segnala(FormStateInterface $form_state, $campo, array $perMese, $tetto, $unita, $norma) {
+  $fuori = [];
+  foreach ($perMese as $mese => $quanti) {
+    if ($quanti > $tetto) {
+      $fuori[] = $mese . ': ' . rtrim(rtrim(number_format($quanti, 1, ',', ''), '0'), ',') . ' ' . $unita;
+    }
+  }
+
+  if ($fuori) {
+    $form_state->setErrorByName($campo, t('Il limite di @tetto @unita al mese è superato (@mesi). @norma', [
+      '@tetto' => $tetto,
+      '@unita' => $unita,
+      '@mesi' => implode('; ', $fuori),
+      '@norma' => $norma,
+    ]));
+  }
 }

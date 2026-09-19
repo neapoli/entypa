@@ -45,7 +45,7 @@
           in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}
           {{ elements.processed_text['#text']|raw }}
         </p>
-        {{ elements.periodi_richiesti }}
+        <p>Anno scolastico di riferimento: <strong>{{ data.anno_scolastico_di_riferimento }}</strong></p>
         <table style="width:100%; border: 1px #ccc solid;">
           <thead>
           <tr>
@@ -65,6 +65,9 @@
           </tbody>
         </table>
         <p>Per un totale di giorni: <strong>{{ data.totale_giorni }}</strong></p>
+        {% if data.dichiarazione_periodo %}
+          <p style="margin: 2px 0 12px; font-size: 0.9em;">Il richiedente dichiara che le giornate ricadono dopo il termine delle lezioni e degli esami, oppure in un periodo di sospensione delle lezioni (art. 14, comma 2, CCNL 29/11/2007).</p>
+        {% endif %}
         <div style="margin-top: 20px;">
           {% if data.note %}
             <strong>Note</strong><br />

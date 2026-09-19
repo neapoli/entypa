@@ -36,7 +36,7 @@
         </p>
       </div>
       <div>
-        <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Autorizzazione di cambio turno Docenti - {{ data.cognome }} {{ data.nome }}</strong></p>
+        <p>Oggetto: <strong>Istanza N°: {{ webform_token('[webform_submission:serial]', webform_submission) }} - Autorizzazione allo scambio di ore di lezione - {{ data.cognome }} {{ data.nome }}</strong></p>
       </div>
       <div class="corpo">
         <p>
@@ -45,11 +45,18 @@
           in qualità di {{ data.in_qualita_di_ }} a {{ data.a_tempo }}
         </p>
         <div>{{ elements.processed_text['#text']|raw }}</div>
+        {% set minuti_previsto = data.turno_previsto_totale_ore
+          ? data.turno_previsto_totale_ore|split(':')[0] * 60 + data.turno_previsto_totale_ore|split(':')[1]
+          : 0 %}
+        {% set minuti_modificato = data.turno_modificato_totale_ore
+          ? data.turno_modificato_totale_ore|split(':')[0] * 60 + data.turno_modificato_totale_ore|split(':')[1]
+          : 0 %}
         {{ elements.turno_previsto_tabella }}
         <table style="width:90%; border: 1px #ccc solid;">
           <thead>
             <tr>
               <th>Plesso</th>
+              <th>Classe</th>
               <th>data</th>
               <th>dalle ore</th>
               <th>alle ore</th>
@@ -59,10 +66,11 @@
           <tbody class="text-align-center">
             <tr>
               <td>{{ data.turno_previsto_plesso_interessato }}</td>
+              <td>{{ data.turno_previsto_classe }}</td>
               <td>{{ data.turno_previsto_giorno|date('d.m.Y') }}</td>
               <td>{{ data.turno_previsto_dalle_ore|date('H:i') }}</td>
               <td>{{ data.turno_previsto_alle_ore|date('H:i') }}</td>
-              <td>{{ data.turno_previsto_totale_ore|date('H:i') }}</td>
+              <td>{{ data.turno_previsto_totale_ore }}</td>
             </tr>
           </tbody>
         </table>
@@ -71,6 +79,7 @@
           <thead>
             <tr>
               <th>Plesso</th>
+              <th>Classe</th>
               <th>data</th>
               <th>dalle ore</th>
               <th>alle ore</th>
@@ -80,17 +89,24 @@
           <tbody class="text-align-center">
             <tr>
               <td>{{ data.turno_modificato_plesso_interessato }}</td>
+              <td>{{ data.turno_modificato_classe }}</td>
               <td>{{ data.turno_modificato_giorno|date('d.m.Y') }}</td>
               <td>{{ data.turno_modificato_dalle_ore|date('H:i') }}</td>
               <td>{{ data.turno_modificato_alle_ore|date('H:i') }}</td>
-              <td>{{ data.turno_modificato_totale_ore|date('H:i') }}</td>
+              <td>{{ data.turno_modificato_totale_ore }}</td>
             </tr>
           </tbody>
         </table>
+        {% if minuti_previsto and minuti_modificato and minuti_previsto != minuti_modificato %}
+          {% set divario = (minuti_modificato - minuti_previsto)|abs %}
+          {% set ore = divario // 60 %}
+          {% set resto = divario % 60 %}
+          <p style="margin: 2px 0 12px; font-size: 0.9em;">Differenza fra i due orari: {{ ore ? ore ~ (ore == 1 ? ' ora' : ' ore') : '' }}{{ ore and resto ? ' e ' : '' }}{{ resto ? resto ~ ' minuti' : '' }} {{ minuti_modificato > minuti_previsto ? 'in più' : 'in meno' }}. Lo scambio non è a somma zero. {{ minuti_modificato > minuti_previsto ? 'Le ore in più costituiscono ore eccedenti (art. 45 del CCNL 2019-2021).' : 'Le ore in meno restano da recuperare secondo quanto disposto dal dirigente scolastico.' }}</p>
+        {% endif %}
         <p><strong>Motivo della richiesta</strong><br /> {{ data.motivo_della_richiesta }}</p>
-        <p>Nome del collega con cui si effettua il cambio turno:<strong> {{ data.collega }}</strong></p>
+        <p>Nome del collega con cui si effettua lo scambio:<strong> {{ data.collega }}</strong></p>
         <p>Il personale coinvolto nella modifica è stato informato e acconsente al cambio</p>
-        <p><strong>Il servizio giornaliero sarà così riorganizzato</strong><br /> {{ data.il_servizio_giornaliero_sara_cosi_riorganizzato }}</p>
+        <p><strong>Le lezioni saranno così coperte</strong><br /> {{ data.il_servizio_giornaliero_sara_cosi_riorganizzato }}</p>
         <div class="data_invio">
           <p>Data, {{ data.data_compilazione|date('d.m.Y') }}</p>
         </div>

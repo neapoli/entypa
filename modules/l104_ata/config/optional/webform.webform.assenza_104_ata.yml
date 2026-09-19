@@ -34,8 +34,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
       '#markup': 'Il/La sottoscritto/a<br />&nbsp;'
@@ -51,8 +50,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     nome:
@@ -67,8 +65,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     codice_fiscale:
@@ -81,8 +78,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
   flexbox:
@@ -100,8 +96,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     in_qualita_di_:
@@ -115,8 +110,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
     a_tempo:
@@ -129,8 +123,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
   processed_text:
@@ -141,36 +134,34 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#text': '<div class="text-align-center"><strong>CHIEDE</strong></div><div class="text-align-center">&nbsp;</div><div class="text-align-center">ai sensi dell’articolo 3, comma 3 della Legge 5 febbraio 1992, n. 104:</div><div>&nbsp;</div>'
+    '#text': '<div class="text-align-center"><strong>CHIEDE</strong></div><div class="text-align-center">&nbsp;</div><div class="text-align-center">ai sensi dell’articolo 33, comma 6, della Legge 5 febbraio 1992, n. 104:</div><div>&nbsp;</div><p>La persona con disabilit&agrave; grave pu&ograve; fruire <strong>alternativamente</strong> dei permessi previsti dai commi 2 e 3 dell’art. 33: <strong>due ore di permesso giornaliero</strong> oppure <strong>tre giorni di permesso mensile</strong>. I due regimi non si cumulano: indicare quale si intende utilizzare. Per chi ha un orario giornaliero inferiore a sei ore il permesso orario &egrave; ridotto a un’ora.</p>'
     '#format': bootstrap_italia_2
   scelta:
     '#type': radios
     '#title': Scelta
     '#options':
-      permesso_orario: 'Permesso orario'
-      permesso_giornaliero: 'Permesso giornaliero'
-      entrambi: 'Permesso orario e giornaliero'
+      permesso_orario: 'Due ore di permesso giornaliero (art. 33, commi 2 e 6)'
+      permesso_giornaliero: 'Tre giorni di permesso mensile (art. 33, commi 3 e 6)'
     '#required': true
   periodi_richiesti:
     '#type': webform_custom_composite
     '#title': 'Giorni di permesso'
     '#states':
       visible:
-        - ':input[name="scelta"]':
-            value: permesso_giornaliero
-        - or
-        - ':input[name="scelta"]':
-            value: entrambi
+        ':input[name="scelta"]':
+          value: permesso_giornaliero
     '#multiple__sorting': false
     '#multiple__add_more': false
     '#format_items': table
     '#element':
       data_inizio:
         '#type': date
+        '#required': true
         '#title': 'Data inizio'
         '#format': bootstrap_italia_short_date
       data_fine:
         '#type': date
+        '#required': true
         '#title': 'Data fine'
         '#format': bootstrap_italia_short_date
       numero_giorni:
@@ -188,38 +179,34 @@ elements: |-
     '#title': 'Totale giorni'
     '#size': 12
     '#readonly': true
-    '#required': true
     '#states':
       visible:
-        - ':input[name="scelta"]':
-            value: permesso_giornaliero
-        - or
-        - ':input[name="scelta"]':
-            value: entrambi
+        ':input[name="scelta"]':
+          value: permesso_giornaliero
   permesso_orario:
     '#type': webform_custom_composite
     '#title': 'Permesso orario'
     '#required': true
     '#states':
       visible:
-        - ':input[name="scelta"]':
-            value: permesso_orario
-        - or
-        - ':input[name="scelta"]':
-            value: entrambi
+        ':input[name="scelta"]':
+          value: permesso_orario
     '#multiple__sorting': false
     '#multiple__add_more': false
     '#format_items': table
     '#element':
       giorno:
         '#type': date
+        '#required': true
         '#title': Giorno
         '#format': bootstrap_italia_short_date
       ora_inizio:
         '#type': webform_time
+        '#required': true
         '#title': 'Dalle Ore'
       ora_fine:
         '#type': webform_time
+        '#required': true
         '#title': 'Alle Ore'
       totale_ore:
         '#type': textfield
@@ -235,18 +222,25 @@ elements: |-
     '#title': 'Tot. ore'
     '#size': 10
     '#readonly': true
-    '#required': true
     '#states':
       visible:
-        - ':input[name="scelta"]':
-            value: permesso_orario
-        - or
-        - ':input[name="scelta"]':
-            value: entrambi
+        ':input[name="scelta"]':
+          value: permesso_orario
+  verbale_accertamento:
+    '#type': textfield
+    '#title': 'Estremi del verbale di accertamento'
+    '#description': '<p>Commissione, numero e data del verbale che riconosce la propria situazione di gravità (art. 3, comma 3, della L. 104/1992).</p>'
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   processed_text_01:
     '#type': processed_text
     '#display_on': both
-    '#text': '<p>ai sensi della L.15/68 il/la sottoscritto/a&nbsp;</p><p class="text-align-center"><strong>DICHIARA</strong></p><p>sotto la propria responsabilità:</p><ul><li class="ck-list-marker-bold" data-list-item-id="e5c26b1d57f3b448b2485bd365d13f27e"><strong>che necessita delle agevolazioni per le esigenze legate alla propria situazione di disabilità</strong></li><li data-list-item-id="ef7138e40e900b64300850cd049f87701"><strong>di impegnarsi</strong> a comunicare tempestivamente ogni variazione della situazione di fatto e di diritto da cui consegua la perdita della legittimazione alle agevolazioni (revoca del riconoscimento dello stato di disabilità grave in caso di rivedibilità)</li><li data-list-item-id="eb973a999471eb4c023ccef61bee8c53a"><strong>di essere consapevole</strong> che la possibilità di fruire delle agevolazioni comporta un onere per l''amministrazione e un impegno di spesa pubblica che lo Stato e la collettività sopportano per l''effettiva tutela dei disabili.</li></ul>'
+    '#text': '<p>ai sensi del D.P.R. 28 dicembre 2000, n. 445, il/la sottoscritto/a&nbsp;</p><p class="text-align-center"><strong>DICHIARA</strong></p><p>sotto la propria responsabilità:</p><ul><li class="ck-list-marker-bold" data-list-item-id="e5c26b1d57f3b448b2485bd365d13f27e"><strong>che necessita delle agevolazioni per le esigenze legate alla propria situazione di disabilità</strong></li><li data-list-item-id="ef7138e40e900b64300850cd049f87701"><strong>di impegnarsi</strong> a comunicare tempestivamente ogni variazione della situazione di fatto e di diritto da cui consegua la perdita della legittimazione alle agevolazioni (revoca del riconoscimento dello stato di disabilità grave in caso di rivedibilità)</li><li data-list-item-id="eb973a999471eb4c023ccef61bee8c53a"><strong>di essere consapevole</strong> che la possibilità di fruire delle agevolazioni comporta un onere per l''amministrazione e un impegno di spesa pubblica che lo Stato e la collettività sopportano per l''effettiva tutela dei disabili.</li></ul>'
     '#format': bootstrap_italia_2
   note:
     '#type': textarea
@@ -258,9 +252,7 @@ elements: |-
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
-      - administrator
-      - dirigente
-      - direttore
+      - authenticated
     '#access_view_roles':
       - authenticated
   documento_allegato:
@@ -287,8 +279,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
+        - authenticated
       '#access_view_roles':
         - authenticated
       '#date_date_format': ''
@@ -306,9 +297,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
-        - direttore
+        - authenticated
       '#access_view_roles':
         - authenticated
   file_pdf:
@@ -339,7 +328,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ''
-javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  // Le due tabelle stanno nello stesso form, e le loro righe si aggiungono e\r\n  // si tolgono via AJAX.\r\n  var SEL_FORM = '[class*=\"webform-submission-assenza-104-ata\"]';\r\n\r\n  // Permesso orario: una riga per fascia.\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_ORE    = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                   'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n\r\n  // Permesso giornaliero: una riga per periodo.\r\n  var SEL_INIZIO = 'input[name*=\"periodi_richiesti\"][name*=\"[data_inizio]\"]';\r\n  var SEL_DATE   = SEL_INIZIO + ', ' +\r\n                   'input[name*=\"periodi_richiesti\"][name*=\"[data_fine]\"]';\r\n\r\n  var GIORNO_MS = 86400000;\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    if (!h) { return m + 'min'; }\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  // Le fasce orarie. Più fasce nello stesso giorno sono ammesse — una al\r\n  // mattino e una al pomeriggio sono il caso normale — purché non si\r\n  // sovrappongano: due fasce sovrapposte conterebbero due volte le stesse ore\r\n  // nel totale.\r\n  function validaOre($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n    var finePrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errInizio = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Le righe seguono l'ordine del calendario, ma lo stesso giorno può\r\n      //    ripetersi su più righe.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno < giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' non può precedere quello della riga precedente.';\r\n      }\r\n      // 2. Due fasce dello stesso giorno non si sovrappongono.\r\n      else if (dGiorno !== null && dGiorno === giornoPrecedente &&\r\n               inizio !== null && finePrecedente !== null && inizio < finePrecedente) {\r\n        errInizio = 'La fascia della riga ' + (indice + 1) +\r\n          ' si sovrappone a quella precedente dello stesso giorno.';\r\n      }\r\n\r\n      // 3. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($inizio, errInizio);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errInizio && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimenti per la riga successiva: solo se questa riga è valida. La\r\n      // fine serve alla riga dopo soltanto quando ricade nello stesso giorno,\r\n      // e giorno e fine si aggiornano insieme.\r\n      if (dGiorno !== null && !errGiorno && !errInizio) {\r\n        giornoPrecedente = dGiorno;\r\n        finePrecedente = errFine ? null : fine;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"per_un_totale_di_ore\"]')\r\n      .val(totale ? formatOre(totale) : '');\r\n  }\r\n\r\n  // I periodi a giorni interi: ricalcola i giorni, valida la sequenza, somma\r\n  // il totale.\r\n  function validaGiorni($form) {\r\n    var totale = 0;\r\n    var finePrecedente = null;\r\n\r\n    $form.find(SEL_INIZIO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $inizio = campo($form, p, 'data_inizio');\r\n      var $fine   = campo($form, p, 'data_fine');\r\n      var $giorni = campo($form, p, 'numero_giorni');\r\n\r\n      var dInizio = toData($inizio.val());\r\n      var dFine   = toData($fine.val());\r\n\r\n      var errInizio = '';\r\n      var errFine   = '';\r\n\r\n      // 1. La riga deve iniziare dopo la fine della riga precedente.\r\n      if (dInizio !== null && finePrecedente !== null && dInizio <= finePrecedente) {\r\n        errInizio = 'Il periodo ' + (indice + 1) +\r\n          ' deve iniziare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      // 2. Fine >= inizio (inizio == fine significa un giorno solo).\r\n      if (dInizio !== null && dFine !== null && dFine < dInizio) {\r\n        errFine = 'La data di fine non può precedere quella di inizio.';\r\n      }\r\n      // 3. Caso limite: inizio vuoto ma fine compilata.\r\n      else if (dInizio === null && dFine !== null &&\r\n               finePrecedente !== null && dFine <= finePrecedente) {\r\n        errFine = 'Il periodo ' + (indice + 1) +\r\n          ' deve terminare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      errore($inizio, errInizio);\r\n      errore($fine, errFine);\r\n\r\n      if (dInizio !== null && dFine !== null && !errInizio && !errFine) {\r\n        var giorni = Math.round((dFine - dInizio) / GIORNO_MS) + 1;\r\n        $giorni.val(giorni);\r\n        totale += giorni;\r\n      }\r\n      else {\r\n        $giorni.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dFine !== null && !errInizio && !errFine) {\r\n        finePrecedente = dFine;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"totale_giorni\"]').val(totale || '');\r\n  }\r\n\r\n  function valida(contesto) {\r\n    $(contesto).find(SEL_FORM).addBack(SEL_FORM).each(function () {\r\n      validaOre($(this));\r\n      validaGiorni($(this));\r\n    });\r\n  }\r\n\r\n  $(document).on('change.l104Ata input.l104Ata',\r\n    SEL_ORE + ', ' + SEL_GIORNO + ', ' + SEL_DATE, function () {\r\n      var $form = $(this).closest(SEL_FORM);\r\n      if ($form.length) {\r\n        validaOre($form);\r\n        validaGiorni($form);\r\n      }\r\n    });\r\n\r\n  // Aggiunta e rimozione delle righe dei composite: passano per AJAX, e la\r\n  // tabella ricostruita arriva ai behavior come contesto senza il form\r\n  // intorno, dove valida() non la troverebbe.\r\n  $(document).on('ajaxComplete.l104Ata', function () {\r\n    valida(document);\r\n  });\r\n\r\n  Drupal.behaviors.l104AssistenzaAtaTotali = {\r\n    attach: function (context) {\r\n      valida(context);\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
+javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  /* Chi ha la disabilità fruisce, alternativamente, di due ore di permesso\r\n     giornaliero oppure di tre giorni mensili (art. 33, comma 6, della L.\r\n     104/1992, che rinvia ai commi 2 e 3). Le due ore sono una misura\r\n     giornaliera, non un monte da distribuire, e i tre giorni si contano per\r\n     mese. Chi ha un orario giornaliero inferiore a sei ore ha diritto a un'ora\r\n     sola: quella riduzione non viene imposta qui, perché il formulario non\r\n     conosce l'orario di servizio del richiedente. */\r\n  var GIORNI_AL_MESE = 3;\r\n  var ORE_AL_GIORNO = 2;\r\n\r\n  function mese(ms) {\r\n    var d = new Date(ms);\r\n    return d.getUTCFullYear() + '-' + ('0' + (d.getUTCMonth() + 1)).slice(-2);\r\n  }\r\n\r\n  function avviso($ancora, id, testo) {\r\n    var $a = $('#' + id);\r\n\r\n    if (!$a.length) {\r\n      $a = $('<div>', { id: id, 'aria-live': 'polite' });\r\n      $ancora.closest('.js-form-item, .form-item').after($a);\r\n    }\r\n\r\n    $a.toggleClass('messages messages--warning', !!testo).text(testo || '');\r\n\r\n    if ($ancora[0] && $ancora[0].setCustomValidity) {\r\n      $ancora[0].setCustomValidity(testo || '');\r\n    }\r\n  }\r\n\r\n  // Le due tabelle stanno nello stesso form, e le loro righe si aggiungono e\r\n  // si tolgono via AJAX.\r\n  var SEL_FORM = '[class*=\"webform-submission-assenza-104-ata\"]';\r\n\r\n  // Permesso orario: una riga per fascia.\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_ORE    = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                   'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n\r\n  // Permesso giornaliero: una riga per periodo.\r\n  var SEL_INIZIO = 'input[name*=\"periodi_richiesti\"][name*=\"[data_inizio]\"]';\r\n  var SEL_DATE   = SEL_INIZIO + ', ' +\r\n                   'input[name*=\"periodi_richiesti\"][name*=\"[data_fine]\"]';\r\n\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    if (!h) { return m + 'min'; }\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  // Le fasce orarie. Più fasce nello stesso giorno sono ammesse — una al\r\n  // mattino e una al pomeriggio sono il caso normale — purché non si\r\n  // sovrappongano: due fasce sovrapposte conterebbero due volte le stesse ore\r\n  // nel totale.\r\n  function validaOre($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n    var finePrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = Drupal.entypa.toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errInizio = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Le righe seguono l'ordine del calendario, ma lo stesso giorno può\r\n      //    ripetersi su più righe.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno < giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' non può precedere quello della riga precedente.';\r\n      }\r\n      // 2. Due fasce dello stesso giorno non si sovrappongono.\r\n      else if (dGiorno !== null && dGiorno === giornoPrecedente &&\r\n               inizio !== null && finePrecedente !== null && inizio < finePrecedente) {\r\n        errInizio = 'La fascia della riga ' + (indice + 1) +\r\n          ' si sovrappone a quella precedente dello stesso giorno.';\r\n      }\r\n\r\n      // 3. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($inizio, errInizio);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errInizio && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n        if (fine - inizio > ORE_AL_GIORNO * 60) {\r\n          errore($fine, 'Il permesso orario è di due ore al giorno ' +\r\n            '(art. 33, commi 2 e 6, della L. 104/1992).');\r\n        }\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimenti per la riga successiva: solo se questa riga è valida. La\r\n      // fine serve alla riga dopo soltanto quando ricade nello stesso giorno,\r\n      // e giorno e fine si aggiornano insieme.\r\n      if (dGiorno !== null && !errGiorno && !errInizio) {\r\n        giornoPrecedente = dGiorno;\r\n        finePrecedente = errFine ? null : fine;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"per_un_totale_di_ore\"]')\r\n      .val(totale ? formatOre(totale) : '');\r\n  }\r\n\r\n  // I periodi a giorni interi: ricalcola i giorni, valida la sequenza, somma\r\n  // il totale.\r\n  function validaGiorni($form) {\r\n    var totale = 0;\r\n    var perMese = {};\r\n    var finePrecedente = null;\r\n\r\n    $form.find(SEL_INIZIO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $inizio = campo($form, p, 'data_inizio');\r\n      var $fine   = campo($form, p, 'data_fine');\r\n      var $giorni = campo($form, p, 'numero_giorni');\r\n\r\n      var dInizio = Drupal.entypa.toData($inizio.val());\r\n      var dFine   = Drupal.entypa.toData($fine.val());\r\n\r\n      var errInizio = '';\r\n      var errFine   = '';\r\n\r\n      // 1. La riga deve iniziare dopo la fine della riga precedente.\r\n      if (dInizio !== null && finePrecedente !== null && dInizio <= finePrecedente) {\r\n        errInizio = 'Il periodo ' + (indice + 1) +\r\n          ' deve iniziare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      // 2. Fine >= inizio (inizio == fine significa un giorno solo).\r\n      if (dInizio !== null && dFine !== null && dFine < dInizio) {\r\n        errFine = 'La data di fine non può precedere quella di inizio.';\r\n      }\r\n      // 3. Caso limite: inizio vuoto ma fine compilata.\r\n      else if (dInizio === null && dFine !== null &&\r\n               finePrecedente !== null && dFine <= finePrecedente) {\r\n        errFine = 'Il periodo ' + (indice + 1) +\r\n          ' deve terminare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      errore($inizio, errInizio);\r\n      errore($fine, errFine);\r\n\r\n      if (dInizio !== null && dFine !== null && !errInizio && !errFine) {\r\n        var giorni = Drupal.entypa.giorniLavorativi(dInizio, dFine);\r\n        $giorni.val(giorni);\r\n        var m = mese(dInizio);\r\n        perMese[m] = (perMese[m] || 0) + giorni;\r\n        totale += giorni;\r\n      }\r\n      else {\r\n        $giorni.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dFine !== null && !errInizio && !errFine) {\r\n        finePrecedente = dFine;\r\n      }\r\n    });\r\n\r\n    var $totGiorni = $form.find('input[name=\"totale_giorni\"]');\r\n    $totGiorni.val(totale || '');\r\n\r\n    var fuori = [];\r\n    Object.keys(perMese).sort().forEach(function (m) {\r\n      if (perMese[m] > GIORNI_AL_MESE) { fuori.push(m + ': ' + perMese[m] + ' giorni'); }\r\n    });\r\n\r\n    avviso($totGiorni, 'l104-avviso-giorni', fuori.length\r\n      ? 'Il limite di ' + GIORNI_AL_MESE + ' giorni al mese è superato (' +\r\n        fuori.join('; ') + '). I permessi spettano nella misura di tre giorni ' +\r\n        'al mese (art. 33, commi 3 e 6, della L. 104/1992).'\r\n      : '');\r\n  }\r\n\r\n  function valida(contesto) {\r\n    $(contesto).find(SEL_FORM).addBack(SEL_FORM).each(function () {\r\n      validaOre($(this));\r\n      validaGiorni($(this));\r\n    });\r\n  }\r\n\r\n  $(document).on('change.l104Ata input.l104Ata',\r\n    SEL_ORE + ', ' + SEL_GIORNO + ', ' + SEL_DATE, function () {\r\n      var $form = $(this).closest(SEL_FORM);\r\n      if ($form.length) {\r\n        validaOre($form);\r\n        validaGiorni($form);\r\n      }\r\n    });\r\n\r\n  // Aggiunta e rimozione delle righe dei composite: passano per AJAX, e la\r\n  // tabella ricostruita arriva ai behavior come contesto senza il form\r\n  // intorno, dove valida() non la troverebbe.\r\n  $(document).on('ajaxComplete.l104Ata', function () {\r\n    valida(document);\r\n  });\r\n\r\n  Drupal.behaviors.l104AssistenzaAtaTotali = {\r\n    attach: function (context) {\r\n      valida(context);\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -595,9 +584,6 @@ handlers:
       subject: 'Invio Richiesta "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
       body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
       excluded_elements:
-        altro_giorno_1: altro_giorno_1
-        altro_giorno_2: altro_giorno_2
-        markup_02: markup_02
         istituto: istituto
         mail_istituto: mail_istituto
         mail_user: mail_user
@@ -640,9 +626,6 @@ handlers:
       subject: 'La richiesta di "[webform_submission:source-title]" è stata ricevuta'
       body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
       excluded_elements:
-        altro_giorno_1: altro_giorno_1
-        altro_giorno_2: altro_giorno_2
-        markup_02: markup_02
         istituto: istituto
         mail_istituto: mail_istituto
         mail_user: mail_user

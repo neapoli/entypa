@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -33,6 +35,73 @@ function entypa_get_mail_istituto() {
 }
 
 /**
+ * Restituisce la ricorrenza del santo patrono configurata per l'istituto.
+ *
+ * L'art. 14 del CCNL 29/11/2007 la considera giorno festivo per la località in
+ * cui il dipendente presta servizio: va quindi esclusa dal conteggio dei giorni
+ * di ferie, come le festività nazionali. Non è calcolabile, cambia con la sede,
+ * e per questo si configura una volta in entypa.settings.
+ *
+ * @return string
+ *   La ricorrenza nella forma mm-gg, oppure stringa vuota se non impostata.
+ */
+function entypa_get_patrono() {
+  return trim((string) \Drupal::config('entypa.settings')->get('patrono'));
+}
+
+/**
+ * Riporta una ricorrenza da mm-gg alla forma GG/MM mostrata nelle impostazioni.
+ *
+ * @param string $patrono
+ *   La ricorrenza nella forma mm-gg.
+ *
+ * @return string
+ *   La ricorrenza nella forma GG/MM, oppure stringa vuota.
+ */
+function _entypa_patrono_in_formato_italiano($patrono) {
+  if (!preg_match('/^(\\d{2})-(\\d{2})$/', (string) $patrono, $parti)) {
+    return '';
+  }
+  return $parti[2] . '/' . $parti[1];
+}
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ *
+ * Passa la ricorrenza del patrono al browser: il JavaScript dei formulari è
+ * servito come file statico e non può leggere la configurazione, ma deve
+ * contare i giorni come li conta il server, altrimenti chi compila vedrebbe un
+ * numero diverso da quello che viene salvato.
+ */
+function entypa_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $form['#attached']['drupalSettings']['entypa']['patrono'] = entypa_get_patrono();
+}
+
+/**
+ * Implements hook_library_info_alter().
+ *
+ * Webform costruisce al volo una libreria per il JavaScript personalizzato di
+ * ciascun formulario (webform.javascript.ID) e non le assegna dipendenze. Qui
+ * si dichiara la dipendenza da entypa/giorni-lavorativi, così il conteggio
+ * condiviso è caricato prima, sempre e nell'ordine giusto: hook_library_info_build
+ * gira prima di questo alter, quindi le librerie dinamiche sono già presenti.
+ *
+ * La si aggiunge a tutte, non a un elenco di formulari da tenere aggiornato a
+ * mano: il file è piccolo e un elenco che si disallinea costerebbe di più.
+ */
+function entypa_library_info_alter(array &$libraries, $extension) {
+  if ($extension !== 'webform') {
+    return;
+  }
+
+  foreach (array_keys($libraries) as $nome) {
+    if (str_starts_with($nome, 'webform.javascript.')) {
+      $libraries[$nome]['dependencies'][] = 'entypa/giorni-lavorativi';
+    }
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_presave() for webform_submission entities.
  *
  * Valorizza l'elemento "mail_istituto" con l'email configurata per l'istituto,
@@ -61,4 +130,142 @@ function entypa_webform_submission_presave(WebformSubmissionInterface $webform_s
 
   $data['mail_istituto'] = $mail;
   $webform_submission->setData($data);
+}
+
+/**
+ * Conta i giorni lavorativi di un periodo, estremi inclusi.
+ *
+ * Serve a tutti i formulari che chiedono un periodo e ne dichiarano i giorni:
+ * ferie, festività soppresse e quanti altri useranno la stessa struttura.
+ *
+ * Le ferie si computano in giorni lavorativi (art. 13, comma 2, del CCNL
+ * 29/11/2007): domeniche e festività non si scalano. Alle festività nazionali,
+ * che sono calcolabili, si aggiunge la ricorrenza del santo patrono presa dalle
+ * impostazioni di Entýpa, perché varia con la sede e non si può dedurre.
+ *
+ * @param string $inizio
+ *   Data di inizio in formato Y-m-d.
+ * @param string $fine
+ *   Data di fine in formato Y-m-d.
+ *
+ * @return int|null
+ *   I giorni lavorativi, oppure NULL se le date mancano o sono incoerenti.
+ */
+function entypa_giorni_lavorativi($inizio, $fine) {
+  if (!is_string($inizio) || !is_string($fine) || $inizio === '' || $fine === '') {
+    return NULL;
+  }
+
+  $da = \DateTimeImmutable::createFromFormat('!Y-m-d', $inizio, new \DateTimeZone('UTC'));
+  $a = \DateTimeImmutable::createFromFormat('!Y-m-d', $fine, new \DateTimeZone('UTC'));
+  if (!$da || !$a || $a < $da) {
+    return NULL;
+  }
+
+  // Un periodo di ferie non supera l'anno: oltre, il dato è errato.
+  if ($da->diff($a)->days > 366) {
+    return NULL;
+  }
+
+  $fisse = [
+    '01-01', '01-06', '04-25', '05-01', '06-02',
+    '08-15', '11-01', '12-08', '12-25', '12-26',
+  ];
+
+  // Se il patrono cade di domenica non aggiunge nulla, ed è corretto: l'art. 14
+  // lo considera festivo «purché ricadente in giorno lavorativo».
+  $patrono = entypa_get_patrono();
+  if ($patrono !== '') {
+    $fisse[] = $patrono;
+  }
+
+  $giorni = 0;
+  $pasquette = [];
+  for ($g = $da; $g <= $a; $g = $g->modify('+1 day')) {
+    if ($g->format('N') === '7') {
+      continue;
+    }
+    if (in_array($g->format('m-d'), $fisse, TRUE)) {
+      continue;
+    }
+
+    $anno = (int) $g->format('Y');
+    if (!isset($pasquette[$anno])) {
+      $pasquette[$anno] = _entypa_pasquetta($anno);
+    }
+    if ($g->format('Y-m-d') === $pasquette[$anno]) {
+      continue;
+    }
+
+    $giorni++;
+  }
+
+  return $giorni;
+}
+
+/**
+ * Restituisce il lunedì dell'Angelo di un anno, in formato Y-m-d.
+ *
+ * Pasqua gregoriana con l'algoritmo di Meeus/Jones/Butcher, per non dipendere
+ * dall'estensione calendar di PHP, che non è detto sia installata. La domenica
+ * di Pasqua non serve: è già esclusa fra le domeniche.
+ *
+ * @param int $anno
+ *   L'anno di riferimento.
+ *
+ * @return string
+ *   La data del lunedì dell'Angelo in formato Y-m-d.
+ */
+function _entypa_pasquetta($anno) {
+  $a = $anno % 19;
+  $b = intdiv($anno, 100);
+  $c = $anno % 100;
+  $d = intdiv($b, 4);
+  $e = $b % 4;
+  $f = intdiv($b + 8, 25);
+  $g = intdiv($b - $f + 1, 3);
+  $h = (19 * $a + $b - $d - $g + 15) % 30;
+  $i = intdiv($c, 4);
+  $k = $c % 4;
+  $l = (32 + 2 * $e + 2 * $i - $h - $k) % 7;
+  $m = intdiv($a + 11 * $h + 22 * $l, 451);
+  $mese = intdiv($h + $l - 7 * $m + 114, 31);
+  $giorno = (($h + $l - 7 * $m + 114) % 31) + 1;
+
+  $pasqua = new \DateTimeImmutable(sprintf('%04d-%02d-%02d', $anno, $mese, $giorno), new \DateTimeZone('UTC'));
+  return $pasqua->modify('+1 day')->format('Y-m-d');
+}
+
+/**
+ * Aggancia una validazione all'elemento indicato di un form di invio.
+ *
+ * Va usata al posto di $form['#validate']: quando il bottone premuto ha un
+ * proprio #validate — è il caso di «Anteprima» e di «Avanti» — il Form API non
+ * esegue i validatori di form, e Webform li richiama a mano solo in alcune
+ * condizioni. #element_validate invece viene eseguito sempre, nell'ordine in
+ * cui gli elementi compaiono nel form, e viene soppresso da Webform sugli
+ * elementi nascosti dalle condizioni: esattamente quel che serve.
+ *
+ * @param array $form
+ *   Il form di invio, per riferimento.
+ * @param string $chiave
+ *   La chiave dell'elemento Webform a cui agganciare la validazione.
+ * @param string $callback
+ *   La funzione di validazione.
+ *
+ * @return bool
+ *   TRUE se l'elemento è stato trovato e la validazione agganciata.
+ */
+function entypa_aggiungi_validazione(array &$form, $chiave, $callback) {
+  foreach (Element::children($form) as $figlio) {
+    if (($form[$figlio]['#webform_key'] ?? NULL) === $chiave) {
+      $form[$figlio]['#element_validate'][] = $callback;
+      return TRUE;
+    }
+    if (entypa_aggiungi_validazione($form[$figlio], $chiave, $callback)) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }

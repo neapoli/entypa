@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\webform\WebformSubmissionInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +22,46 @@ function ferie_estive_doc_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for webform_submission entities.
+ *
+ * Ricalcola i giorni di ferie di ogni periodo e il totale. Il JavaScript del
+ * modulo fa lo stesso conto mentre si compila, ma i campi sono readonly e
+ * quindi modificabili dagli strumenti di sviluppo, e restano vuoti se lo
+ * script non gira: il numero che finisce sull'istanza firmata deve nascere
+ * qui, dove nessuno può toccarlo.
+ */
+function ferie_estive_doc_webform_submission_presave(WebformSubmissionInterface $webform_submission) {
+  $webform = $webform_submission->getWebform();
+  if (!$webform || $webform->id() !== 'ferie_estive_doc') {
+    return;
+  }
+
+  $data = $webform_submission->getData();
+  $periodi = $data['periodi_richiesti'] ?? [];
+  if (!is_array($periodi)) {
+    return;
+  }
+
+  $totale = 0;
+  $conteggiate = FALSE;
+  foreach ($periodi as $indice => $periodo) {
+    $giorni = entypa_giorni_lavorativi(
+      $periodo['data_inizio'] ?? '',
+      $periodo['data_fine'] ?? ''
+    );
+    $periodi[$indice]['numero_giorni'] = ($giorni === NULL) ? '' : (string) $giorni;
+    if ($giorni !== NULL) {
+      $totale += $giorni;
+      $conteggiate = TRUE;
+    }
+  }
+
+  // Zero è un risultato: un periodo di sole domeniche non consuma ferie, e
+  // dirlo è diverso dal lasciare il campo in bianco.
+  $data['periodi_richiesti'] = $periodi;
+  $data['totale_giorni'] = $conteggiate ? (string) $totale : '';
+  $webform_submission->setData($data);
 }

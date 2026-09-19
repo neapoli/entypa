@@ -129,12 +129,29 @@ elements: |-
     '#access_view_roles':
       - authenticated
     '#text': |
-      <p>Con riferimento all’art. 18 del CCNL del 6.7.1995, all’art. 28, comma 6, del CCNL 21/05/2018, agli effetti della legge 937/1977,</p>
+      <p>ai sensi dell'art. 14 del C.C.N.L. 29.11.2007 e della legge 23 dicembre 1977, n. 937</p>
 
       <div class="text-align-center"><strong>CHIEDE</strong></div>
 
-      <p>di poter usufruire dei seguenti giorni di festività soppresse:</p>
+      <p>di poter usufruire dei seguenti giorni di festivit&agrave; soppresse:</p>
+
+      <p>Le giornate di riposo spettanti sono quattro per anno scolastico e si fruiscono nel corso dell'anno cui si riferiscono (art. 14, commi 1 e 2). Il conteggio dei giorni esclude domeniche e festivit&agrave;.</p>
     '#format': bootstrap_italia_2
+  anno_scolastico_di_riferimento:
+    '#type': textfield
+    '#title': 'Anno scolastico di riferimento'
+    '#description': '<p>Le quattro giornate si fruiscono nel corso dell''anno scolastico cui si riferiscono (art. 14, comma 2, del CCNL 29/11/2007).</p>'
+    '#required': true
+    '#size': 12
+    '#placeholder': 2026/2027
+    '#pattern': '\d{4}/\d{4}'
+    '#pattern_error': "Indicare l'anno scolastico nella forma 2026/2027."
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   periodi_richiesti:
     '#type': webform_custom_composite
     '#title': 'Periodi richiesti'
@@ -212,9 +229,7 @@ elements: |-
       '#access_create_roles':
         - authenticated
       '#access_update_roles':
-        - administrator
-        - dirigente
-        - direttore
+        - authenticated
       '#access_view_roles':
         - authenticated
   file_pdf:
@@ -246,7 +261,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ''
-javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  var SEL_DATE = 'input[name*=\"[data_inizio]\"], input[name*=\"[data_fine]\"]';\r\n  var SEL_PESO = 'select[name*=\"[weight]\"]';\r\n  var SEL_FORM = '[class*=\"webform-submission-assenza-festivita-soppresse-ata\"]';\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  // Passaggio completo: ricalcola i giorni, valida la sequenza, somma il totale.\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var finePrecedente = null;\r\n\r\n    $form.find('input[name*=\"[data_inizio]\"]').each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $inizio = campo($form, p, 'data_inizio');\r\n      var $fine   = campo($form, p, 'data_fine');\r\n      var $giorni = campo($form, p, 'numero_giorni');\r\n\r\n      var dInizio = toData($inizio.val());\r\n      var dFine   = toData($fine.val());\r\n\r\n      var errInizio = '';\r\n      var errFine   = '';\r\n\r\n      // 1. La riga deve iniziare dopo la fine della riga precedente.\r\n      if (dInizio !== null && finePrecedente !== null && dInizio <= finePrecedente) {\r\n        errInizio = 'Il periodo ' + (indice + 1) +\r\n          ' deve iniziare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      // 2. Fine >= inizio (inizio == fine significa un giorno solo).\r\n      if (dInizio !== null && dFine !== null && dFine < dInizio) {\r\n        errFine = 'La data di fine non può precedere quella di inizio.';\r\n      }\r\n      // 3. Caso limite: inizio vuoto ma fine compilata.\r\n      else if (dInizio === null && dFine !== null &&\r\n               finePrecedente !== null && dFine <= finePrecedente) {\r\n        errFine = 'Il periodo ' + (indice + 1) +\r\n          ' deve terminare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      errore($inizio, errInizio);\r\n      errore($fine, errFine);\r\n\r\n      if (dInizio !== null && dFine !== null && !errInizio && !errFine) {\r\n        var giorni = Math.round((dFine - dInizio) / 86400000) + 1;\r\n        $giorni.val(giorni);\r\n        totale += giorni;\r\n      }\r\n      else {\r\n        $giorni.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dFine !== null && !errInizio && !errFine) {\r\n        finePrecedente = dFine;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"totale_giorni\"]').val(totale || '');\r\n  }\r\n\r\n  $(document).on('change.ferieGiorni input.ferieGiorni', SEL_DATE, function () {\r\n    var $form = $(this).closest(SEL_FORM);\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Riordino delle righe via drag & drop: cambia l'ordine, va rivalidato.\r\n  $(document).on('change.ferieGiorni', SEL_PESO, function () {\r\n    var $form = $(this).closest(SEL_FORM);\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.ferieGiorni', function () {\r\n    $(SEL_FORM).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.ferieEstiveDocGiorni = {\r\n    attach: function (context) {\r\n      $(context).find(SEL_FORM).addBack(SEL_FORM).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n})(jQuery, Drupal);"
+javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  /* Il conteggio dei giorni lavorativi sta in entypa/giorni-lavorativi,\r\n     dichiarata come dipendenza in entypa_library_info_alter(). Lo stesso\r\n     conto esiste in PHP e ha l'ultima parola: vedi il presave del modulo. */\r\n\r\n  var SEL_DATE = 'input[name*=\"[data_inizio]\"], input[name*=\"[data_fine]\"]';\r\n  var SEL_PESO = 'select[name*=\"[weight]\"]';\r\n  /* Le giornate di riposo dell'art. 14, comma 1, del CCNL 29/11/2007. Il\r\n     controllo qui è solo un avviso tempestivo: a rifiutare la domanda è la\r\n     validazione del modulo, che rifà il conto e non si fida di questo campo,\r\n     che è readonly e quindi modificabile. */\r\n  var GIORNATE_SPETTANTI = 4;\r\n\r\n  var SEL_FORM = '[class*=\"webform-submission-assenza-festivita-soppresse-ata\"]';\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  // Passaggio completo: ricalcola i giorni, valida la sequenza, somma il totale.\r\n  function avvisoLimite($form, totale, conteggiate) {\r\n    var $tot = $form.find('input[name=\"totale_giorni\"]');\r\n    var eccede = conteggiate && totale > GIORNATE_SPETTANTI;\r\n    var testo = eccede\r\n      ? 'La domanda chiede ' + totale + ' giornate, ma le giornate di riposo '\r\n        + 'spettanti sono ' + GIORNATE_SPETTANTI + ' per anno scolastico '\r\n        + '(art. 14, comma 1, del CCNL 29/11/2007).'\r\n      : '';\r\n    var $avviso = $('#giornate-avviso-limite');\r\n\r\n    if (!$avviso.length) {\r\n      $avviso = $('<div>', { id: 'giornate-avviso-limite', 'aria-live': 'polite' });\r\n      $tot.closest('.js-form-item, .form-item').after($avviso);\r\n    }\r\n\r\n    $avviso.toggleClass('messages messages--warning', eccede).text(testo);\r\n\r\n    if ($tot[0] && $tot[0].setCustomValidity) {\r\n      $tot[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var conteggiate = false;\r\n    var finePrecedente = null;\r\n\r\n    $form.find('input[name*=\"[data_inizio]\"]').each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $inizio = campo($form, p, 'data_inizio');\r\n      var $fine   = campo($form, p, 'data_fine');\r\n      var $giorni = campo($form, p, 'numero_giorni');\r\n\r\n      var dInizio = Drupal.entypa.toData($inizio.val());\r\n      var dFine   = Drupal.entypa.toData($fine.val());\r\n\r\n      var errInizio = '';\r\n      var errFine   = '';\r\n\r\n      // 1. La riga deve iniziare dopo la fine della riga precedente.\r\n      if (dInizio !== null && finePrecedente !== null && dInizio <= finePrecedente) {\r\n        errInizio = 'Il periodo ' + (indice + 1) +\r\n          ' deve iniziare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      // 2. Fine >= inizio (inizio == fine significa un giorno solo).\r\n      if (dInizio !== null && dFine !== null && dFine < dInizio) {\r\n        errFine = 'La data di fine non può precedere quella di inizio.';\r\n      }\r\n      // 3. Caso limite: inizio vuoto ma fine compilata.\r\n      else if (dInizio === null && dFine !== null &&\r\n               finePrecedente !== null && dFine <= finePrecedente) {\r\n        errFine = 'Il periodo ' + (indice + 1) +\r\n          ' deve terminare dopo la fine del periodo precedente.';\r\n      }\r\n\r\n      errore($inizio, errInizio);\r\n      errore($fine, errFine);\r\n\r\n      if (dInizio !== null && dFine !== null && !errInizio && !errFine) {\r\n        var giorni = Drupal.entypa.giorniLavorativi(dInizio, dFine);\r\n        $giorni.val(giorni);\r\n        totale += giorni;\r\n        conteggiate = true;\r\n      }\r\n      else {\r\n        $giorni.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dFine !== null && !errInizio && !errFine) {\r\n        finePrecedente = dFine;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"totale_giorni\"]').val(conteggiate ? totale : '');\r\n    avvisoLimite($form, totale, conteggiate);\r\n  }\r\n\r\n  $(document).on('change.ferieGiorni input.ferieGiorni', SEL_DATE, function () {\r\n    var $form = $(this).closest(SEL_FORM);\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Riordino delle righe via drag & drop: cambia l'ordine, va rivalidato.\r\n  $(document).on('change.ferieGiorni', SEL_PESO, function () {\r\n    var $form = $(this).closest(SEL_FORM);\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.ferieGiorni', function () {\r\n    $(SEL_FORM).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.festivitaSoppresseAtaGiorni = {\r\n    attach: function (context) {\r\n      $(context).find(SEL_FORM).addBack(SEL_FORM).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n})(jQuery, Drupal);"
 settings:
   ajax: false
   ajax_scroll_top: ''
@@ -356,6 +371,7 @@ settings:
   preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
   preview_attributes: {  }
   preview_excluded_elements:
+    file_pdf: file_pdf
     istituto: istituto
     mail_istituto: mail_istituto
     mail_user: mail_user

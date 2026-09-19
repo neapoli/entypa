@@ -47,6 +47,9 @@
         <p class="center-bold">CHIEDE</p>
         <p>
 		      Il seguente periodo di Ferie estive riferite all'<strong>{{ data.anno_scolastico_di_riferimento }}</strong>
+          {% if data.motivo_anno_precedente %}
+            <br />Motivo del mancato godimento nell'anno di maturazione: <strong>{{ data.motivo_anno_precedente }}</strong>
+          {% endif %}
         </p>
         {% if data.periodi_richiesti %}
           <strong>Periodi richiesti:</strong>
@@ -69,6 +72,7 @@
             </tbody>
           </table>
           <p>Per un totale di giorni: <strong>{{ data.totale_giorni }}</strong></p>
+          <p style="margin: 2px 0 12px; font-size: 0.9em;">Il conteggio è in giorni lavorativi ed esclude domeniche e festività (art. 13, comma 2, CCNL 29/11/2007). Le ferie spettanti sono 32 giorni lavorativi, 30 per il personale neoassunto nei primi tre anni di servizio.</p>
         {% endif %}
         {% if data.note %}
           <div style="margin-top: 20px;">

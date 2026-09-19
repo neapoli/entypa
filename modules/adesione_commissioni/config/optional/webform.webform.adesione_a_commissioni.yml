@@ -23,7 +23,9 @@ archive: false
 id: adesione_a_commissioni
 title: 'Adesione a Commissioni'
 description: "<p>Form per aderire alle varie commissioni di lavoro dell'Istituto.</p>"
-categories: {  }
+categories:
+  - Docenti
+  - Ata
 elements: |-
   dati_anagrafici:
     '#type': webform_flexbox
@@ -44,6 +46,7 @@ elements: |-
       '#title': Cognome
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#required': true
       '#default_value': '[current-user:field_cognome]'
       '#access_create_roles':
         - authenticated
@@ -56,6 +59,7 @@ elements: |-
       '#title': Nome
       '#readonly': true
       '#input_mask': "'casing': 'upper'"
+      '#required': true
       '#default_value': '[current-user:field_nome]'
       '#access_create_roles':
         - authenticated
@@ -152,7 +156,7 @@ elements: |-
     '#type': webform_flexbox
     '#attributes':
       style: 'margin-top: 50px'
-    data_di_invio:
+    data_compilazione:
       '#type': date
       '#title': 'Data compilazione'
       '#title_display': inline
