@@ -151,6 +151,21 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
+  anno_solare_di_riferimento:
+    '#type': textfield
+    '#title': 'Anno solare di riferimento'
+    '#description': '<p>Le 150 ore si contano per anno solare, non per anno scolastico (art. 37, comma 1, del CCNL 2019-2021).</p>'
+    '#required': true
+    '#size': 8
+    '#placeholder': '2026'
+    '#pattern': '\d{4}'
+    '#pattern_error': "Indicare l'anno solare in quattro cifre, ad esempio 2026."
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   processed_text:
     '#type': processed_text
     '#access_create_roles':
@@ -160,7 +175,7 @@ elements: |-
     '#access_view_roles':
       - authenticated
     '#display_on': both
-    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>I seguenti giorni di permesso straordinario retribuito per il diritto allo studio ai sensi dell''art. 3 del D.P.R. 395/1988 e dell''art.15, comma 7, del C.C.N.L. per il comparto Scuola.</p>'
+    '#text': '<p class="text-align-center"><strong>CHIEDE</strong></p><p>le seguenti ore di permesso straordinario retribuito per il diritto allo studio, ai sensi dell''art. 37 del C.C.N.L. Istruzione e Ricerca 2019-2021.</p><p>I permessi spettano nella misura massima di <strong>150 ore annue individuali per ciascun anno solare</strong>, entro il limite del <strong>3% del personale in servizio</strong> all''inizio di ogni anno. Se le richieste superano quel contingente, la precedenza è accordata nell''ordine a chi frequenta corsi di scuola media superiore, universitari e post-universitari (art. 37, commi 1 e 3).</p><p>Chi fruisce di questi permessi ha diritto, salvo eccezionali e inderogabili esigenze di servizio, a turni di lavoro che agevolino la frequenza ai corsi e la preparazione agli esami, e non è obbligato a prestazioni di lavoro straordinario o durante i giorni festivi e di riposo settimanale (art. 37, comma 4).</p>'
     '#format': bootstrap_italia_2
   permesso_orario:
     '#type': webform_custom_composite
@@ -227,9 +242,38 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
+  certificazione_iscrizione:
+    '#type': radios
+    '#title': "Certificazione di iscrizione al corso"
+    '#description': '<p>L''art. 37, comma 5, del CCNL 2019-2021 richiede la certificazione dell''iscrizione, della frequenza e degli esami sostenuti. L''iscrizione si documenta subito; frequenza ed esami si attestano dopo.</p>'
+    '#options':
+      allego: 'La allego a questa domanda'
+      gia_consegnata: "È già stata consegnata all'istituto per l'anno solare indicato"
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  impegno_certificazioni:
+    '#type': checkbox
+    '#title': 'Mi impegno a produrre la certificazione di frequenza per le ore fruite e quella degli esami finali sostenuti'
+    '#description': '<p>In mancanza delle certificazioni previste, i permessi già utilizzati vengono considerati come aspettativa senza assegni per motivi personali, con recupero delle somme corrisposte (art. 37, comma 5, del CCNL Istruzione e Ricerca 2019-2021).</p>'
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   documento_allegato:
     '#type': managed_file
-    '#title': 'Allegato/i (Non obbligatorio)'
+    '#title': 'Certificazione di iscrizione ed eventuali altri allegati'
+    '#states':
+      required:
+        ':input[name="certificazione_iscrizione"]':
+          value: allego
     '#multiple': 5
     '#format_items': comma
     '#access_create_roles':
@@ -331,7 +375,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ".referenti-plesso {\r\n  visibility: hidden;\r\n}"
-javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  var SEL_ORE = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_PESO   = 'select[name*=\"permesso_orario\"][name*=\"[weight]\"]';\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Il giorno deve essere successivo a quello della riga precedente.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno <= giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' deve essere successivo a quello della riga precedente.';\r\n      }\r\n\r\n      // 2. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dGiorno !== null && !errGiorno) {\r\n        giornoPrecedente = dGiorno;\r\n      }\r\n    });\r\n\r\n    $form.find('input[name=\"per_un_totale_di_ore\"]')\r\n      .val(totale ? formatOre(totale) : '');\r\n  }\r\n\r\n  function formConPermessi(context) {\r\n    return $(context).find('form').addBack('form').has(SEL_GIORNO);\r\n  }\r\n\r\n  $(document).on('change.permessiOre input.permessiOre',\r\n    SEL_ORE + ', ' + SEL_GIORNO, function () {\r\n      var $form = $(this).closest('form');\r\n      if ($form.length) { validaForm($form); }\r\n    });\r\n\r\n  // Riordino righe via drag & drop.\r\n  $(document).on('change.permessiOre', SEL_PESO, function () {\r\n    var $form = $(this).closest('form');\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.permessiOre', function () {\r\n    formConPermessi(document).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.permessiOrariTotale = {\r\n    attach: function (context) {\r\n      formConPermessi(context).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
+javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  /* 150 ore annue individuali per ciascun anno solare (art. 37, comma 1, del\r\n     CCNL Istruzione e Ricerca 2019-2021). Il controllo qui riguarda la singola\r\n     domanda: quante ore siano già state fruite nell'anno il formulario non lo\r\n     sa. A rifiutare è comunque la validazione del modulo, perché questo campo\r\n     è readonly e quindi modificabile. */\r\n  var ORE_ANNUE = 150;\r\n\r\n  function avvisoTetto($tot, minuti) {\r\n    var eccede = minuti > ORE_ANNUE * 60;\r\n    var testo = eccede\r\n      ? 'La domanda chiede ' + Math.round(minuti / 6) / 10 + ' ore, ma il '\r\n        + 'permesso per il diritto allo studio è di ' + ORE_ANNUE + ' ore annue '\r\n        + 'individuali per anno solare (art. 37, comma 1, del CCNL 2019-2021).'\r\n      : '';\r\n    var $a = $('#avviso-150-ore');\r\n\r\n    if (!$a.length) {\r\n      $a = $('<div>', { id: 'avviso-150-ore', 'aria-live': 'polite' });\r\n      $tot.closest('.js-form-item, .form-item').after($a);\r\n    }\r\n\r\n    $a.toggleClass('messages messages--warning', eccede).text(testo);\r\n\r\n    if ($tot[0] && $tot[0].setCustomValidity) {\r\n      $tot[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  var SEL_ORE = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_PESO   = 'select[name*=\"permesso_orario\"][name*=\"[weight]\"]';\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Il giorno deve essere successivo a quello della riga precedente.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno <= giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' deve essere successivo a quello della riga precedente.';\r\n      }\r\n\r\n      // 2. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dGiorno !== null && !errGiorno) {\r\n        giornoPrecedente = dGiorno;\r\n      }\r\n    });\r\n\r\n    var $totOre = $form.find('input[name=\"per_un_totale_di_ore\"]');\r\n    $totOre.val(totale ? formatOre(totale) : '');\r\n    avvisoTetto($totOre, totale);\r\n  }\r\n\r\n  function formConPermessi(context) {\r\n    return $(context).find('form').addBack('form').has(SEL_GIORNO);\r\n  }\r\n\r\n  $(document).on('change.permessiOre input.permessiOre',\r\n    SEL_ORE + ', ' + SEL_GIORNO, function () {\r\n      var $form = $(this).closest('form');\r\n      if ($form.length) { validaForm($form); }\r\n    });\r\n\r\n  // Riordino righe via drag & drop.\r\n  $(document).on('change.permessiOre', SEL_PESO, function () {\r\n    var $form = $(this).closest('form');\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.permessiOre', function () {\r\n    formConPermessi(document).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.permessiOrariTotale = {\r\n    attach: function (context) {\r\n      formConPermessi(context).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
 settings:
   ajax: false
   ajax_scroll_top: ''

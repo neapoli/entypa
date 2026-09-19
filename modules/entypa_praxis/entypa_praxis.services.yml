@@ -1,0 +1,23 @@
+services:
+  entypa_praxis.email:
+    class: Drupal\entypa_praxis\Service\EmailService
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+      - '@plugin.manager.mail'
+      - '@current_user'
+      - '@language_manager'
+      - '@date.formatter'
+      - '@database'
+
+  entypa_praxis.field_manager:
+    class: Drupal\entypa_praxis\Service\FieldManagerService
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+
+  entypa_praxis.instance_helper:
+    class: Drupal\entypa_praxis\Service\InstanceHelperService
+    arguments:
+      - '@database'
+      - '@entity_type.manager'

@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +22,59 @@ function permessi_brevi_art16_ata_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Ore di permesso breve nell'anno scolastico, per il personale ATA.
+ *
+ * @see art. 16, comma 2, del CCNL 29/11/2007
+ */
+const PERMESSI_BREVI_ART16_ATA_ORE_ANNUE = 36;
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function permessi_brevi_art16_ata_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if ($webform && $webform->id() === 'permessi_brevi_art16_ata') {
+    entypa_aggiungi_validazione($form, 'per_un_totale_di_ore', 'permessi_brevi_art16_ata_valida_ore');
+  }
+}
+
+/**
+ * Validazione del tetto annuo, sulla singola domanda.
+ *
+ * Il totale viene rifatto dagli orari, perché il campo che lo mostra è readonly
+ * e lo riempie il JavaScript. Il limite del comma 1 sulla singola richiesta —
+ * metà dell'orario giornaliero individuale — non è verificabile qui: quell'orario
+ * dipende da flessibilità, plurisettimanale e turni, che il formulario non conosce.
+ */
+function permessi_brevi_art16_ata_valida_ore(array &$elemento, FormStateInterface $form_state) {
+  $minuti = 0;
+  foreach ((array) $form_state->getValue('permesso_orario') as $riga) {
+    $durata = _permessi_brevi_art16_ata_minuti($riga['ora_inizio'] ?? '', $riga['ora_fine'] ?? '');
+    if ($durata !== NULL) {
+      $minuti += $durata;
+    }
+  }
+
+  if ($minuti > PERMESSI_BREVI_ART16_ATA_ORE_ANNUE * 60) {
+    $form_state->setErrorByName('per_un_totale_di_ore', t(
+      'La domanda chiede @ore ore, ma i permessi brevi non possono eccedere @tetto ore nel corso dell\'anno scolastico (art. 16, comma 2, del CCNL 29.11.2007).',
+      ['@ore' => round($minuti / 60, 1), '@tetto' => PERMESSI_BREVI_ART16_ATA_ORE_ANNUE]
+    ));
+  }
+}
+
+/**
+ * Minuti fra due orari nella forma HH:MM, o NULL se non calcolabili.
+ */
+function _permessi_brevi_art16_ata_minuti($inizio, $fine) {
+  if (!preg_match('/^(\d{1,2}):(\d{2})/', (string) $inizio, $a)
+    || !preg_match('/^(\d{1,2}):(\d{2})/', (string) $fine, $b)) {
+    return NULL;
+  }
+
+  $minuti = ((int) $b[1] * 60 + (int) $b[2]) - ((int) $a[1] * 60 + (int) $a[2]);
+  return $minuti > 0 ? $minuti : NULL;
 }

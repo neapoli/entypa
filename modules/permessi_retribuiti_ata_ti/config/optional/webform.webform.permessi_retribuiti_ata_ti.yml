@@ -21,8 +21,8 @@ uid: 1
 template: false
 archive: false
 id: permessi_retribuiti_ata_ti
-title: 'Permessi retribuiti art. 15 (ATA Tempo indeterminato)'
-description: '<p>Form per richiesta di permessi retribuiti art. 15 (ATA Tempo indeterminato)</p>'
+title: 'Permessi retribuiti — personale ATA a tempo indeterminato (art. 15 CCNL 29/11/2007)'
+description: '<p>Form per la richiesta di permessi retribuiti del personale ATA a tempo indeterminato, ai sensi dell''art. 15 del CCNL 29/11/2007.</p>'
 categories:
   - Ata
 elements: |-
@@ -127,6 +127,15 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
+  avvertenza_modulo_errato:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="a_tempo"]':
+          value: 'Tempo determinato'
+    '#markup': |-
+      <p><strong>Attenzione:</strong> il tuo profilo risulta a <strong>tempo determinato</strong>, mentre questo modulo riguarda il personale di ruolo e applica l'art. 15 del CCNL 29/11/2007. Se hai un contratto a termine, usa il modulo «Permessi — personale ATA a tempo determinato», che applica l'art. 35 del CCNL 2019-2021. Se invece il dato del profilo non è aggiornato, segnalalo alla segreteria prima di procedere.</p>
   tipologia_richiesta:
     '#type': radios
     '#title': 'Tipologia di permesso'
@@ -238,22 +247,11 @@ elements: |-
     '#text': |
       <p><strong>Matrimonio </strong>- Permesso retribuito di quindici giorni consecutivi in occasione del matrimonio, con decorrenza indicata dal dipendente medesimo ma comunque fruibili da una settimana prima a due mesi successivi al matrimonio stesso. Il personale, che intende usufruire dei 15 giorni di permesso per matrimonio, deve presentare la richiesta al dirigente scolastico con ragionevole anticipo (eccetto i casi in cui vi siano motivi urgenti e imprevedibili). Il dipendente dovrà produrre, a giustificazione dell’assenza, il certificato del matrimonio rilasciato dall’ufficiale di stato o una dichiarazione sostitutiva di certificazione comprovante l’avvenuto matrimonio</p>
     '#format': bootstrap_italia_2
-  motivi_familiari_personali:
-    '#type': processed_text
-    '#states':
-      visible:
-        ':input[name="tipologia_richiesta"]':
-          value: 'Motivi familiari/personali '
-    '#access_create_roles':
-      - authenticated
-    '#access_update_roles':
-      - authenticated
-    '#access_view_roles':
-      - authenticated
-    '#text': |
-      <p><strong>Motivi familiari/personali</strong><br />
-      Tre giorni di permesso retribuito per motivi personali o familiari documentati anche mediante autocertificazione. In aggiunta ai tre giorni sopraccitati i 6 giorni di ferie previsti dall’art. del CCNL (fruibili durante i periodi di attività didattica) possono essere trasformati in permessi retribuiti, in tale caso non opera la condizione di non creare oneri all’amministrazione.</p>
-    '#format': bootstrap_italia_2
+  avvertenza_motivi_personali:
+    '#type': webform_markup
+    '#display_on': form
+    '#markup': |-
+      <p>Per i <strong>motivi personali o familiari</strong> il personale ATA non rientra nell'art. 15, comma 2, che riguarda il personale docente: dispone di <strong>18 ore di permesso retribuito nell'anno scolastico</strong>, fruibili anche ad ore, ai sensi dell'art. 67 del CCNL Istruzione e Ricerca 2019-2021. Quell'istituto non è fra le tipologie di questo modulo: per fruirne rivolgersi alla segreteria.</p>
   donazione_sangue:
     '#type': processed_text
     '#states':
@@ -320,10 +318,10 @@ elements: |-
     '#access_view_roles':
       - authenticated
     '#text': |
-      <p><strong>Art. 38 - CCNL Contratto scuola - Permessi ed Assenze del Personale Docente Chiamato a Ricoprire Cariche Pubbliche Elettive</strong></p>
+      <p><strong>Art. 52 - CCNL 29/11/2007 - Permessi ed assenze del personale ATA chiamato a ricoprire cariche pubbliche elettive</strong></p>
 
       <ol>
-      	<li>Nei confronti del personale docente chiamato a ricoprire cariche elettive, si applicano le norme di cui al d.lgs 18.08.2000, n. 267 e di cui all'art. 68 del d.lgs. 30 marzo 2001, n. 165. Il personale che si avvalga del regime delle assenze e dei permessi di cui alle leggi predette, è tenuto a presentare, ogni trimestre, a partire dall'inizio dell'anno scolastico, alla scuola in cui presta servizio, apposita dichiarazione circa gli impegni connessi alla carica ricoperta, da assolvere nel trimestre successivo, nonché a comunicare mensilmente alla stessa scuola la conferma o le eventuali variazioni degli impegni già dichiarati.</li>
+      	<li>Nei confronti del personale ATA chiamato a ricoprire cariche elettive, si applicano le norme di cui al d.lgs 18.08.2000, n. 267 e di cui all'art. 68 del d.lgs. 30 marzo 2001, n. 165. Il personale che si avvalga del regime delle assenze e dei permessi di cui alle leggi predette, è tenuto a presentare, ogni trimestre, a partire dall'inizio dell'anno scolastico, alla scuola in cui presta servizio, apposita dichiarazione circa gli impegni connessi alla carica ricoperta, da assolvere nel trimestre successivo, nonché a comunicare mensilmente alla stessa scuola la conferma o le eventuali variazioni degli impegni già dichiarati.</li>
       	<li>Nel caso in cui il docente presti servizio in più scuole, la predetta dichiarazione va presentata a tutte le scuole interessate.</li>
       	<li>Qualora le assenze dal servizio derivanti dall'assolvimento degli impegni dichiarati non consentano al docente di assicurare la necessaria continuità didattica nella classe o nelle classi cui sia assegnato può farsi luogo alla nomina di un supplente per il periodo strettamente indispensabile e, comunque, sino al massimo di un mese, durata prorogabile soltanto ove se ne ponga l'esigenza in relazione a quanto dichiarato nella comunicazione mensile di cui al comma 1, sempreché non sia possibile provvedere con altro personale docente in soprannumero o a disposizione.</li>
       	<li>Per tutta la durata della nomina del supplente il docente, nei periodi in cui non sia impegnato nell'assolvimento dei compiti connessi alla carica ricoperta, è utilizzato nell'ambito della scuola e per le esigenze di essa, nei limiti dell'orario obbligatorio di servizio. prioritariamente per le supplenze e per i corsi di recupero.</li>

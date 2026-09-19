@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +22,58 @@ function permessi_150ore_ata_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Ore di permesso per il diritto allo studio, per anno solare.
+ *
+ * @see art. 37, comma 1, del CCNL Istruzione e Ricerca 2019-2021
+ */
+const PERMESSI_150ORE_ATA_ORE_ANNUE = 150;
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function permessi_150ore_ata_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if ($webform && $webform->id() === 'permessi_150ore_ata') {
+    entypa_aggiungi_validazione($form, 'per_un_totale_di_ore', 'permessi_150ore_ata_valida_ore');
+  }
+}
+
+/**
+ * Validazione del tetto annuo, sulla singola domanda.
+ *
+ * Il totale viene rifatto dagli orari: il campo che lo mostra è readonly e lo
+ * riempie il JavaScript, quindi non fa fede. Quante ore siano già state fruite
+ * nell'anno solare resta un riscontro della segreteria.
+ */
+function permessi_150ore_ata_valida_ore(array &$elemento, FormStateInterface $form_state) {
+  $minuti = 0;
+  foreach ((array) $form_state->getValue('permesso_orario') as $riga) {
+    $durata = _permessi_150ore_ata_minuti($riga['ora_inizio'] ?? '', $riga['ora_fine'] ?? '');
+    if ($durata !== NULL) {
+      $minuti += $durata;
+    }
+  }
+
+  if ($minuti > PERMESSI_150ORE_ATA_ORE_ANNUE * 60) {
+    $form_state->setErrorByName('per_un_totale_di_ore', t(
+      'La domanda chiede @ore ore, ma il permesso per il diritto allo studio è di @tetto ore annue individuali per anno solare (art. 37, comma 1, del CCNL Istruzione e Ricerca 2019-2021).',
+      ['@ore' => round($minuti / 60, 1), '@tetto' => PERMESSI_150ORE_ATA_ORE_ANNUE]
+    ));
+  }
+}
+
+/**
+ * Minuti fra due orari nella forma HH:MM, o NULL se non calcolabili.
+ */
+function _permessi_150ore_ata_minuti($inizio, $fine) {
+  if (!preg_match('/^(\d{1,2}):(\d{2})/', (string) $inizio, $a)
+    || !preg_match('/^(\d{1,2}):(\d{2})/', (string) $fine, $b)) {
+    return NULL;
+  }
+
+  $minuti = ((int) $b[1] * 60 + (int) $b[2]) - ((int) $a[1] * 60 + (int) $a[2]);
+  return $minuti > 0 ? $minuti : NULL;
 }

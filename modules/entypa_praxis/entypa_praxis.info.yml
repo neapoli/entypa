@@ -1,0 +1,10 @@
+name: "Entýpa — Praxis"
+description: "Istruttoria e definizione delle istanze prodotte dai formulari Entýpa: protocollo, visti, concessione, evasione, annullamento ed elaborazione."
+package: "Neapoli"
+
+type: module
+core_version_requirement: ^10 || ^11 || ^12
+dependencies:
+  - entypa:entypa
+  - webform:webform
+  - drupal:views

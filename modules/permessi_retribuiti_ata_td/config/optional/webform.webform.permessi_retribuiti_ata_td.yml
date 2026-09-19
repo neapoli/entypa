@@ -21,8 +21,8 @@ uid: 1
 template: false
 archive: false
 id: permessi_retribuiti_ata_td
-title: 'Permessi retribuiti art. 19 (ATA Tempo determinato)'
-description: '<p>Form per la richiesta di permessi retribuiti art.19 (ATA Tempo determinato)</p>'
+title: 'Permessi — personale ATA a tempo determinato (art. 35 CCNL 2019-2021)'
+description: '<p>Form per la richiesta di permessi e assenze del personale ATA a tempo determinato, ai sensi dell''art. 35 del CCNL Istruzione e Ricerca 2019-2021.</p>'
 categories:
   - Ata
 elements: |-
@@ -127,6 +127,29 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
+  avvertenza_modulo_errato:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="a_tempo"]':
+          value: 'Tempo indeterminato'
+    '#markup': |-
+      <p><strong>Attenzione:</strong> il tuo profilo risulta a <strong>tempo indeterminato</strong>, mentre questo modulo riguarda il personale a tempo determinato e applica l'art. 35 del CCNL Istruzione e Ricerca 2019-2021. Se sei di ruolo, usa il modulo «Permessi retribuiti — personale ATA a tempo indeterminato». Se invece il dato del profilo non è aggiornato, segnalalo alla segreteria prima di procedere.</p>
+  tipo_contratto_td:
+    '#type': radios
+    '#title': 'Tipo di contratto a tempo determinato'
+    '#description': '<p>Dal tipo di contratto dipende il regime dei permessi per motivi personali o familiari: tre giorni retribuiti per i contratti annuali o al 30 giugno (art. 35, comma 12), sei giorni non retribuiti per gli altri (comma 13).</p>'
+    '#options':
+      annuale: 'Contratto annuale (31 agosto) o fino al termine delle attività didattiche (30 giugno)'
+      altro: 'Altro contratto a tempo determinato'
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
   tipologia_richiesta:
     '#type': radios
     '#title': 'Tipologia di permesso'
@@ -138,6 +161,9 @@ elements: |-
       'Donazione midollo osseo': 'Donazione midollo osseo'
       'Ricoprire Cariche Pubbliche Elettive': 'Ricoprire Cariche Pubbliche Elettive'
       "Citazione a testimoniare a favore dell'Amministrazione": "Citazione a testimoniare a favore dell'Amministrazione"
+      'Motivi personali o familiari': 'Motivi personali o familiari (3 giorni retribuiti)'
+      'Motivi personali o familiari non retribuiti': 'Motivi personali o familiari (6 giorni non retribuiti)'
+      'Concorsi ed esami': 'Concorsi ed esami (8 giorni non retribuiti)'
     '#options_display': two_columns
     '#required': true
     '#flex': 0
@@ -288,7 +314,7 @@ elements: |-
     '#access_view_roles':
       - authenticated
     '#text': |
-      <p><strong>Art. 38 - CCNL Contratto scuola - Permessi ed Assenze del Personale Docente Chiamato a Ricoprire Cariche Pubbliche Elettive</strong></p>
+      <p><strong>Art. 52 - CCNL 29/11/2007 - Permessi ed assenze del personale ATA chiamato a ricoprire cariche pubbliche elettive</strong></p>
 
       <ol>
       	<li>Nei confronti del personale docente chiamato a ricoprire cariche elettive, si applicano le norme di cui al d.lgs 18.08.2000, n. 267 e di cui all'art. 68 del d.lgs. 30 marzo 2001, n. 165. Il personale che si avvalga del regime delle assenze e dei permessi di cui alle leggi predette, è tenuto a presentare, ogni trimestre, a partire dall'inizio dell'anno scolastico, alla scuola in cui presta servizio, apposita dichiarazione circa gli impegni connessi alla carica ricoperta, da assolvere nel trimestre successivo, nonché a comunicare mensilmente alla stessa scuola la conferma o le eventuali variazioni degli impegni già dichiarati.</li>
@@ -299,6 +325,51 @@ elements: |-
       </ol>
 
       <p>&nbsp;</p>
+    '#format': bootstrap_italia_2
+  motivi_personali:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Motivi personali o familiari'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Motivi personali o familiari</strong> - Il personale assunto con contratto a tempo determinato per l'intero anno scolastico (31 agosto) o fino al termine delle attività didattiche (30 giugno) ha diritto, a domanda, a tre giorni di permesso retribuito nell'anno scolastico, per motivi personali o familiari, documentati anche mediante autocertificazione (art. 35, comma 12, del CCNL Istruzione e Ricerca 2019-2021). Per il personale ATA tali permessi possono anche essere fruiti ad ore, con le modalità dell'art. 67.</p>
+    '#format': bootstrap_italia_2
+  motivi_personali_non_retribuiti:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Motivi personali o familiari non retribuiti'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Motivi personali o familiari, non retribuiti</strong> - Al personale assunto con contratto a tempo determinato diverso da quello annuale o al 30 giugno sono attribuiti permessi non retribuiti, fino a un massimo di sei giorni per anno scolastico, per i motivi previsti dall'art. 15, comma 2, del CCNL 29/11/2007 (art. 35, comma 13). I periodi di assenza senza assegni interrompono la maturazione dell'anzianità di servizio (comma 15).</p>
+    '#format': bootstrap_italia_2
+  concorsi_esami:
+    '#type': processed_text
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'Concorsi ed esami'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p><strong>Concorsi ed esami</strong> - Al personale assunto a tempo determinato sono concessi permessi non retribuiti per la partecipazione a concorsi od esami, nel limite di otto giorni complessivi per anno scolastico, ivi compresi quelli eventualmente richiesti per il viaggio (art. 35, comma 14). I periodi di assenza senza assegni interrompono la maturazione dell'anzianità di servizio (comma 15).</p>
     '#format': bootstrap_italia_2
   note:
     '#type': textarea

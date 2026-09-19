@@ -1,0 +1,98 @@
+entypa_praxis.settings:
+  path: '/admin/config/system/entypa-praxis'
+  defaults:
+    _form: '\Drupal\entypa_praxis\Form\EntypaPraxisSettingsForm'
+    _title: 'Entýpa — Istruttoria delle istanze'
+  requirements:
+    _permission: 'amministra istanze'
+
+# I percorsi sono annidati sotto «praxis» per non accavallarsi con quelli del
+# vecchio modulo finché i due convivono: nessuno li digita a mano, i collegamenti
+# sono generati dai plugin Views per nome di rotta.
+entypa_praxis.acquisisci:
+  path: '/node/{node}/submission/{submission}/praxis/acquisisci/{tid}'
+  defaults:
+    _form: '\Drupal\entypa_praxis\Form\EntypaPraxisReasonsForm'
+    _title: 'Acquisisci istanza'
+    field: 'acquisito'
+  requirements:
+    _permission: 'acquisito'
+    node: \d+
+    submission: \d+
+    tid: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+entypa_praxis.concedi:
+  path: '/node/{node}/submission/{submission}/praxis/concedi/{tid}'
+  defaults:
+    _form: '\Drupal\entypa_praxis\Form\EntypaPraxisReasonsForm'
+    _title: 'Concedi istanza'
+    field: 'concedibile'
+  requirements:
+    _permission: 'acquisito'
+    node: \d+
+    submission: \d+
+    tid: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+entypa_praxis.visto:
+  path: '/node/{node}/submission/{submission}/praxis/visto/{tid}'
+  defaults:
+    _form: '\Drupal\entypa_praxis\Form\EntypaPraxisReasonsForm'
+    _title: 'Concedi istanza'
+    field: 'visto'
+  requirements:
+    _permission: 'visto'
+    node: \d+
+    submission: \d+
+    tid: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+entypa_praxis.visto_dsga:
+  path: '/node/{node}/submission/{submission}/praxis/visto-dsga/{tid}'
+  defaults:
+    _form: '\Drupal\entypa_praxis\Form\EntypaPraxisReasonsForm'
+    _title: 'Visto DSGA'
+    field: 'visto_dsga'
+  requirements:
+    _permission: 'visto dsga'
+    node: \d+
+    submission: \d+
+    tid: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+entypa_praxis.visto_referente:
+  path: '/node/{node}/submission/{submission}/praxis/visto-referente/{tid}'
+  defaults:
+    _form: '\Drupal\entypa_praxis\Form\EntypaPraxisReasonsForm'
+    _title: 'Visto Referente'
+    field: 'visto_referente'
+  requirements:
+    _permission: 'visto referente'
+    node: \d+
+    submission: \d+
+    tid: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+entypa_praxis.ajax_protocollo:
+  path: '/entypa-praxis/ajax-protocollo'
+  defaults:
+    _controller: '\Drupal\entypa_praxis\Form\EntypaPraxisInlineForm::ajaxProtocolloEndpoint'
+  requirements:
+    _permission: 'protocollato'
+  methods: [POST]

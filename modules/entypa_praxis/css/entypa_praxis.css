@@ -1,0 +1,30 @@
+/**
+ * @file
+ * Stili dell'istruttoria delle istanze.
+ */
+
+.button-si {
+  cursor: pointer;
+  padding: 2px 6px;
+  margin: 2px;
+  font-size: 0.9em;
+}
+
+.istanza-annullata {
+  opacity: 0.7;
+}
+
+/* Il contenitore generato da templates/entypa-praxis-views.html.twig. */
+.istanze-form {
+  min-height: 1.4em;
+}
+
+/* Icone di stato dell'istanza. */
+.entypa-praxis-status {
+  white-space: nowrap;
+}
+
+.entypa-praxis-status img {
+  vertical-align: middle;
+  margin-right: 4px;
+}

@@ -1,0 +1,16 @@
+entypa_praxis.settings:
+  title: 'Entýpa — Istruttoria'
+  description: "Configurazione dell'istruttoria delle istanze: tipi di contenuto, email, firme e dati dell'istituto."
+  parent: system.admin_config_system
+  route_name: entypa_praxis.settings
+  weight: 12
+
+# Voce nel menù "Azioni principali" del sito della scuola, accanto a quella di
+# entypa: là il personale presenta le istanze, qui la segreteria le lavora.
+# Il peso 0 lascia che l'ordinamento sia alfabetico.
+entypa_praxis.gestione:
+  title: 'Modulistica del personale: gestione'
+  description: "Istruttoria delle istanze presentate dal personale scolastico: protocollo, visti, concessione ed evasione."
+  route_name: view.admin_entypa_praxis.page_1
+  menu_name: azioni-principali
+  weight: 0

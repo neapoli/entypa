@@ -284,7 +284,7 @@ elements: |-
     '#type': webform_markup
     '#display_on': form
     '#markup': |-
-      <p>Durante l'assenza per malattia è obbligatorio essere reperibili all'indirizzo indicato nelle fasce <strong>9.00-13.00</strong> e <strong>15.00-18.00</strong>, tutti i giorni compresi i festivi.</p>
+      <p>Durante l'assenza per malattia è obbligatorio farsi trovare all'indirizzo comunicato nelle fasce <strong>10.00-12.00</strong> e <strong>17.00-19.00</strong>, in ciascun giorno, anche domenicale o festivo (art. 17, comma 14, del C.C.N.L. 29.11.2007). Chi deve allontanarsi durante le fasce per visite, prestazioni o accertamenti specialistici, o per altri giustificati motivi documentabili, è tenuto a darne preventiva comunicazione indicando la diversa fascia da osservare (art. 17, comma 16).</p>
   reperibilita:
     '#type': webform_flexbox
     '#attributes':

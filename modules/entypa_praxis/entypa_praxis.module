@@ -1,0 +1,235 @@
+<?php
+
+/**
+ * @file
+ * Istruttoria e definizione delle istanze prodotte dai formulari Entýpa.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function entypa_praxis_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.entypa_praxis':
+      $output = '<h3>' . t('Informazioni') . '</h3>';
+      $output .= '<p>' . t("Segue le istanze presentate dal personale scolastico lungo tutto il loro iter: protocollo, visti, concessione, evasione, annullamento ed elaborazione. Deriva dal modulo «Supporto per Istanze on line» progettato da Nadia Caprotti.") . '</p>';
+      $output .= '<h3>' . t('Configurazione') . '</h3>';
+      $output .= '<p>' . t('Il modulo si configura nella <a href=":url">pagina delle impostazioni</a>.', [
+        ':url' => '/admin/config/system/entypa-praxis',
+      ]) . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function entypa_praxis_theme($existing, $type, $theme, $path) {
+  return [
+    'entypa_praxis_views' => [
+      'variables' => [
+        'content' => NULL,
+        'assoc' => [],
+      ],
+      'template' => 'entypa-praxis-views',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view() for node entities.
+ */
+function entypa_praxis_node_view(array &$build, NodeInterface $node, $display, $view_mode) {
+  // I campi che governano l'iter servono solo in redazione, non in lettura.
+  $da_nascondere = [
+    'field_si_acquisisci',
+    'field_si_dsga',
+    'field_si_referente',
+    'field_si_email',
+  ];
+
+  foreach ($da_nascondere as $field_name) {
+    if (isset($build[$field_name])) {
+      unset($build[$field_name]);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function entypa_praxis_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('entypa_praxis.settings');
+  $node_types = $config->get('node_types') ?: [];
+
+  foreach ($node_types as $type => $enabled) {
+    if ($enabled && $form_id === 'node_' . $type . '_form') {
+      // Solo alla creazione: in modifica vale quanto scelto sul nodo.
+      if (\Drupal::routeMatch()->getRouteName() === 'node.add') {
+        if (isset($form['field_si_email'])) {
+          $form['field_si_email']['widget']['value']['#default_value'] = $config->get('notification_email') ?: FALSE;
+        }
+      }
+      break;
+    }
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function entypa_praxis_mail($key, &$message, $params) {
+  $config = \Drupal::config('entypa_praxis.settings');
+
+  // Le variabili del messaggio sono costruite dal servizio: qui se ne fa solo uso.
+  $variables = \Drupal::service('entypa_praxis.email')->prepareEmailVariables($params);
+  if (!$variables) {
+    // Senza il destinatario non c'è messaggio da comporre.
+    return;
+  }
+
+  $oe = $config->get('oe') ?: FALSE;
+  $is_ok = $params['is_ok'] ?? 1;
+  $langcode = $message['langcode'];
+
+  // I testi arrivano dalla configurazione e passano da t() di proposito: ogni
+  // scuola li personalizza e la personalizzazione vive nel catalogo di traduzione.
+  switch ($key) {
+    case 'notifica':
+      // Messaggio a chi ha presentato l'istanza.
+      $message['subject'] = t('Notifica di istanza evasa (@nomesito)', $variables, ['langcode' => $langcode]);
+
+      $body = t("Gentile @nome,", $variables, ['langcode' => $langcode]) . "\r\n";
+      $body .= t($config->get('notification_body'), $variables, ['langcode' => $langcode]) . "\r\n";
+
+      if ($is_ok == 2 || $is_ok == 3 || ($oe && $is_ok == 0)) {
+        $body .= "\r\n" . t("Motivazioni: @motivazioni", $variables, ['langcode' => $langcode]) . "\r\n";
+      }
+
+      $body .= "\r\n" . t($config->get('notification_footer'), $variables, ['langcode' => $langcode]);
+
+      $message['body'][] = $body;
+      break;
+
+    case 'segreteria':
+      // Copia per la segreteria.
+      $message['subject'] = t($config->get('segreteria_subject'), $variables, ['langcode' => $langcode]);
+
+      $body = t("All'attenzione della segreteria,", $variables, ['langcode' => $langcode]) . "\r\n";
+      $body .= t($config->get('segreteria_body'), $variables, ['langcode' => $langcode]) . "\r\n";
+
+      if ($is_ok == 2 || $is_ok == 3) {
+        $body .= "\r\n" . t("Motivazioni: @motivazioni", $variables, ['langcode' => $langcode]) . "\r\n";
+      }
+
+      $body .= "\r\n" . t($config->get('notification_footer'), $variables, ['langcode' => $langcode]);
+
+      $message['body'][] = $body;
+
+      // @todo Generazione della firma, mai portata dal modulo originale.
+      if ($config->get('evaded_signature')) {
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function entypa_praxis_mail_alter(&$message) {
+  $config = \Drupal::config('entypa_praxis.settings');
+
+  if (!$config->get('instance_signature')) {
+    return;
+  }
+
+  $filtro = $config->get('email_protocollo');
+
+  if (!empty($filtro) && isset($message['to']) && strpos($message['to'], $filtro) !== FALSE) {
+    // Se la segnatura c'è già non se ne aggiunge un'altra.
+    if (isset($message['params']['attachments'])) {
+      foreach ($message['params']['attachments'] as $allegato) {
+        if (isset($allegato['filename']) && $allegato['filename'] === 'Segnatura.xml') {
+          return;
+        }
+      }
+    }
+
+    // @todo Generazione di Segnatura.xml, mai portata dal modulo originale.
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for webform_submission.
+ */
+function entypa_praxis_webform_submission_insert(EntityInterface $entity) {
+  $source_entity = $entity->getSourceEntity();
+
+  if (!$source_entity || $source_entity->getEntityTypeId() !== 'node') {
+    return;
+  }
+
+  // L'istruttoria riguarda solo i tipi di contenuto abilitati.
+  if (!\Drupal::service('entypa_praxis.field_manager')->appliesToBundle($source_entity->bundle())) {
+    return;
+  }
+
+  try {
+    \Drupal::database()->insert('entypa_praxis')
+      ->fields([
+        'submission_id' => $entity->id(),
+        'user_id' => $entity->getOwnerId(),
+        'protocollo_stato' => 0,
+        'concedibile_stato' => 0,
+        'visto_dsga_stato' => 0,
+        'visto_referente_stato' => 0,
+        'visto_stato' => 0,
+        'evaso_data' => NULL,
+        'annullato_data' => NULL,
+        'elaborato_data' => NULL,
+        'motivazioni' => NULL,
+      ])
+      ->execute();
+
+    \Drupal::logger('entypa_praxis')->info('Creata la riga di istruttoria per l\'istanza @sid.', [
+      '@sid' => $entity->id(),
+    ]);
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('entypa_praxis')->error("Errore nella creazione della riga di istruttoria per l'istanza @sid: @errore", [
+      '@sid' => $entity->id(),
+      '@errore' => $e->getMessage(),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function entypa_praxis_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'entypa_praxis/entypa_praxis';
+}
+
+/**
+ * Prepares variables for entypa-praxis-views.html.twig.
+ *
+ * @param array $variables
+ *   Un array associativo che contiene:
+ *   - content: il contenuto da mostrare.
+ *   - assoc: un array associativo di elementi aggiuntivi.
+ */
+function template_preprocess_entypa_praxis_views(array &$variables) {
+  if (!empty($variables['assoc'])) {
+    $renderer = \Drupal::service('renderer');
+    foreach ($variables['assoc'] as $key => $value) {
+      if (is_array($value)) {
+        $variables['assoc'][$key] = $renderer->render($value);
+      }
+    }
+  }
+}

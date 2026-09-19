@@ -1,0 +1,29 @@
+entypa_praxis:
+  version: 1.x
+  css:
+    theme:
+      css/entypa_praxis.css: {}
+  js:
+    js/entypa_praxis.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+
+force-normal-submit:
+  version: 1.0
+  js:
+    js/entypa_praxis_force_submit.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+
+protocollo-ajax:
+  version: 1.0
+  js:
+    js/entypa_praxis_protocollo_ajax.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once

@@ -1,0 +1,64 @@
+entypa_praxis.settings:
+  type: config_object
+  label: "Impostazioni dell'istruttoria delle istanze"
+  mapping:
+    node_types:
+      type: sequence
+      label: 'Node types'
+      sequence:
+        type: string
+        label: 'Node type'
+    oe:
+      type: boolean
+      label: 'Operatori economici mode'
+    email:
+      type: email
+      label: 'Secretary email'
+    notification_email:
+      type: boolean
+      label: 'Send notification email to secretary'
+    notification_body:
+      type: text
+      label: 'Notification body'
+    segreteria_subject:
+      type: string
+      label: 'Secretary email subject'
+    segreteria_body:
+      type: text
+      label: 'Secretary email body'
+    notification_footer:
+      type: text
+      label: 'Notification footer'
+    instance_signature:
+      type: boolean
+      label: 'Instance signature'
+    evaded_signature:
+      type: boolean
+      label: 'Evaded signature'
+    email_protocollo:
+      type: email
+      label: 'Protocol email'
+    nome_scuola:
+      type: string
+      label: 'School name'
+    toponimo:
+      type: string
+      label: 'Street type'
+    civico:
+      type: string
+      label: 'Street number'
+    cap:
+      type: string
+      label: 'ZIP code'
+    comune:
+      type: string
+      label: 'City'
+    provincia:
+      type: string
+      label: 'Province'
+    fax:
+      type: string
+      label: 'Fax'
+    telefono:
+      type: string
+      label: 'Phone'

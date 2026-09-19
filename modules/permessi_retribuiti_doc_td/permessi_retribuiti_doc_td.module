@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +22,59 @@ function permessi_retribuiti_doc_td_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Giorni spettanti per ciascuna fattispecie, e articolo che li prevede.
+ *
+ * Il tetto è quello della singola fattispecie: quante giornate siano già state
+ * fruite nell'anno scolastico il formulario non lo sa, e resta un riscontro
+ * della segreteria.
+ */
+function _permessi_retribuiti_doc_td_tetti() {
+  return [
+    'Lutto familiare' => [3, 'art. 35, comma 8, del CCNL Istruzione e Ricerca 2019-2021'],
+    'Matrimonio' => [15, 'art. 35, comma 9, del CCNL Istruzione e Ricerca 2019-2021'],
+    'Motivi personali o familiari' => [3, 'art. 35, comma 12, del CCNL Istruzione e Ricerca 2019-2021'],
+    'Motivi personali o familiari non retribuiti' => [6, 'art. 35, comma 13, del CCNL Istruzione e Ricerca 2019-2021'],
+    'Concorsi ed esami' => [8, 'art. 35, comma 14, del CCNL Istruzione e Ricerca 2019-2021'],
+  ];
+}
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function permessi_retribuiti_doc_td_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if ($webform && $webform->id() === 'permessi_retribuiti_doc_td') {
+    entypa_aggiungi_validazione($form, 'numero_giorni', 'permessi_retribuiti_doc_td_valida');
+  }
+}
+
+/**
+ * Verifica la coerenza fra tipo di contratto, fattispecie e giorni richiesti.
+ */
+function permessi_retribuiti_doc_td_valida(array &$elemento, FormStateInterface $form_state) {
+  $tipologia = (string) $form_state->getValue('tipologia_richiesta');
+  $contratto = (string) $form_state->getValue('tipo_contratto_td');
+  $giorni = (int) $form_state->getValue('numero_giorni');
+
+  // I motivi personali hanno due regimi che si escludono, secondo il contratto.
+  if ($tipologia === 'Motivi personali o familiari' && $contratto === 'altro') {
+    $form_state->setErrorByName('tipologia_richiesta', t('I tre giorni retribuiti per motivi personali o familiari spettano ai contratti annuali o fino al termine delle attività didattiche. Con un altro contratto a tempo determinato sono attribuiti sei giorni non retribuiti (art. 35, commi 12 e 13, del CCNL Istruzione e Ricerca 2019-2021).'));
+    return;
+  }
+  if ($tipologia === 'Motivi personali o familiari non retribuiti' && $contratto === 'annuale') {
+    $form_state->setErrorByName('tipologia_richiesta', t('Con un contratto annuale o fino al termine delle attività didattiche spettano tre giorni retribuiti per motivi personali o familiari, non i sei giorni non retribuiti previsti per gli altri contratti a termine (art. 35, commi 12 e 13, del CCNL Istruzione e Ricerca 2019-2021).'));
+    return;
+  }
+
+  $tetti = _permessi_retribuiti_doc_td_tetti();
+  if (isset($tetti[$tipologia]) && $giorni > $tetti[$tipologia][0]) {
+    [$tetto, $norma] = $tetti[$tipologia];
+    $form_state->setErrorByName('numero_giorni', t(
+      'La domanda chiede @giorni giorni, ma per «@tipologia» ne spettano @tetto (@norma).',
+      ['@giorni' => $giorni, '@tipologia' => $tipologia, '@tetto' => $tetto, '@norma' => $norma]
+    ));
+  }
 }

@@ -135,7 +135,7 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-    '#text': '<p><em>ai sensi del C.C.N.L. comparto scuola del 29.11.2007 di cui all’articolo sopra indicato,</em></p><div class="text-align-center"><strong>CHIEDE</strong></div>'
+    '#text': '<p><em>ai sensi dell’art. 17 del C.C.N.L. 29.11.2007 e, per il personale a tempo determinato, dell’art. 35 del C.C.N.L. Istruzione e Ricerca 2019-2021</em></p><div class="text-align-center"><strong>CHIEDE</strong></div>'
     '#format': bootstrap_italia_2
   tipologia_richiesta:
     '#type': radios
@@ -158,6 +158,33 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
+  avvertenza_comporto_ti:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="a_tempo"]':
+          value: 'Tempo indeterminato'
+    '#markup': |-
+      <p>Il dipendente assente per malattia ha diritto alla conservazione del posto per <strong>diciotto mesi</strong>; al periodo si sommano le assenze per malattia verificatesi nel triennio precedente (art. 17, comma 1, del C.C.N.L. 29.11.2007).</p>
+  avvertenza_comporto_td:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="a_tempo"]':
+          value: 'Tempo determinato'
+    '#markup': |-
+      <p>Per il personale a tempo determinato la conservazione del posto dipende dal tipo di contratto: <strong>nove mesi in un triennio scolastico</strong> per i contratti annuali o fino al termine delle attività didattiche, con retribuzione intera il primo mese e al 50% nel secondo e terzo (art. 35, commi 3 e 4); <strong>trenta giorni annui retribuiti al 50%</strong> per le supplenze stipulate dal dirigente scolastico (art. 35, comma 6).</p>
+  avvertenza_visite:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="tipologia_richiesta"]':
+          value: 'MALATTIA per esami diagnostici o terapie'
+    '#markup': |-
+      <p>Per il personale docente l'assenza per visite, terapie o accertamenti è imputata alla malattia, con il relativo trattamento giuridico ed economico: il regime autonomo delle 18 ore annue dell'art. 69 del C.C.N.L. 2019-2021 riguarda il solo personale ATA. In alternativa si possono utilizzare i permessi brevi a recupero (art. 16) o i tre giorni per motivi personali o familiari (art. 15, comma 2), secondo la disciplina propria di quegli istituti.</p>
   giorni:
     '#type': webform_flexbox
     '#attributes':
@@ -251,6 +278,11 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
+  avvertenza_reperibilita:
+    '#type': webform_markup
+    '#display_on': form
+    '#markup': |-
+      <p>Durante l'assenza per malattia è obbligatorio farsi trovare all'indirizzo comunicato nelle fasce <strong>10.00-12.00</strong> e <strong>17.00-19.00</strong>, in ciascun giorno, anche domenicale o festivo (art. 17, comma 14, del C.C.N.L. 29.11.2007). Chi deve allontanarsi durante le fasce per visite, prestazioni o accertamenti specialistici, o per altri giustificati motivi documentabili, è tenuto a darne preventiva comunicazione indicando la diversa fascia da osservare (art. 17, comma 16).</p>
   reperibilita:
     '#type': webform_flexbox
     '#attributes':
@@ -348,6 +380,7 @@ elements: |-
   file_pdf:
     '#type': 'webform_entity_print_attachment:pdf'
     '#title': 'File PDF'
+    '#display_on': view
     '#access_create_roles':
       - authenticated
     '#access_update_roles':
@@ -392,7 +425,7 @@ elements: |-
     '#default_value': '0'
     '#access': false
 css: ''
-javascript: "(function ($) {\r\n  'use strict';\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function controllo($campo) {\r\n    var $form   = $campo.closest('form');\r\n    var $inizio = $form.find('[name=\"data_inizio\"]');\r\n    var $fine   = $form.find('[name=\"data_fine\"]');\r\n    var $giorni = $form.find('[name=\"numero_giorni\"]');\r\n\r\n    if (!$giorni.length) { return; }\r\n\r\n    var dInizio = toData($inizio.val());\r\n    var dFine   = toData($fine.val());\r\n    var errore  = '';\r\n\r\n    if (dInizio === null || dFine === null) {\r\n      $giorni.val('');\r\n    }\r\n    else if (dFine < dInizio) {\r\n      $giorni.val('');\r\n      errore = \"La data di fine non può precedere quella di inizio.\";\r\n    }\r\n    else {\r\n      $giorni.val(Math.round((dFine - dInizio) / 86400000) + 1);\r\n    }\r\n\r\n    if ($fine[0] && $fine[0].setCustomValidity) {\r\n      $fine[0].setCustomValidity(errore);\r\n    }\r\n  }\r\n\r\n  $(document).on(\r\n    'change.giorniSingolo input.giorniSingolo',\r\n    '[name=\"data_inizio\"], [name=\"data_fine\"]',\r\n    function () {\r\n      controllo($(this));\r\n    }\r\n  );\r\n\r\n}(jQuery));"
+javascript: "(function ($) {\r\n  'use strict';\r\n\r\n  /* I giorni si contano di calendario, non lavorativi: il periodo di comporto\r\n     comprende domeniche e festività, e un'assenza dal venerdì al lunedì vale\r\n     quattro giorni. Non va quindi usata qui entypa_giorni_lavorativi(), che\r\n     serve a ferie e festività soppresse, dove il conto è un altro. */\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function controllo($campo) {\r\n    var $form   = $campo.closest('form');\r\n    var $inizio = $form.find('[name=\"data_inizio\"]');\r\n    var $fine   = $form.find('[name=\"data_fine\"]');\r\n    var $giorni = $form.find('[name=\"numero_giorni\"]');\r\n\r\n    if (!$giorni.length) { return; }\r\n\r\n    var dInizio = toData($inizio.val());\r\n    var dFine   = toData($fine.val());\r\n    var errore  = '';\r\n\r\n    if (dInizio === null || dFine === null) {\r\n      $giorni.val('');\r\n    }\r\n    else if (dFine < dInizio) {\r\n      $giorni.val('');\r\n      errore = \"La data di fine non può precedere quella di inizio.\";\r\n    }\r\n    else {\r\n      // Estremi inclusi, giorni di calendario.\r\n      $giorni.val(Math.round((dFine - dInizio) / 86400000) + 1);\r\n    }\r\n\r\n    if ($fine[0] && $fine[0].setCustomValidity) {\r\n      $fine[0].setCustomValidity(errore);\r\n    }\r\n  }\r\n\r\n  $(document).on(\r\n    'change.giorniSingolo input.giorniSingolo',\r\n    '[name=\"data_inizio\"], [name=\"data_fine\"]',\r\n    function () {\r\n      controllo($(this));\r\n    }\r\n  );\r\n\r\n}(jQuery));"
 settings:
   ajax: false
   ajax_scroll_top: ''

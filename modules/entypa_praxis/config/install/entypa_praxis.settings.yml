@@ -1,0 +1,19 @@
+node_types: []
+oe: false
+email: ''
+notification_email: false
+notification_body: 'La sua istanza @istanza, n. @istanza_id del @data, è stata @esito.'
+segreteria_subject: 'Notifica istanza evasa - @istanza n. @istanza_serial - @nome'
+segreteria_body: "L'istanza @istanza, n. @istanza_id del @data presentata da @nome, è stata @esito."
+notification_footer: "Cordiali saluti,\n@operatore (@qualifica_operatore)."
+instance_signature: false
+evaded_signature: false
+email_protocollo: ''
+nome_scuola: ''
+toponimo: ''
+civico: ''
+cap: ''
+comune: ''
+provincia: 'AG'
+fax: ''
+telefono: ''

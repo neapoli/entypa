@@ -1,5 +1,5 @@
 name: "Entýpa"
-description: 'Entýpa, dal greco Moduli/Formulari, è un modulo Drupal per la gestione delle Istanze del personale scolastico'
+description: 'Entýpa, dal greco «moduli, formulari», è la base delle istanze on line del personale scolastico: fornisce il tipo di contenuto, le impostazioni e i servizi condivisi dai formulari e dalla loro istruttoria.'
 package: "Neapoli"
 version: 2.0.0
 

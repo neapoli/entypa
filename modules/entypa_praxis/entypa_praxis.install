@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * @file
+ * Installazione e disinstallazione di Entýpa — Praxis.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function entypa_praxis_schema() {
+  $schema['entypa_praxis'] = [
+    'description' => "Stato dell'istruttoria di ogni istanza prodotta dai formulari Entýpa.",
+    'fields' => [
+      'tid' => [
+        'description' => 'Identificativo progressivo della riga.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'submission_id' => [
+        'description' => "Identificativo dell'invio del formulario (webform_submission.sid).",
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'user_id' => [
+        'description' => "Identificativo dell'utente che ha presentato l'istanza.",
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'protocollo_stato' => [
+        'description' => 'Stato della protocollazione.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'visto_referente_stato' => [
+        'description' => 'Stato del visto del referente di plesso.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'concedibile_stato' => [
+        'description' => "Stato della concessione dell'istanza.",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'visto_dsga_stato' => [
+        'description' => 'Stato del visto del DSGA.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'visto_stato' => [
+        'description' => 'Stato del visto del dirigente scolastico.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'evaso_data' => [
+        'description' => "Data di evasione dell'istanza (timestamp).",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'motivazioni' => [
+        'description' => 'Motivazioni del diniego o annotazioni di istruttoria.',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'annullato_data' => [
+        'description' => "Data di annullamento dell'istanza (timestamp).",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'elaborato_data' => [
+        'description' => "Data di elaborazione dell'istanza (timestamp).",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['tid'],
+    'indexes' => [
+      'submission_id' => ['submission_id'],
+      'user_id' => ['user_id'],
+      'evaso_data' => ['evaso_data'],
+      'annullato_data' => ['annullato_data'],
+      'elaborato_data' => ['elaborato_data'],
+    ],
+  ];
+
+  return $schema;
+}

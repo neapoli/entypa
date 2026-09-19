@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +22,46 @@ function permessi_retribuiti_doc_ti_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Giorni spettanti per ciascuna fattispecie, e articolo che li prevede.
+ *
+ * La chiave dei motivi personali termina con uno spazio: è il valore
+ * dell'opzione così come sta nella configurazione, e il confronto è esatto.
+ */
+function _permessi_retribuiti_doc_ti_tetti() {
+  return [
+    'Partecipazione a concorso/esame' => [8, 'art. 15, comma 1, del CCNL 29/11/2007'],
+    'Lutto familiare' => [3, 'art. 15, comma 1, del CCNL 29/11/2007'],
+    'Matrimonio' => [15, 'art. 15, comma 3, del CCNL 29/11/2007'],
+    'Motivi familiari/personali ' => [3, 'art. 15, comma 2, del CCNL 29/11/2007'],
+  ];
+}
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function permessi_retribuiti_doc_ti_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if ($webform && $webform->id() === 'permessi_retribuiti_doc_ti') {
+    entypa_aggiungi_validazione($form, 'numero_giorni', 'permessi_retribuiti_doc_ti_valida');
+  }
+}
+
+/**
+ * Verifica che i giorni richiesti rientrino nel tetto della fattispecie.
+ */
+function permessi_retribuiti_doc_ti_valida(array &$elemento, FormStateInterface $form_state) {
+  $tipologia = (string) $form_state->getValue('tipologia_richiesta');
+  $giorni = (int) $form_state->getValue('numero_giorni');
+  $tetti = _permessi_retribuiti_doc_ti_tetti();
+
+  if (isset($tetti[$tipologia]) && $giorni > $tetti[$tipologia][0]) {
+    [$tetto, $norma] = $tetti[$tipologia];
+    $form_state->setErrorByName('numero_giorni', t(
+      'La domanda chiede @giorni giorni, ma per «@tipologia» ne spettano @tetto (@norma).',
+      ['@giorni' => $giorni, '@tipologia' => trim($tipologia), '@tetto' => $tetto, '@norma' => $norma]
+    ));
+  }
 }

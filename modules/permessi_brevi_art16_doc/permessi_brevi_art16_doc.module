@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_theme_registry_alter().
  *
@@ -20,4 +22,79 @@ function permessi_brevi_art16_doc_theme_registry_alter(&$theme_registry) {
     'variables' => $theme_registry['entity_print']['variables'] ?? [],
     'preprocess functions' => $theme_registry['entity_print']['preprocess functions'] ?? [],
   ];
+}
+
+/**
+ * Durata massima del singolo permesso breve per il personale docente.
+ *
+ * @see art. 16, comma 1, del CCNL 29/11/2007
+ */
+const PERMESSI_BREVI_ART16_DOC_ORE_PER_PERMESSO = 2;
+
+/**
+ * Massimo orario settimanale di insegnamento, usato come soglia di sicurezza.
+ *
+ * Il monte annuo dei permessi brevi corrisponde all'orario settimanale di
+ * insegnamento del docente (art. 16, comma 2): 25 ore nella scuola dell'infanzia,
+ * 22 nella primaria, 18 nella secondaria. Il formulario non conosce l'ordine di
+ * scuola di chi compila, quindi rifiuta solo oltre il valore più alto, che è
+ * eccessivo per chiunque; il limite proprio resta enunciato nel testo.
+ */
+const PERMESSI_BREVI_ART16_DOC_ORE_ANNUE_MASSIME = 25;
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function permessi_brevi_art16_doc_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $webform = $form_state->getFormObject()->getEntity()->getWebform();
+  if ($webform && $webform->id() === 'permessi_brevi_art16_doc') {
+    entypa_aggiungi_validazione($form, 'per_un_totale_di_ore', 'permessi_brevi_art16_doc_valida_ore');
+  }
+}
+
+/**
+ * Validazione dei permessi brevi: durata del singolo e totale della domanda.
+ */
+function permessi_brevi_art16_doc_valida_ore(array &$elemento, FormStateInterface $form_state) {
+  $minuti = 0;
+  $lunghi = 0;
+  foreach ((array) $form_state->getValue('permesso_orario') as $riga) {
+    $durata = _permessi_brevi_art16_doc_minuti($riga['ora_inizio'] ?? '', $riga['ora_fine'] ?? '');
+    if ($durata === NULL) {
+      continue;
+    }
+    $minuti += $durata;
+    if ($durata > PERMESSI_BREVI_ART16_DOC_ORE_PER_PERMESSO * 60) {
+      $lunghi++;
+    }
+  }
+
+  if ($lunghi) {
+    $form_state->setErrorByName('per_un_totale_di_ore', \Drupal::translation()->formatPlural(
+      $lunghi,
+      'Un permesso supera le due ore: per il personale docente il permesso breve non può superare due ore (art. 16, comma 1, del CCNL 29.11.2007).',
+      '@count permessi superano le due ore: per il personale docente il permesso breve non può superare due ore (art. 16, comma 1, del CCNL 29.11.2007).'
+    ));
+    return;
+  }
+
+  if ($minuti > PERMESSI_BREVI_ART16_DOC_ORE_ANNUE_MASSIME * 60) {
+    $form_state->setErrorByName('per_un_totale_di_ore', t(
+      'La domanda chiede @ore ore, oltre il massimo possibile: per i docenti i permessi brevi non possono eccedere l\'orario settimanale di insegnamento, che è di 25 ore nell\'infanzia, 22 nella primaria e 18 nella secondaria (art. 16, comma 2, del CCNL 29.11.2007).',
+      ['@ore' => round($minuti / 60, 1)]
+    ));
+  }
+}
+
+/**
+ * Minuti fra due orari nella forma HH:MM, o NULL se non calcolabili.
+ */
+function _permessi_brevi_art16_doc_minuti($inizio, $fine) {
+  if (!preg_match('/^(\d{1,2}):(\d{2})/', (string) $inizio, $a)
+    || !preg_match('/^(\d{1,2}):(\d{2})/', (string) $fine, $b)) {
+    return NULL;
+  }
+
+  $minuti = ((int) $b[1] * 60 + (int) $b[2]) - ((int) $a[1] * 60 + (int) $a[2]);
+  return $minuti > 0 ? $minuti : NULL;
 }

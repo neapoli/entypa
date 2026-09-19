@@ -21,7 +21,7 @@ uid: 1
 template: false
 archive: false
 id: permessi_retribuiti_doc_ti
-title: 'Permessi retribuiti art. 15 (DOCENTE Tempo indeterminato)'
+title: 'Permessi retribuiti — personale docente a tempo indeterminato (art. 15 CCNL 29/11/2007)'
 description: '<p>Form per la richiesta di permessi retribuiti art. 15 (DOCENTE Tempo indeterminato)</p>'
 categories:
   - Docenti
@@ -127,6 +127,15 @@ elements: |-
         - authenticated
       '#access_view_roles':
         - authenticated
+  avvertenza_modulo_errato:
+    '#type': webform_markup
+    '#display_on': form
+    '#states':
+      visible:
+        ':input[name="a_tempo"]':
+          value: 'Tempo determinato'
+    '#markup': |-
+      <p><strong>Attenzione:</strong> il tuo profilo risulta a <strong>tempo determinato</strong>, mentre questo modulo riguarda il personale di ruolo e applica l'art. 15 del CCNL 29/11/2007. Se hai un contratto a termine, usa il modulo «Permessi — personale docente a tempo determinato», che applica l'art. 35 del CCNL 2019-2021. Se invece il dato del profilo non è aggiornato, segnalalo alla segreteria prima di procedere.</p>
   tipologia_richiesta:
     '#type': radios
     '#title': 'Tipologia di permesso'
@@ -253,7 +262,7 @@ elements: |-
       - authenticated
     '#text': |
       <p><strong>Motivi familiari/personali</strong><br />
-      Tre giorni di permesso retribuito per motivi personali o familiari documentati anche mediante autocertificazione. In aggiunta ai tre giorni sopraccitati i 6 giorni di ferie previsti dall’art. del CCNL (fruibili durante i periodi di attività didattica) possono essere trasformati in permessi retribuiti, in tale caso non opera la condizione di non creare oneri all’amministrazione.</p>
+      Tre giorni di permesso retribuito per motivi personali o familiari documentati anche mediante autocertificazione. In aggiunta ai tre giorni sopraccitati per gli stessi motivi e con le stesse modalità sono fruiti i sei giorni di ferie durante i periodi di attività didattica previsti dall’art. 13, comma 9, del CCNL 29/11/2007, prescindendo dalle condizioni stabilite in quella norma — cioè senza che operi il vincolo della sostituibilità senza oneri per l’amministrazione (art. 15, comma 2).</p>
     '#format': bootstrap_italia_2
   donazione_sangue:
     '#type': processed_text

@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Contenitore dei controlli di istruttoria dentro le colonne della vista.
+ *
+ * Variabili disponibili:
+ * - content: il contenuto principale da mostrare.
+ * - assoc: un array associativo di elementi aggiuntivi.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="istanze-form">
+  {% if content %}
+    {{ content }}
+  {% endif %}
+
+  {% if assoc %}
+    {% for value in assoc %}
+      {{ value }}
+    {% endfor %}
+  {% endif %}
+</div>

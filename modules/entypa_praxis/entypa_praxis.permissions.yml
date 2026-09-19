@@ -1,0 +1,35 @@
+# I nomi dei permessi sono identici a quelli di supporto_istanze: sono stringhe
+# già assegnate ai ruoli sui siti delle scuole, e mantenerle rende indolore lo
+# scambio fra i due moduli.
+amministra istanze:
+  title: 'Configurazione'
+  description: 'Amministrare la configurazione del modulo'
+  restrict access: true
+
+protocollato:
+  title: 'Protocollo'
+  description: 'Impostare o togliere il campo <em>Protocollo</em>'
+
+visto dsga:
+  title: 'Visto del DSGA'
+  description: 'Visto del DSGA per la concessione di una istanza'
+
+visto referente:
+  title: 'Visto Referente'
+  description: 'Visto del Referente per la concessione di una istanza'
+
+visto:
+  title: 'Visto del DS'
+  description: 'Visto del DS per la concessione di una istanza'
+
+acquisito:
+  title: 'Istanza concedibile o acquisita'
+  description: 'Controllare se una istanza può procedere nel suo iter'
+
+annullato:
+  title: 'Istanza annullata'
+  description: 'Annullare una istanza'
+
+elaborato:
+  title: 'Istanza elaborata'
+  description: 'Finalizzare una istanza'

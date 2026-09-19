@@ -1,0 +1,4 @@
+entypa_praxis.settings:
+  route_name: entypa_praxis.settings
+  title: 'Impostazioni'
+  base_route: entypa_praxis.settings
