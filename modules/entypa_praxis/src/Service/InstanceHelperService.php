@@ -156,6 +156,54 @@ class InstanceHelperService {
   }
 
   /**
+   * Registra che una richiesta di annullamento non è stata accolta.
+   *
+   * Se l'ufficio evade un'istanza su cui pende una richiesta di annullamento,
+   * la lavorazione è andata avanti lo stesso: la richiesta va chiusa. Non si
+   * torna a zero, perché resti scritto che il dipendente l'aveva chiesto.
+   *
+   * @param int $tid
+   *   L'identificativo della riga di istruttoria.
+   *
+   * @return bool
+   *   TRUE se c'era una richiesta pendente ed è stata chiusa.
+   */
+  public function chiudiRichiestaAnnullamento($tid) {
+    if (empty($tid)) {
+      return FALSE;
+    }
+
+    // La condizione sul valore fa da guardia: senza richiesta pendente non
+    // si tocca niente, e chiamare due volte non cambia nulla.
+    $chiuse = $this->database->update('entypa_praxis')
+      ->fields(['richiesta_annullamento' => 3])
+      ->condition('tid', $tid)
+      ->condition('richiesta_annullamento', 1)
+      ->execute();
+
+    if (!$chiuse) {
+      return FALSE;
+    }
+
+    $submission_id = $this->database->select('entypa_praxis', 'x')
+      ->fields('x', ['submission_id'])
+      ->condition('tid', $tid)
+      ->execute()
+      ->fetchField();
+
+    $submission = $submission_id
+      ? $this->entityTypeManager->getStorage('webform_submission')->load($submission_id)
+      : NULL;
+
+    if ($submission && $submission->getWebform()->getElement('richiesta_annullamento')) {
+      $submission->setElementData('richiesta_annullamento', 3);
+      $submission->save();
+    }
+
+    return TRUE;
+  }
+
+  /**
    * Delete an instance record.
    *
    * @param int $submission_id

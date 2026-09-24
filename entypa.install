@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for Entýpa.
  */
 
-use Drupal\Core\Config\FileStorage;
-
 /**
  * Nome macchina del menù in cui pubblicare la voce "Modulistica del personale".
  */
@@ -28,27 +26,8 @@ const ENTYPA_MENU_LINK_URIS = [
  * Implements hook_install().
  */
 function entypa_install() {
-  _entypa_install_config_update();
+  entypa_importa_config_update('entypa');
   _entypa_delete_manual_menu_links();
-}
-
-/**
- * Crea, alla prima installazione, le configurazioni di config/update.
- *
- * A regime quella cartella viene riallineata a ogni "drush updb" (vedi
- * src/Drush/Commands/EntypaCommands.php), ma su un sito nuovo l'aggiornamento
- * non è ancora passato: senza questo passaggio le viste e i display del
- * contenuto "Modulistica online" non esisterebbero fino al primo updb.
- * Le configurazioni già presenti non vengono toccate.
- */
-function _entypa_install_config_update() {
-  $source = DRUPAL_ROOT . '/' . \Drupal::service('extension.list.module')->getPath('entypa') . '/config/update';
-
-  if (!is_dir($source)) {
-    return;
-  }
-
-  \Drupal::service('config.installer')->installOptionalConfig(new FileStorage($source));
 }
 
 /**
@@ -102,4 +81,178 @@ function entypa_update_10001() {
   return $deleted
     ? t('Voce di menù aggiunta; rimosse @count voci duplicate create manualmente.', ['@count' => $deleted])
     : t('Voce di menù aggiunta al menù "Azioni principali".');
+}
+
+/**
+ * Aggiunge il campo «motivo_annullamento» ai formulari e le impostazioni della richiesta.
+ */
+function entypa_update_10002() {
+  $config = \Drupal::configFactory()->getEditable('entypa.settings');
+  $predefiniti = [
+    'annullamento_email' => TRUE,
+    'annullamento_subject' => 'Richiesta di annullamento istanza n. @istanza_serial - @nome',
+    'annullamento_body' => entypa_annullamento_testo_predefinito(),
+  ];
+  foreach ($predefiniti as $chiave => $valore) {
+    if ($config->get($chiave) === NULL) {
+      $config->set($chiave, $valore);
+    }
+  }
+  $config->save();
+
+  $aggiornati = _entypa_aggiungi_motivo_annullamento();
+
+  return t('Impostazioni della richiesta di annullamento allineate; campo «motivo_annullamento» aggiunto a @n formulari.', [
+    '@n' => $aggiornati,
+  ]);
+}
+
+/**
+ * Aggiunge «motivo_annullamento» ai formulari che hanno «richiesta_annullamento».
+ *
+ * I formulari distribuiti dai sottomoduli stanno in config/optional, che core
+ * legge solo all'installazione: sui siti già avviati il campo va aggiunto alla
+ * configurazione viva. Si tocca solo ciò che manca, per non sovrascrivere le
+ * modifiche fatte dalla singola scuola.
+ *
+ * @return int
+ *   Quanti formulari sono stati aggiornati.
+ */
+function _entypa_aggiungi_motivo_annullamento() {
+  $aggiornati = 0;
+
+  foreach (\Drupal\webform\Entity\Webform::loadMultiple() as $webform) {
+    $elements = $webform->get('elements');
+
+    if (strpos($elements, 'richiesta_annullamento') === FALSE || strpos($elements, 'motivo_annullamento') !== FALSE) {
+      continue;
+    }
+
+    // Nella configurazione viva gli elementi stanno a colonna zero; nei file
+    // del modulo sono rientrati perché vivono dentro «elements: |-».
+    $fine_riga = strpos($elements, "\r\n") !== FALSE ? "\r\n" : "\n";
+    $righe = preg_split("/\r\n|\n/", $elements);
+
+    $inizio = NULL;
+    foreach ($righe as $n => $riga) {
+      if (rtrim($riga) === 'richiesta_annullamento:') {
+        $inizio = $n;
+        break;
+      }
+    }
+    if ($inizio === NULL) {
+      continue;
+    }
+
+    $fine = $inizio + 1;
+    while ($fine < count($righe) && $righe[$fine] !== '' && $righe[$fine][0] === ' ') {
+      $fine++;
+    }
+
+    array_splice($righe, $fine, 0, [
+      'motivo_annullamento:',
+      "  '#type': textarea",
+      "  '#title': 'Motivo annullamento'",
+      "  '#access': false",
+    ]);
+    $webform->set('elements', implode($fine_riga, $righe));
+
+    $settings = $webform->getSettings();
+    $settings['submission_excluded_elements']['motivo_annullamento'] = 'motivo_annullamento';
+    $webform->setSettings($settings);
+
+    $webform->save();
+    $aggiornati++;
+  }
+
+  return $aggiornati;
+}
+
+/**
+ * Porta in HTML il testo della richiesta di annullamento.
+ */
+function entypa_update_10003() {
+  $config = \Drupal::configFactory()->getEditable('entypa.settings');
+  $attuale = $config->get('annullamento_body');
+
+  // Il primo testo, tutto di seguito e con le andate a capo in chiaro: le
+  // scuole spediscono con phpmailer_smtp, che manda in HTML, e quelle andate a
+  // capo sparivano.
+  $primo = "Il/La sottoscritto/a @nome (@codice_fiscale) chiede l'annullamento della propria istanza @istanza, n. @istanza_serial presentata il @data, per il seguente motivo:\n\n@motivo";
+
+  if ($attuale !== NULL && $attuale !== $primo) {
+    return t("Testo della richiesta di annullamento lasciato invariato: era già stato riscritto su questo sito.");
+  }
+
+  $config->set('annullamento_body', entypa_annullamento_testo_predefinito())->save();
+
+  return t('Testo della richiesta di annullamento aggiornato con le andate a capo in HTML.');
+}
+
+/**
+ * Porta in Entýpa i dati dell'istituto, finora nelle impostazioni di Praxis.
+ *
+ * Servono anche alle scuole senza Praxis: la segnatura di protocollo sulle
+ * istanze inviate è di Entýpa. Si copiano i valori già inseriti; la provincia
+ * vuota resta vuota, e la «AG» che Praxis proponeva da sé non si porta se
+ * nessuno ha compilato l'indirizzo, perché era un valore predefinito e non una
+ * scelta della scuola.
+ */
+function entypa_update_10004() {
+  $entypa = \Drupal::configFactory()->getEditable('entypa.settings');
+  $praxis = \Drupal::configFactory()->get('entypa_praxis.settings');
+
+  $chiavi = ['nome_scuola', 'toponimo', 'civico', 'cap', 'comune', 'provincia', 'telefono', 'fax', 'instance_signature'];
+  $copiate = [];
+
+  foreach ($chiavi as $chiave) {
+    $valore = $praxis->get($chiave);
+
+    // Un valore già scritto in Entýpa non si tocca.
+    if ($entypa->get($chiave) !== NULL && $entypa->get($chiave) !== '' && $entypa->get($chiave) !== FALSE) {
+      continue;
+    }
+
+    if ($chiave === 'provincia' && $valore === 'AG' && !$praxis->get('comune')) {
+      $valore = '';
+    }
+
+    $entypa->set($chiave, $chiave === 'instance_signature' ? (bool) $valore : (string) ($valore ?? ''));
+
+    if ($valore !== NULL && $valore !== '' && $valore !== FALSE) {
+      $copiate[] = $chiave;
+    }
+  }
+
+  foreach (['codice_ipa', 'codice_aoo'] as $chiave) {
+    if ($entypa->get($chiave) === NULL) {
+      $entypa->set($chiave, '');
+    }
+  }
+
+  $entypa->save();
+
+  if (!$copiate) {
+    return t("Aggiunti i dati dell'istituto alle impostazioni di Entýpa; in Praxis non ce n'erano da copiare.");
+  }
+
+  return t("Dati dell'istituto portati da Praxis a Entýpa: @chiavi.", ['@chiavi' => implode(', ', $copiate)]);
+}
+
+/**
+ * Porta in Entýpa i referenti di plesso, finora nelle impostazioni di Praxis.
+ *
+ * Servono anche alle scuole senza istruttoria, dove l'avviso parte all'invio.
+ */
+function entypa_update_10005() {
+  $entypa = \Drupal::configFactory()->getEditable('entypa.settings');
+  $da_praxis = \Drupal::config('entypa_praxis.settings')->get('referenti_plesso') ?: [];
+
+  if (!$entypa->get('referenti_plesso')) {
+    $entypa->set('referenti_plesso', $da_praxis)->save();
+  }
+
+  return $da_praxis
+    ? t('Referenti di plesso portati da Praxis a Entýpa: @n sedi.', ['@n' => count($da_praxis)])
+    : t("Aggiunti i referenti di plesso alle impostazioni di Entýpa; in Praxis non ce n'erano da copiare.");
 }

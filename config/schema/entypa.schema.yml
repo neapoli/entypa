@@ -8,3 +8,58 @@ entypa.settings:
     patrono:
       type: string
       label: 'Ricorrenza del santo patrono (mm-gg)'
+    annullamento_email:
+      type: boolean
+      label: "Invia alla segreteria l'email di richiesta annullamento"
+    annullamento_subject:
+      type: string
+      label: "Oggetto dell'email di richiesta annullamento"
+    annullamento_body:
+      type: text
+      label: "Testo dell'email di richiesta annullamento"
+    nome_scuola:
+      type: label
+      label: "Denominazione ufficiale dell'istituto"
+    codice_ipa:
+      type: string
+      label: "Codice IPA dell'istituto"
+    codice_aoo:
+      type: string
+      label: "Codice AOO dell'istituto"
+    toponimo:
+      type: string
+      label: 'Via o piazza'
+    civico:
+      type: string
+      label: 'Numero civico'
+    cap:
+      type: string
+      label: 'CAP'
+    comune:
+      type: string
+      label: 'Comune'
+    provincia:
+      type: string
+      label: 'Sigla della provincia'
+    telefono:
+      type: string
+      label: 'Telefono'
+    fax:
+      type: string
+      label: 'Fax'
+    instance_signature:
+      type: boolean
+      label: 'Allega la segnatura di protocollo alle istanze inviate'
+    referenti_plesso:
+      type: sequence
+      label: 'Referenti di plesso'
+      sequence:
+        type: mapping
+        label: 'Plesso'
+        mapping:
+          sede:
+            type: string
+            label: 'Sede di servizio, come nel profilo del personale'
+          email:
+            type: string
+            label: 'Email dei referenti, separate da virgola'

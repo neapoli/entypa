@@ -78,45 +78,163 @@ class EntypaCommands extends DrushCommands {
   }
 
   /**
-   * Riallinea le configurazioni di entypa/config/update.
+   * Riallinea le configurazioni di config/update di Entýpa e dei sottomoduli.
    *
-   * Utile per riapplicarle senza attendere il prossimo "drush updb".
+   * Core legge config/install e config/optional una sola volta, quando il
+   * modulo viene installato: le modifiche che facciamo dopo non arriverebbero
+   * mai ai siti già in opera. Per questo i formulari e le viste stanno in
+   * config/update, che riversiamo qui a ogni aggiornamento.
+   *
+   * Si raccolgono solo i sottomoduli davvero installati su questo sito: una
+   * scuola sceglie quali formulari attivare, e importare anche gli altri ne
+   * creerebbe di non voluti.
+   *
+   * Utile anche a mano, senza attendere il prossimo "drush updb".
    */
   #[CLI\Command(name: 'entypa:config-update', aliases: ['entypa-cu'])]
-  #[CLI\Usage(name: 'drush entypa:config-update', description: 'Riapplica le configurazioni di entypa/config/update.')]
+  #[CLI\Usage(name: 'drush entypa:config-update', description: 'Riapplica le configurazioni di Entýpa e dei sottomoduli installati.')]
   public function importConfigUpdate(): void {
-    $source = DRUPAL_ROOT . '/' . $this->moduleExtensionList->getPath('entypa') . '/config/update';
+    $cartelle = $this->cartelleDaRiapplicare();
+
     // Senza file da importare config:import uscirebbe in errore.
-    if (!is_dir($source) || !glob($source . '/*.yml')) {
+    if (!$cartelle) {
       $this->logger()->notice(dt('Entýpa: nessuna configurazione da riapplicare (config/update vuota).'));
       return;
     }
 
-    $this->logger()->notice(dt('Entýpa: riapplico le configurazioni da @source', ['@source' => $source]));
+    $this->logger()->notice(dt('Entýpa: riapplico le configurazioni di @moduli.', [
+      '@moduli' => implode(', ', array_keys($cartelle)),
+    ]));
 
-    $process = $this->processManager()->drush(
-      Drush::aliasManager()->getSelf(),
-      ConfigImportCommands::IMPORT,
-      [],
-      ['partial' => TRUE, 'source' => $source, 'yes' => TRUE]
-    );
+    // config:import legge una sola cartella: le si raduna tutte in una
+    // temporanea, così l'importazione è una e risolve da sé l'ordine delle
+    // dipendenze fra le configurazioni dei vari moduli.
+    $source = $this->radunaConfigurazioni($cartelle);
 
-    // Volutamente run() e non mustRun(): config:import valida le dipendenze e
-    // fallisce, per esempio, se una configurazione cita un modulo non
-    // installato su questa scuola. Con mustRun() l'errore interromperebbe
-    // l'intero "drush updb"; così l'aggiornamento arriva in fondo e il
-    // problema resta ben visibile nel log.
-    $process->run();
-    $this->output()->writeln($process->getOutput());
+    try {
+      $process = $this->processManager()->drush(
+        Drush::aliasManager()->getSelf(),
+        ConfigImportCommands::IMPORT,
+        [],
+        ['partial' => TRUE, 'source' => $source, 'yes' => TRUE]
+      );
 
-    if (!$process->isSuccessful()) {
-      $this->logger()->error(dt("Entýpa: l'allineamento di config/update è fallito. @error", [
-        '@error' => $process->getErrorOutput(),
-      ]));
-      return;
+      // Volutamente run() e non mustRun(): config:import valida le dipendenze e
+      // fallisce, per esempio, se una configurazione cita un modulo non
+      // installato su questa scuola. Con mustRun() l'errore interromperebbe
+      // l'intero "drush updb"; così l'aggiornamento arriva in fondo e il
+      // problema resta ben visibile nel log.
+      $process->run();
+      $this->output()->writeln($process->getOutput());
+
+      if (!$process->isSuccessful()) {
+        $this->logger()->error(dt("Entýpa: l'allineamento di config/update è fallito. @error", [
+          '@error' => $process->getErrorOutput(),
+        ]));
+        return;
+      }
+    }
+    finally {
+      $this->rimuoviCartella($source);
     }
 
     $this->logger()->success(dt('Entýpa: configurazioni di config/update riapplicate.'));
+  }
+
+  /**
+   * Elenca le cartelle config/update da riversare nel sito.
+   *
+   * @return array
+   *   Il percorso della cartella, per nome di modulo.
+   */
+  protected function cartelleDaRiapplicare(): array {
+    $cartelle = [];
+
+    foreach (array_merge(['entypa'], $this->sottomoduliInstallati()) as $modulo) {
+      $cartella = DRUPAL_ROOT . '/' . $this->moduleExtensionList->getPath($modulo) . '/config/update';
+
+      if (is_dir($cartella) && glob($cartella . '/*.yml')) {
+        $cartelle[$modulo] = $cartella;
+      }
+    }
+
+    return $cartelle;
+  }
+
+  /**
+   * Elenca i sottomoduli di Entýpa installati su questo sito.
+   *
+   * Il riconoscimento è sul percorso e non sul nome: i sottomoduli non hanno
+   * un prefisso comune — l104_ata, malattia_doc, libera_professione — ma
+   * stanno tutti dentro entypa/modules.
+   *
+   * @return array
+   *   I nomi dei moduli, in ordine alfabetico.
+   */
+  protected function sottomoduliInstallati(): array {
+    $dentro = $this->moduleExtensionList->getPath('entypa') . '/modules/';
+    $nomi = [];
+
+    foreach (array_keys($this->moduleExtensionList->getAllInstalledInfo()) as $modulo) {
+      if ($modulo !== 'entypa' && str_starts_with($this->moduleExtensionList->getPath($modulo), $dentro)) {
+        $nomi[] = $modulo;
+      }
+    }
+
+    sort($nomi);
+
+    return $nomi;
+  }
+
+  /**
+   * Copia le configurazioni dei moduli in un'unica cartella temporanea.
+   *
+   * @param array $cartelle
+   *   Il percorso della cartella config/update, per nome di modulo.
+   *
+   * @return string
+   *   Il percorso della cartella temporanea, da rimuovere dopo l'uso.
+   */
+  protected function radunaConfigurazioni(array $cartelle): string {
+    $temporanea = sys_get_temp_dir() . '/entypa-config-update-' . getmypid() . '-' . uniqid();
+    mkdir($temporanea, 0700, TRUE);
+
+    $provenienza = [];
+
+    foreach ($cartelle as $modulo => $cartella) {
+      foreach (glob($cartella . '/*.yml') as $file) {
+        $nome = basename($file);
+
+        // Due moduli che spedissero la stessa configurazione si sovrascrivono
+        // a vicenda, e quale vinca dipenderebbe dall'ordine: meglio dirlo.
+        if (isset($provenienza[$nome])) {
+          $this->logger()->warning(dt('Entýpa: @file è fornita sia da @primo sia da @secondo; vince @secondo.', [
+            '@file' => $nome,
+            '@primo' => $provenienza[$nome],
+            '@secondo' => $modulo,
+          ]));
+        }
+
+        copy($file, $temporanea . '/' . $nome);
+        $provenienza[$nome] = $modulo;
+      }
+    }
+
+    return $temporanea;
+  }
+
+  /**
+   * Rimuove la cartella temporanea e il suo contenuto.
+   *
+   * @param string $cartella
+   *   Il percorso della cartella da rimuovere.
+   */
+  protected function rimuoviCartella(string $cartella): void {
+    foreach (glob($cartella . '/*') ?: [] as $file) {
+      unlink($file);
+    }
+
+    rmdir($cartella);
   }
 
 }

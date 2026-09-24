@@ -26,39 +26,71 @@ entypa_praxis.settings:
     segreteria_body:
       type: text
       label: 'Secretary email body'
+    annullata_subject:
+      type: string
+      label: "Oggetto dell'email di istanza annullata"
+    annullata_body:
+      type: text
+      label: "Testo dell'email di istanza annullata"
     notification_footer:
       type: text
       label: 'Notification footer'
-    instance_signature:
-      type: boolean
-      label: 'Instance signature'
     evaded_signature:
       type: boolean
-      label: 'Evaded signature'
-    email_protocollo:
-      type: email
-      label: 'Protocol email'
-    nome_scuola:
-      type: string
-      label: 'School name'
-    toponimo:
-      type: string
-      label: 'Street type'
-    civico:
-      type: string
-      label: 'Street number'
-    cap:
-      type: string
-      label: 'ZIP code'
-    comune:
-      type: string
-      label: 'City'
-    provincia:
-      type: string
-      label: 'Province'
-    fax:
-      type: string
-      label: 'Fax'
-    telefono:
-      type: string
-      label: 'Phone'
+      label: "Allega la segnatura di protocollo all'email di istanza evasa"
+
+# Plugin Views del modulo. Nessuno aggiunge opzioni proprie: ciascuno prende
+# lo schema del plugin del core da cui deriva, così la vista si valida per
+# intero e le opzioni ereditate (per esempio il formato della data) sono
+# descritte.
+views.field.entypa_praxis_annullato_data:
+  type: views.field.date
+  label: 'Istanza annullata il'
+
+views.field.entypa_praxis_concedibile:
+  type: views_field
+  label: 'Concedibile'
+
+views.field.entypa_praxis_modifica:
+  type: views_field
+  label: 'Modifica'
+
+views.field.entypa_praxis_motivazioni:
+  type: views_field
+  label: 'Motivazioni'
+
+views.field.entypa_praxis_protocollo:
+  type: views_field
+  label: 'Protocollo'
+
+views.field.entypa_praxis_richiesta_annullamento:
+  type: views_field
+  label: 'Richiesta di annullamento'
+
+views.field.entypa_praxis_visto:
+  type: views_field
+  label: 'Visto del dirigente'
+
+views.field.entypa_praxis_visto_dsga:
+  type: views_field
+  label: 'Visto del DSGA'
+
+views.field.entypa_praxis_visto_referente:
+  type: views_field
+  label: 'Visto del referente'
+
+views.filter.entypa_praxis_annullato_data_filter:
+  type: views.filter.boolean
+  label: 'Annullata'
+
+views.filter.entypa_praxis_evaso_data:
+  type: views.filter.boolean
+  label: 'Evasa'
+
+views.filter.entypa_praxis_richiesta_annullamento_filter:
+  type: views.filter.in_operator
+  label: 'Richiesta di annullamento'
+
+views.sort.entypa_praxis_concedibile_sort:
+  type: views.sort.standard
+  label: 'Concedibile'

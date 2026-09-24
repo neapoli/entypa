@@ -1,2 +1,17 @@
 mail_istituto: ''
 patrono: ''
+annullamento_email: true
+annullamento_subject: "Richiesta di annullamento istanza n. @istanza_serial - @nome"
+annullamento_body: "Il/La sottoscritto/a @nome (@codice_fiscale),<br><br>\nchiede l'annullamento della propria istanza @istanza, n. @istanza_serial presentata il @data, per il seguente motivo:<br><br>\n\n@motivo.<br><br>\nCordiali saluti."
+nome_scuola: ''
+codice_ipa: ''
+codice_aoo: ''
+toponimo: ''
+civico: ''
+cap: ''
+comune: ''
+provincia: ''
+telefono: ''
+fax: ''
+instance_signature: false
+referenti_plesso: []

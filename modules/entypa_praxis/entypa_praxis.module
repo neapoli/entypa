@@ -5,10 +5,13 @@
  * Istruttoria e definizione delle istanze prodotte dai formulari Entýpa.
  */
 
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\NodeInterface;
+use Drupal\webform\WebformSubmissionInterface;
 
 /**
  * Implements hook_help().
@@ -81,6 +84,35 @@ function entypa_praxis_form_alter(&$form, FormStateInterface $form_state, $form_
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter() for views_exposed_form.
+ *
+ * Restringe la tendina «Tipo di permesso» ai formulari pubblicati nella
+ * Modulistica OnLine. La restrizione sta qui e non nel filtro della vista
+ * perché un elenco scritto nella configurazione diventerebbe una dipendenza su
+ * ogni singolo formulario: la vista non si installerebbe più sulle scuole che
+ * ne hanno attivati solo alcuni, ed è esattamente quello che succedeva.
+ *
+ * Così invece l'elenco si adatta al sito: compaiono i formulari che quella
+ * scuola pubblica davvero, e non quelli di altri moduli.
+ */
+function entypa_praxis_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $vista = $form_state->get('view');
+
+  if (!$vista || $vista->id() !== 'admin_entypa_praxis' || empty($form['webform_id']['#options'])) {
+    return;
+  }
+
+  $pubblicati = entypa_formulari_pubblicati();
+
+  $form['webform_id']['#options'] = array_filter(
+    $form['webform_id']['#options'],
+    // «All» è la voce «- Qualsiasi -», che deve restare.
+    fn($chiave) => $chiave === 'All' || isset($pubblicati[$chiave]),
+    ARRAY_FILTER_USE_KEY
+  );
+}
+
+/**
  * Implements hook_mail().
  */
 function entypa_praxis_mail($key, &$message, $params) {
@@ -116,6 +148,18 @@ function entypa_praxis_mail($key, &$message, $params) {
       $message['body'][] = $body;
       break;
 
+    case 'annullata':
+      // Avviso di annullamento: nessuna motivazione, l'annullamento non è
+      // l'esito di un'istruttoria ma una decisione dell'ufficio.
+      $message['subject'] = t($config->get('annullata_subject') ?: 'Istanza annullata - @istanza n. @istanza_serial', $variables, ['langcode' => $langcode]);
+
+      $body = t("Gentile @nome,", $variables, ['langcode' => $langcode]) . "\r\n";
+      $body .= t($config->get('annullata_body') ?: 'La sua istanza @istanza, n. @istanza_id del @data, è stata annullata.', $variables, ['langcode' => $langcode]) . "\r\n";
+      $body .= "\r\n" . t($config->get('notification_footer'), $variables, ['langcode' => $langcode]);
+
+      $message['body'][] = $body;
+      break;
+
     case 'segreteria':
       // Copia per la segreteria.
       $message['subject'] = t($config->get('segreteria_subject'), $variables, ['langcode' => $langcode]);
@@ -131,36 +175,10 @@ function entypa_praxis_mail($key, &$message, $params) {
 
       $message['body'][] = $body;
 
-      // @todo Generazione della firma, mai portata dal modulo originale.
       if ($config->get('evaded_signature')) {
+        \Drupal::service('entypa_praxis.email')->allegaSegnaturaEvasione($message, $params);
       }
       break;
-  }
-}
-
-/**
- * Implements hook_mail_alter().
- */
-function entypa_praxis_mail_alter(&$message) {
-  $config = \Drupal::config('entypa_praxis.settings');
-
-  if (!$config->get('instance_signature')) {
-    return;
-  }
-
-  $filtro = $config->get('email_protocollo');
-
-  if (!empty($filtro) && isset($message['to']) && strpos($message['to'], $filtro) !== FALSE) {
-    // Se la segnatura c'è già non se ne aggiunge un'altra.
-    if (isset($message['params']['attachments'])) {
-      foreach ($message['params']['attachments'] as $allegato) {
-        if (isset($allegato['filename']) && $allegato['filename'] === 'Segnatura.xml') {
-          return;
-        }
-      }
-    }
-
-    // @todo Generazione di Segnatura.xml, mai portata dal modulo originale.
   }
 }
 
@@ -206,6 +224,79 @@ function entypa_praxis_webform_submission_insert(EntityInterface $entity) {
       '@errore' => $e->getMessage(),
     ]);
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for entity_form_display.
+ *
+ * Rimette nel form del nodo i quattro campi che governano l'iter.
+ *
+ * Il form display dei tipi di contenuto è distribuito da Entýpa, che lo
+ * riapplica a ogni «drush updb»: quel file non conosce i campi aggiunti da
+ * questo modulo e li toglierebbe ogni volta, lasciando l'iter ingovernabile
+ * senza che nessun errore lo segnali. Agganciarsi al salvataggio del display
+ * è l'unico modo che non dipenda dall'ordine in cui girano i moduli.
+ *
+ * @param \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display
+ *   Il display in corso di salvataggio.
+ */
+function entypa_praxis_entity_form_display_presave(EntityFormDisplayInterface $display) {
+  if ($display->getTargetEntityTypeId() !== 'node' || $display->getMode() !== 'default') {
+    return;
+  }
+
+  $tipi = array_filter((array) \Drupal::config('entypa_praxis.settings')->get('node_types'));
+
+  if (!isset($tipi[$display->getTargetBundle()])) {
+    return;
+  }
+
+  foreach (['field_si_acquisisci', 'field_si_dsga', 'field_si_referente', 'field_si_email'] as $campo) {
+    // Solo se il campo esiste davvero su quel tipo di contenuto.
+    if (!FieldConfig::loadByName('node', $display->getTargetBundle(), $campo)) {
+      continue;
+    }
+
+    if (!$display->getComponent($campo)) {
+      $display->setComponent($campo, [
+        'type' => 'boolean_checkbox',
+        'weight' => 10,
+        'settings' => ['display_label' => TRUE],
+      ]);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for webform_submission.
+ */
+function entypa_praxis_webform_submission_update(EntityInterface $entity) {
+  _entypa_praxis_rispecchia_annullamento($entity);
+}
+
+/**
+ * Riporta nella riga di istruttoria l'annullamento scritto sull'istanza.
+ *
+ * Il valore buono è quello sull'invio del formulario: c'è sempre, anche sulle
+ * scuole che usano Entýpa senza l'istruttoria. Questa colonna ne è una copia,
+ * tenuta perché entri nella query principale della vista della segreteria
+ * senza una lettura per ogni riga.
+ *
+ * La copia va in una sola direzione — istanza verso colonna — così le due
+ * non possono rincorrersi.
+ *
+ * @param \Drupal\webform\WebformSubmissionInterface $submission
+ *   L'invio del formulario.
+ */
+function _entypa_praxis_rispecchia_annullamento(WebformSubmissionInterface $submission) {
+  if (!$submission->getWebform()->getElement('richiesta_annullamento')) {
+    return;
+  }
+
+  \Drupal::database()->update('entypa_praxis')
+    ->fields(['richiesta_annullamento' => (int) $submission->getElementData('richiesta_annullamento')])
+    ->condition('submission_id', $submission->id())
+    ->execute();
 }
 
 /**

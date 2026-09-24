@@ -206,7 +206,7 @@ class FieldManagerService {
         continue;
       }
 
-      // Create field instance if it doesn't exist and bundle is enabled.
+      // Si crea l'istanza solo se manca.
       if (!$field_config) {
         $default_value = FALSE;
         if ($field_name === 'field_si_email') {
@@ -227,30 +227,34 @@ class FieldManagerService {
           ],
         ]);
         $field_config->save();
+      }
 
-        // Configure form display.
-        $form_display = $this->entityTypeManager
-          ->getStorage('entity_form_display')
-          ->load('node.' . $bundle . '.default');
+      // La collocazione nei display va invece sempre verificata, non solo
+      // alla creazione: se il campo esiste già — perché il modulo era stato
+      // installato e poi disinstallato — resterebbe invisibile nel form del
+      // nodo per sempre, per quante volte si risalvino le impostazioni.
+      $form_display = $this->entityTypeManager
+        ->getStorage('entity_form_display')
+        ->load('node.' . $bundle . '.default');
 
-        if ($form_display) {
-          $form_display->setComponent($field_name, [
-            'type' => 'boolean_checkbox',
-            'weight' => 10,
-            'settings' => [
-              'display_label' => TRUE,
-            ],
-          ])->save();
-        }
+      if ($form_display && !$form_display->getComponent($field_name)) {
+        $form_display->setComponent($field_name, [
+          'type' => 'boolean_checkbox',
+          'weight' => 10,
+          'settings' => [
+            'display_label' => TRUE,
+          ],
+        ])->save();
+      }
 
-        // Configure view display (hide by default).
-        $view_display = $this->entityTypeManager
-          ->getStorage('entity_view_display')
-          ->load('node.' . $bundle . '.default');
+      // In lettura questi campi non si mostrano: governano l'iter, non
+      // fanno parte del contenuto.
+      $view_display = $this->entityTypeManager
+        ->getStorage('entity_view_display')
+        ->load('node.' . $bundle . '.default');
 
-        if ($view_display) {
-          $view_display->removeComponent($field_name)->save();
-        }
+      if ($view_display && $view_display->getComponent($field_name)) {
+        $view_display->removeComponent($field_name)->save();
       }
     }
 

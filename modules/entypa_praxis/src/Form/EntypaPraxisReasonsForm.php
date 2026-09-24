@@ -238,11 +238,27 @@ class EntypaPraxisReasonsForm extends FormBase {
         break;
     }
 
-    // Reasons textarea.
+    // Le motivazioni si chiedono solo quando servono: comparivano sempre, e
+    // chi concedeva finiva per scriverci dentro una nota che poi risultava
+    // il motivo di un diniego. Il controllo vero resta in validateForm():
+    // gli stati sono un aiuto del browser, non una garanzia.
+    $quando_respinta = [[':input[name="is_ok"]' => ['value' => '2']]];
+
+    if (($config->get('oe') ?: FALSE) && $field === 'acquisito') {
+      // In modalità operatori economici anche la sospensione va motivata.
+      $quando_respinta[] = 'or';
+      $quando_respinta[] = [':input[name="is_ok"]' => ['value' => '0']];
+    }
+
     $form['reasons'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Motivazioni, in caso di istanza respinta:'),
+      '#title' => $this->t('Motivazioni'),
+      '#description' => $this->t("Vengono comunicate a chi ha presentato l'istanza."),
       '#default_value' => $reasons,
+      '#states' => [
+        'visible' => $quando_respinta,
+        'required' => $quando_respinta,
+      ],
     ];
 
     $form['submit'] = [
@@ -367,7 +383,17 @@ class EntypaPraxisReasonsForm extends FormBase {
       ->execute();
 
     if ($rows > 0) {
+      if ($evaso) {
+        // Se pendeva una richiesta di annullamento, la lavorazione è andata
+        // avanti lo stesso: la richiesta risulta non accolta.
+        \Drupal::service('entypa_praxis.instance_helper')->chiudiRichiestaAnnullamento($tid);
+      }
+
       $this->messenger->addStatus($this->t('Salvato campo istanza @sid.', ['@sid' => $submission_id]));
+
+      // I referenti di plesso seguono l'esito: avvisati se accolta, avvisati
+      // del ritiro se non lo è più.
+      \Drupal::service('entypa_praxis.referenti')->aggiorna($submission_id);
 
       // Send email if instance is evaso or suspended (for OE mode).
       $oe = $config->get('oe') ?: FALSE;
@@ -407,32 +433,21 @@ class EntypaPraxisReasonsForm extends FormBase {
       ->fetchAssoc();
     
     if ($instance_data) {
-      // Determine which field completed the instance (caused evaso)
-      // Priority: visto_stato > visto_dsga_stato > concedibile_stato
-      $is_ok = NULL;
-      
-      if (!empty($instance_data['visto_stato'])) {
-        // DS visa exists - use it (normal workflow)
-        $is_ok = $instance_data['visto_stato'];
-      }
-      elseif (!empty($instance_data['visto_dsga_stato'])) {
-        // DSGA visa exists (acquisition with DSGA)
-        $is_ok = $instance_data['visto_dsga_stato'];
-      }
-      elseif (!empty($instance_data['concedibile_stato'])) {
-        // Concedibile/acquisito (acquisition without DSGA)
-        $is_ok = $instance_data['concedibile_stato'];
-      }
-      else {
-        // Fallback - should not happen if evaso is set correctly
-        $is_ok = 1;
-      }
-      
+      // L'esito è quello dell'ultimo passaggio che ha deciso, calcolato dalla
+      // stessa funzione che governa lo stato mostrato al dipendente: se qui e
+      // là la regola divergesse, il messaggio direbbe una cosa e l'elenco
+      // un'altra.
+      $esito = entypa_esito_istanza([
+        $instance_data['visto_stato'],
+        $instance_data['visto_dsga_stato'],
+        $instance_data['concedibile_stato'],
+      ], $instance_data['evaso_data']);
+
       $params = [
-        'is_ok' => $is_ok,
+        'is_ok' => $esito ? $esito['is_ok'] : 1,
         'reasons' => $instance_data['motivazioni'] ?? '',
       ];
-      
+
       $email_service->sendNotification($submission_id, $uid, $nid, $params);
     }
   }

@@ -11,3 +11,10 @@ giorni-lavorativi:
   dependencies:
     - core/drupal
     - core/drupalSettings
+
+annullamento:
+  version: 1.x
+  css:
+    theme:
+      css/entypa-annullamento.css: {}
+

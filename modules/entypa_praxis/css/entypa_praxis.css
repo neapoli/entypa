@@ -3,13 +3,6 @@
  * Stili dell'istruttoria delle istanze.
  */
 
-.button-si {
-  cursor: pointer;
-  padding: 2px 6px;
-  margin: 2px;
-  font-size: 0.9em;
-}
-
 .istanza-annullata {
   opacity: 0.7;
 }
@@ -27,4 +20,144 @@
 .entypa-praxis-status img {
   vertical-align: middle;
   margin-right: 4px;
+}
+
+/* Stato dell'annullamento nella tabella dell'istruttoria. */
+.entypa-praxis-richiesta {
+  white-space: nowrap;
+}
+
+/* La richiesta pendente è l'unica che chiede una decisione. */
+.entypa-praxis-richiesta--pendente {
+  font-weight: 700;
+  color: #a5540a;
+}
+
+.entypa-praxis-richiesta--annullata,
+.entypa-praxis-richiesta--respinta {
+  color: #595959;
+}
+
+/* I due comandi che stanno dentro una cella — «Motivazioni» e «Annulla» —
+   devono avere lo stesso ingombro. Le misure stanno in un posto solo perché
+   non divergano; il tema dà ai pulsanti un'altezza minima che qui va tolta. */
+.entypa-praxis-motivo__apri,
+input.deleteButtonClass {
+  white-space: nowrap;
+  font-size: 0.85em;
+  line-height: 1.4;
+  padding: 0.1rem 0.5rem;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+}
+
+/* Icona e pulsante incolonnati e centrati nella cella. */
+.entypa-praxis-richiesta__cella {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.entypa-praxis-motivo p {
+  white-space: pre-line;
+}
+
+.entypa-praxis-motivo__azioni {
+  margin-top: 1rem;
+}
+
+/* La tabella dell'istruttoria: molte colonne strette, meglio un corpo minore. */
+.entypa-praxis-tabella table {
+  font-size: 0.85rem;
+}
+
+.entypa-praxis-tabella td,
+.entypa-praxis-tabella th {
+  padding-inline: 0.4rem;
+  vertical-align: middle;
+}
+
+/* Le intestazioni devono poter andare a capo: «Verifica ufficio» e
+   «Cognome Nome» stanno su due righe invece di allargare la colonna. */
+.entypa-praxis-tabella th {
+  white-space: normal;
+  line-height: 1.2;
+}
+
+.entypa-praxis-tabella th.views-field-concedibile-stato,
+.entypa-praxis-tabella th.views-field-field-cognome,
+.entypa-praxis-tabella th.views-field-visto-dsga-stato {
+  width: 5.5rem;
+}
+
+/* Del solo pulsante di annullamento resta proprio il colore. Si scrive come
+   «input.» per avere la meglio sugli stili del tema per «.button». */
+input.deleteButtonClass {
+  color: #dc3545;
+  background: transparent;
+  background-image: none;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+input.deleteButtonClass:hover,
+input.deleteButtonClass:focus {
+  color: #fff;
+  background: #dc3545;
+  background-image: none;
+  border-color: #dc3545;
+}
+
+/* Le colonne che contengono solo un'icona di stato: centrate, come le altre. */
+.entypa-praxis-tabella .views-field-protocollo-stato,
+.entypa-praxis-tabella .views-field-concedibile-stato,
+.entypa-praxis-tabella .views-field-visto-dsga-stato,
+.entypa-praxis-tabella .views-field-visto-stato,
+.entypa-praxis-tabella .views-field-visto-referente-stato,
+.entypa-praxis-tabella .views-field-richiesta-annullamento,
+.entypa-praxis-tabella .views-field-annullato-data {
+  text-align: center;
+}
+
+/* La casella del protocollo la disegna il tema di amministrazione: qui non
+ * c'è nessuna regola sul suo aspetto.
+ *
+ * Il modulo che la contiene però va tenuto allineato a sinistra. Gin disegna
+ * la levetta con un «::before» in «position: absolute» senza «left»: il
+ * pallino si colloca quindi nella propria posizione statica, che dipende
+ * dall'allineamento del testo. Centrando la cella si sposta a destra, il
+ * «transform» che dovrebbe parcheggiarlo a sinistra non lo riporta più al suo
+ * posto, e l'«overflow: hidden» della pillola lo taglia via: resta un ovale
+ * tutto bianco. Centriamo la cella per l'icona, non per il comando.
+ */
+.entypa-praxis-tabella .entypa-praxis-inline-form {
+  text-align: start;
+}
+
+/* Le istruzioni di lavorazione, richiudibili.
+ *
+ * Servono finché la segreteria impara il giro, poi spingono soltanto l'elenco
+ * in fondo alla pagina: stanno chiuse, e chi ha bisogno le apre. Il colore lo
+ * mette il tema di amministrazione, qui si sistema solo l'ingombro.
+ */
+.entypa-praxis-istruzioni {
+  margin-bottom: 1rem;
+}
+
+.entypa-praxis-istruzioni > summary {
+  cursor: pointer;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.entypa-praxis-istruzioni[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+.entypa-praxis-istruzioni ul {
+  margin-top: 0.25rem;
 }

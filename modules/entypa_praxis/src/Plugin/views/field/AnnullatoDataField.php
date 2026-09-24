@@ -23,22 +23,27 @@ class AnnullatoDataField extends Date {
     $tid = $this->colonnaIstruttoria($values, 'tid');
 
     if ($value) {
-      // Already canceled - show date and icon.
-      $formatted_date = parent::render($values);
-      $icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-      $html = sprintf(
-        '<span id="can%d" style="white-space:nowrap">%s (%s)</span>',
-        $sid,
-        $icon_svg,
-        strip_tags($formatted_date)
-      );
-      // Markup::create() perché la stringa è nostra e l'icona è SVG,
-      // che Xss::filterAdmin() toglierebbe.
-      return ['#markup' => Markup::create($html)];
+      // Solo l'icona: la data allungava la colonna e la si ritrova come
+      // suggerimento al passaggio del mouse. È la stessa X che il dipendente
+      // vede nel proprio elenco, presa dal corredo di icone del tema.
+      // La data si formatta qui: il formato del campo Views è quello
+      // dell'elenco, e nel suggerimento va scritta all'italiana.
+      $icona = entypa_icona('it-close-circle', '#dc3545', $this->t('Annullata il @data', [
+        '@data' => \Drupal::service('date.formatter')->format((int) $value, 'custom', 'd/m/Y'),
+      ]));
+
+      return [
+        '#markup' => Markup::create('<span id="can' . $sid . '">' . $icona . '</span>'),
+      ];
     }
 
-    // Show cancel button if user has permission.
-    if (\Drupal::currentUser()->hasPermission('annullato') && $tid) {
+    // Il pulsante compare solo dove la scheda è operativa. Il campo
+    // «modifica» è l'interruttore: se una visualizzazione non lo contiene,
+    // resta di sola consultazione — e allora nessun comando deve accendersi,
+    // questo compreso, che finora sfuggiva al controllo.
+    $editable = property_exists($this->view, 'si_editable') ? $this->view->si_editable : FALSE;
+
+    if ($editable && \Drupal::currentUser()->hasPermission('annullato') && $tid) {
       $form = \Drupal::formBuilder()->getForm(
         'Drupal\entypa_praxis\Form\EntypaPraxisCancelForm',
         $sid, $uid, $tid, 0, 'annullato'

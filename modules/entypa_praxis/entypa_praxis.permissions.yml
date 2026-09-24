@@ -29,7 +29,3 @@ acquisito:
 annullato:
   title: 'Istanza annullata'
   description: 'Annullare una istanza'
-
-elaborato:
-  title: 'Istanza elaborata'
-  description: 'Finalizzare una istanza'

@@ -10,6 +10,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
+use Drupal\entypa\Segnatura;
 
 /**
  * Service for handling email notifications for instances.
@@ -68,6 +71,27 @@ class EmailService {
   protected $database;
 
   /**
+   * Il costruttore della segnatura di protocollo.
+   *
+   * @var \Drupal\entypa\Segnatura
+   */
+  protected $segnatura;
+
+  /**
+   * The print engine plugin manager.
+   *
+   * @var \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface
+   */
+  protected $printEngineManager;
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs an EmailService object.
    */
   public function __construct(
@@ -77,7 +101,10 @@ class EmailService {
     AccountInterface $current_user,
     LanguageManagerInterface $language_manager,
     DateFormatterInterface $date_formatter,
-    Connection $database
+    Connection $database,
+    Segnatura $segnatura,
+    EntityPrintPluginManagerInterface $print_engine_manager,
+    MessengerInterface $messenger
   ) {
     $this->configFactory = $config_factory;
     $this->entityTypeManager = $entity_type_manager;
@@ -86,6 +113,9 @@ class EmailService {
     $this->languageManager = $language_manager;
     $this->dateFormatter = $date_formatter;
     $this->database = $database;
+    $this->segnatura = $segnatura;
+    $this->printEngineManager = $print_engine_manager;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -154,6 +184,54 @@ class EmailService {
         );
       }
     }
+  }
+
+  /**
+   * Avvisa il dipendente che la sua istanza è stata annullata.
+   *
+   * L'annullamento è una decisione dell'ufficio, non l'esito dell'istruttoria:
+   * il messaggio va solo a chi ha presentato l'istanza, non alla segreteria.
+   *
+   * @param int $submission_id
+   *   L'identificativo dell'invio del formulario.
+   * @param int $uid
+   *   L'identificativo di chi ha presentato l'istanza.
+   *
+   * @return bool
+   *   TRUE se il messaggio è stato consegnato al sistema di posta.
+   */
+  public function sendCancellationNotice($submission_id, $uid) {
+    $user = $this->entityTypeManager->getStorage('user')->load($uid);
+    if (!$user || !$user->getEmail()) {
+      return FALSE;
+    }
+
+    $submission_data = $this->getSubmissionData($submission_id);
+    if (!$submission_data) {
+      return FALSE;
+    }
+
+    $esito = $this->mailManager->mail(
+      'entypa_praxis',
+      'annullata',
+      $user->getEmail(),
+      $this->languageManager->getCurrentLanguage()->getId(),
+      [
+        'uid' => $uid,
+        'user' => $user,
+        'submission' => $submission_id,
+        'nomenodo' => $submission_data['title'],
+        'timestamp' => $submission_data['submitted'],
+        'submission_serial' => $submission_data['serial'],
+        // 4 è l'esito «annullata» in prepareEmailVariables().
+        'is_ok' => 4,
+        'reasons' => '',
+      ],
+      NULL,
+      TRUE
+    );
+
+    return !empty($esito['result']);
   }
 
   /**
@@ -245,6 +323,9 @@ class EmailService {
     elseif ($is_ok == 3) {
       $stato = $this->t('sospesa');
     }
+    elseif ($is_ok == 4) {
+      $stato = $this->t('annullata');
+    }
 
     // Get user names.
     $user = $params['user'] ?? NULL;
@@ -286,6 +367,9 @@ class EmailService {
 
     return [
       '@nomesito' => $site_config->get('name'),
+      // La denominazione ufficiale sta nelle impostazioni di Entýpa; se la
+      // scuola non l'ha compilata vale il nome del sito.
+      '@istituto' => $this->configFactory->get('entypa.settings')->get('nome_scuola') ?: $site_config->get('name'),
       '@nome' => $requestor_name,
       '@codice_fiscale' => $codice_fiscale,
       '@istanza' => $params['nomenodo'] ?? '',
@@ -296,6 +380,144 @@ class EmailService {
       '@motivazioni' => $params['reasons'] ?? '',
       '@operatore' => $operator_name,
       '@qualifica_operatore' => $operator_role,
+    ];
+  }
+
+  /**
+   * Allega all'email di istanza evasa la segnatura e i due documenti.
+   *
+   * A scrivere è la scuola, che comunica alla propria segreteria l'esito: il
+   * documento principale è l'esito, in PDF, e l'istanza a cui si riferisce
+   * viaggia con esso. Senza i codici IPA e AOO la scuola non si può
+   * presentare come mittente, e la segnatura non si allega.
+   *
+   * @param array $message
+   *   Il messaggio in composizione, da hook_mail().
+   * @param array $params
+   *   I parametri del messaggio.
+   */
+  public function allegaSegnaturaEvasione(array &$message, array $params) {
+    // La segnatura è un di più: se qualcosa va storto l'email parte senza, e
+    // l'errore resta nel registro.
+    try {
+      $this->costruisciSegnaturaEvasione($message, $params);
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('entypa_praxis')->error("Segnatura non allegata all'email di istanza evasa n. @serial: @errore", [
+        '@serial' => $params['submission_serial'] ?? '',
+        '@errore' => $e->getMessage(),
+      ]);
+    }
+  }
+
+  /**
+   * Costruisce gli allegati per allegaSegnaturaEvasione().
+   */
+  protected function costruisciSegnaturaEvasione(array &$message, array $params) {
+    $mittente = $this->segnatura->mittenteScuola();
+    if ($mittente['codice_amministrazione'] === '' || $mittente['codice_aoo'] === '') {
+      $this->messenger->addWarning($this->t("Segnatura di protocollo non allegata all'email di istanza evasa: mancano il codice IPA o il codice AOO nelle impostazioni di Entýpa."));
+      return;
+    }
+
+    $submission = $this->entityTypeManager->getStorage('webform_submission')->load($params['submission'] ?? 0);
+    if (!$submission) {
+      return;
+    }
+
+    $serial = $params['submission_serial'] ?? $submission->serial();
+    $allegati = [];
+
+    $esito = $this->pdfEsito($message, (string) $serial);
+    if ($esito) {
+      $allegati[] = $esito;
+    }
+
+    $istanza = entypa_pdf_istanza($submission);
+    if ($istanza && !empty($istanza['filecontent'])) {
+      $allegati[] = $istanza;
+    }
+
+    if (!$allegati) {
+      return;
+    }
+
+    $documenti = array_map(fn($allegato) => [
+      'nome' => $allegato['filename'],
+      'mime' => $allegato['filemime'],
+    ], $allegati);
+
+    $xml = $this->segnatura->componi(
+      $mittente,
+      $this->segnatura->numeroScuola(),
+      $message['to'],
+      (string) $message['subject'],
+      $documenti
+    );
+
+    $allegati[] = $this->segnatura->allegato($xml);
+
+    foreach ($allegati as $allegato) {
+      $message['params']['attachments'][] = $allegato;
+    }
+  }
+
+  /**
+   * Riduce il testo dell'email a testo semplice.
+   *
+   * I testi delle notifiche li scrive la scuola, e dove la posta parte in
+   * HTML vanno a capo con «<br>»: nell'email funziona, nel PDF si leggerebbe
+   * il tag. Gli a capo — in HTML o in chiaro — restano a capo, gli altri tag
+   * si tolgono.
+   */
+  protected function testoSemplice(array $corpo) {
+    $testo = implode("\n", array_map('strval', $corpo));
+    $testo = preg_replace('#<br\s*/?>|</p>#i', "\n", $testo);
+    $testo = html_entity_decode(strip_tags($testo), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $testo = str_replace("\r", '', $testo);
+    // Il testo in chiaro e i <br> si sommano: più di una riga vuota di
+    // seguito non serve a nessuno.
+    $testo = preg_replace("/[ \t]*\n[ \t]*/", "\n", $testo);
+    $testo = preg_replace("/\n{3,}/", "\n\n", $testo);
+
+    return trim($testo);
+  }
+
+  /**
+   * Stampa in PDF il testo dell'esito.
+   *
+   * @param array $message
+   *   Il messaggio, di cui si stampano oggetto e testo.
+   * @param string $serial
+   *   Il numero dell'istanza, per il nome del file.
+   *
+   * @return array|null
+   *   L'allegato, oppure NULL se la stampa non è riuscita.
+   */
+  protected function pdfEsito(array $message, $serial) {
+    $html = '<html><head><meta charset="utf-8"><style>body { font-family: DejaVu Sans, sans-serif; font-size: 11pt; line-height: 1.5; } h1 { font-size: 13pt; }</style></head><body>'
+      . '<p>' . htmlspecialchars($this->segnatura->nomeScuola(), ENT_QUOTES) . '</p>'
+      . '<h1>' . htmlspecialchars((string) $message['subject'], ENT_QUOTES) . '</h1>'
+      . '<p>' . nl2br(htmlspecialchars($this->testoSemplice($message['body']), ENT_QUOTES)) . '</p>'
+      . '</body></html>';
+
+    try {
+      $motore = $this->printEngineManager->createSelectedInstance('pdf');
+      $motore->addPage($html);
+      $pdf = $motore->getBlob();
+    }
+    catch (\Throwable $e) {
+      \Drupal::logger('entypa_praxis')->error("PDF dell'esito non generato per l'istanza n. @serial: @errore", [
+        '@serial' => $serial,
+        '@errore' => $e->getMessage(),
+      ]);
+      return NULL;
+    }
+
+    return [
+      'filecontent' => $pdf,
+      'filename' => 'Esito istanza n. ' . $serial . '.pdf',
+      'filemime' => 'application/pdf',
     ];
   }
 

@@ -1,19 +1,12 @@
-node_types: []
+node_types:
+  modulistica_online: modulistica_online
 oe: false
 email: ''
 notification_email: false
 notification_body: 'La sua istanza @istanza, n. @istanza_id del @data, è stata @esito.'
 segreteria_subject: 'Notifica istanza evasa - @istanza n. @istanza_serial - @nome'
 segreteria_body: "L'istanza @istanza, n. @istanza_id del @data presentata da @nome, è stata @esito."
-notification_footer: "Cordiali saluti,\n@operatore (@qualifica_operatore)."
-instance_signature: false
+annullata_subject: 'Istanza annullata - @istanza n. @istanza_serial'
+annullata_body: "La sua istanza @istanza, n. @istanza_id del @data, è stata annullata."
+notification_footer: "Cordiali saluti,\n@istituto"
 evaded_signature: false
-email_protocollo: ''
-nome_scuola: ''
-toponimo: ''
-civico: ''
-cap: ''
-comune: ''
-provincia: 'AG'
-fax: ''
-telefono: ''

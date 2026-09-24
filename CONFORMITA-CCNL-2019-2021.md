@@ -62,7 +62,7 @@ art. 1 commi 56 e seguenti, DPR 445/2000, L. 584/1967, L. 52/2001 art. 5, L. 53/
 | `permessi_brevi_art16_doc` | Permessi brevi docenti | art. 16 CCNL 2007 | **Massimo di 2 ore per singolo permesso imposto** riga per riga (c. 1); monte annuo pari all'orario settimanale di insegnamento — 25/22/18 ore — enunciato, con blocco oltre il massimo possibile; recupero con supplenze e subordinazione alla sostituzione (cc. 3 e 5) | ✅ |
 | `permessi_retribuiti_ata_td`<br>`permessi_retribuiti_doc_td` | Permessi, tempo determinato | **art. 35 CCNL 19/21** | Il titolo citava l'**art. 19, abrogato**. Aggiunte le tre fattispecie mancanti: **3 giorni retribuiti per motivi personali** (c. 12, la novità del rinnovo), **6 giorni non retribuiti** (c. 13), **8 giorni non retribuiti per concorsi ed esami** (c. 14); campo sul tipo di contratto a termine, da cui dipende il regime; validazione delle combinazioni incompatibili e dei tetti; avviso di coerenza col profilo. Nel modulo ATA, corretto il testo sulle cariche elettive che citava l'art. 38 dei docenti anziché l'art. 52 | ✅ |
 | `permessi_retribuiti_ata_ti` | Permessi retribuiti, ATA di ruolo | art. 15 cc. 1 e 3 CCNL 2007 | Rimosso un blocco di testo **orfano** sui motivi personali — nessuna opzione lo attivava — e sostituito con il rimando all'**art. 67** (18 ore), che per gli ATA ha preso il posto dell'art. 15 c. 2; art. 38 → art. 52 sulle cariche elettive; tetti per fattispecie; avviso di coerenza | ✅ |
-| `permessi_retribuiti_doc_ti` | Permessi retribuiti, docenti di ruolo | art. 15 cc. 1, 2, 3 CCNL 2007 | Completata la citazione monca «i 6 giorni di ferie previsti dall'**art.** del CCNL», che sono quelli dell'art. 13 c. 9, fruibili senza il vincolo di sostituibilità senza oneri; tetti per fattispecie; avviso di coerenza | ✅ |
+| `permessi_retribuiti_doc_ti` | Permessi retribuiti, docenti di ruolo | art. 15 cc. 1, 2, 3 CCNL 2007 | Completata la citazione monca «i 6 giorni di ferie previsti dall'**art.** del CCNL», che sono quelli dell'art. 13 c. 9, fruibili senza il vincolo di sostituibilità senza oneri; tetti per fattispecie; avviso di coerenza; **voce distinta per i 6 giorni di ferie**, prima nominati ma non richiedibili (tetto unico di 3 giorni) | ✅ |
 
 ---
 
@@ -141,13 +141,16 @@ Due regole imparate sul campo, utili a chi interverrà dopo:
    porta con sé decisioni non tecniche: se contare le domande inviate o solo quelle
    autorizzate, come trattare quelle annullate, e come sbloccare una domanda legittima fermata
    da uno storico sporco. La proposta sul tavolo è un avviso al dirigente, non un blocco.
-5. **`email_referenti_plesso`.** Presente in nove formulari, nascosto via CSS ed escluso da
-   riepilogo e mail; **nessun handler lo usa**, né in copia né in copia nascosta. Si raccoglie
-   un indirizzo e non se ne fa nulla.
-6. **Ruoli negli `#access_*_roles`.** I moduli corretti usano ora solo `authenticated`. Erano
-   diffusi riferimenti a ruoli inesistenti su questa installazione (`administrator`,
-   `dirigente`, `direttore`, `dsga`, `vicario_ds`, `uff_personale`), che non concedevano nulla
-   a nessuno.
+5. ~~**`email_referenti_plesso`.**~~ *Risolto il 24 settembre 2026.* Il campo, nascosto e mai
+   usato, è stato tolto dai nove formulari. Al suo posto Praxis avvisa i referenti di plesso,
+   impostati per sede nelle sue impostazioni, quando un'istanza di assenza di un docente è
+   accolta, e di nuovo se viene annullata o l'esito cambia. Il messaggio dice solo chi sarà
+   assente e quando, senza causale: per malattia e L. 104 la causale sarebbe un dato sulla
+   salute.
+6. ~~**Ruoli negli `#access_*_roles`.**~~ *Verificato il 24 settembre 2026.* Nei campi dei 22
+   formulari compare solo `authenticated`; nell'accesso ai formulari sono citati 11 ruoli, tutti
+   esistenti (`doc_*` per i docenti, `collaboratore`, `personale_amministrativo`,
+   `personale_tecnico` per gli ATA, più DSGA, dirigente e ruoli redazionali). Nessun ruolo `ex_*`.
 
 **Istituti senza formulario**
 
@@ -156,7 +159,7 @@ Due regole imparate sul campo, utili a chi interverrà dopo:
 | Permessi orari per motivi personali o familiari, ATA | art. 67 CCNL 19/21 | 18 ore per anno scolastico, minimo un'ora |
 | Visite, terapie, prestazioni specialistiche ed esami, ATA | art. 69 CCNL 19/21 | 18 ore per anno scolastico, preavviso di 3 giorni |
 | Ferie del personale ATA | art. 13 CCNL 2007 | 32 giorni; 15 continuativi fra 1º luglio e 31 agosto |
-| 6 giorni di ferie dei docenti in attività didattica | art. 13 c. 9 e art. 15 c. 2 CCNL 2007 | convertibili in permesso per motivi personali |
+| ~~6 giorni di ferie dei docenti in attività didattica~~ | art. 13 c. 9 e art. 15 c. 2 CCNL 2007 | *Risolto il 24 settembre 2026*: voce «Ferie per motivi familiari/personali» in `permessi_retribuiti_doc_ti`, tetto di 6 giorni distinto dai 3 dei motivi personali |
 
 ---
 

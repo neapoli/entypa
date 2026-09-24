@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\webform\WebformSubmissionInterface;
@@ -268,4 +271,848 @@ function entypa_aggiungi_validazione(array &$form, $chiave, $callback) {
   }
 
   return FALSE;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for webform_submission.
+ */
+function entypa_webform_submission_insert(WebformSubmissionInterface $webform_submission) {
+  // Senza istruttoria la scuola accetta quello che riceve: i referenti di
+  // plesso si avvisano subito. Con Praxis aspettano l'esito.
+  \Drupal::service('entypa.referenti')->dopoInvio($webform_submission);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view() for webform_submission.
+ *
+ * Aggiunge sotto i dati dell'istanza un riquadro sull'annullamento.
+ *
+ * I campi «richiesta_annullamento» e «motivo_annullamento» sono tecnici e
+ * restano nascosti: da soli mostrerebbero un numero senza significato. Il
+ * riquadro dice la stessa cosa in italiano, e compare solo quando c'è
+ * qualcosa da dire.
+ */
+function entypa_webform_submission_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if (!$entity->getWebform()->getElement('richiesta_annullamento')) {
+    return;
+  }
+
+  // Il PDF è il documento formale della richiesta originale e non va riscritto
+  // da un fatto successivo. Oggi nessuno dei modelli di stampa stampa
+  // «content», quindi il riquadro non ci arriverebbe comunque: questo
+  // controllo rende la cosa una scelta esplicita invece di un caso fortunato.
+  if (str_starts_with(\Drupal::routeMatch()->getRouteName() ?? '', 'entity_print.')) {
+    return;
+  }
+
+  // Prima l'esito dell'istruttoria, quando c'è.
+  $riga = entypa_riga_istruttoria($entity->id());
+
+  if ($riga) {
+    $esito = entypa_esito_istanza([
+      $riga['visto_stato'],
+      $riga['visto_dsga_stato'],
+      $riga['concedibile_stato'],
+    ], $riga['evaso_data']);
+
+    if ($esito) {
+      $titoli_esito = [
+        'accolta' => t('Istanza accolta'),
+        'respinta' => t('Istanza respinta'),
+        'sospesa' => t('Istanza sospesa'),
+      ];
+
+      $build['entypa_esito'] = [
+        '#type' => 'container',
+        '#weight' => 99,
+        '#attributes' => ['class' => ['entypa-avviso-esito', 'entypa-avviso-esito--' . $esito['chiave']]],
+        '#attached' => ['library' => ['entypa/annullamento']],
+        'titolo' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h3',
+          '#value' => $titoli_esito[$esito['chiave']],
+        ],
+      ];
+
+      // Le motivazioni le riceve già nell'email: qui le ritrova insieme
+      // all'istanza a cui si riferiscono.
+      $motivazioni = trim((string) $riga['motivazioni']);
+      if ($motivazioni !== '') {
+        $build['entypa_esito']['motivazioni'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => t('Motivazioni: @motivazioni', ['@motivazioni' => $motivazioni]),
+        ];
+      }
+    }
+  }
+
+  $stato = (int) $entity->getElementData('richiesta_annullamento');
+
+  $titoli = [
+    1 => t('Annullamento richiesto'),
+    2 => t('Istanza annullata'),
+    3 => t('Richiesta di annullamento non accolta'),
+  ];
+
+  if (!isset($titoli[$stato])) {
+    return;
+  }
+
+  $riquadro = [
+    '#type' => 'container',
+    '#weight' => 100,
+    '#attributes' => ['class' => ['entypa-avviso-annullamento', 'entypa-avviso-annullamento--' . $stato]],
+    '#attached' => ['library' => ['entypa/annullamento']],
+    'titolo' => [
+      '#type' => 'html_tag',
+      '#tag' => 'h3',
+      '#value' => $titoli[$stato],
+    ],
+  ];
+
+  $motivo = $entity->getWebform()->getElement('motivo_annullamento')
+    ? trim((string) $entity->getElementData('motivo_annullamento'))
+    : '';
+
+  if ($motivo !== '') {
+    $riquadro['motivo'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => t('Motivo indicato: @motivo', ['@motivo' => $motivo]),
+    ];
+  }
+
+  // La decisione spetta alla scuola: qui si dice solo a che punto è.
+  if ($stato === 1) {
+    $riquadro['attesa'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => t('La richiesta è stata trasmessa alla segreteria, che deciderà se accoglierla.'),
+    ];
+  }
+
+  $build['entypa_annullamento'] = $riquadro;
+}
+
+/**
+ * Implements hook_mail_alter().
+ *
+ * Allega Segnatura.xml all'email con cui un'istanza arriva alla scuola, così
+ * il software di protocollo la registra già compilata. È l'email del gestore
+ * «e_mail» dei formulari pubblicati nella modulistica: la si riconosce da lì,
+ * non dall'indirizzo del destinatario, che la scuola può cambiare.
+ */
+function entypa_mail_alter(array &$message) {
+  if ($message['module'] !== 'webform' || empty($message['params']['webform_submission'])) {
+    return;
+  }
+
+  $gestore = $message['params']['handler'] ?? NULL;
+  if (!$gestore || $gestore->getHandlerId() !== 'e_mail') {
+    return;
+  }
+
+  if (!\Drupal::config('entypa.settings')->get('instance_signature')) {
+    return;
+  }
+
+  /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+  $submission = $message['params']['webform_submission'];
+  $nodo = $submission->getSourceEntity();
+  if (!$nodo || $nodo->getEntityTypeId() !== 'node' || $nodo->bundle() !== 'modulistica_online') {
+    return;
+  }
+
+  $segnatura = \Drupal::service('entypa.segnatura');
+  $allegati = $message['params']['attachments'] ?? [];
+  if ($segnatura->giaPresente($allegati)) {
+    return;
+  }
+
+  // La segnatura è un di più: se qualcosa va storto l'istanza arriva senza, e
+  // l'errore resta nel registro.
+  try {
+    _entypa_allega_segnatura_istanza($message, $submission, $allegati);
+  }
+  catch (\Throwable $e) {
+    \Drupal::logger('entypa')->error("Segnatura non allegata all'istanza @sid: @errore", [
+      '@sid' => $submission->id(),
+      '@errore' => $e->getMessage(),
+    ]);
+  }
+}
+
+/**
+ * Costruisce e allega la segnatura per entypa_mail_alter().
+ */
+function _entypa_allega_segnatura_istanza(array &$message, WebformSubmissionInterface $submission, array $allegati) {
+  $segnatura = \Drupal::service('entypa.segnatura');
+  $documenti = _entypa_documenti_segnatura($submission, $allegati);
+  $utente = $submission->getOwner();
+
+  // Senza un documento la segnatura non ha niente a cui riferirsi, e senza
+  // un dipendente non ha un mittente: in entrambi i casi l'email parte com'è.
+  if (!$documenti || !$utente || $utente->isAnonymous()) {
+    \Drupal::logger('entypa')->warning("Segnatura non allegata all'istanza @sid: @motivo.", [
+      '@sid' => $submission->id(),
+      '@motivo' => $documenti ? 'istanza senza utente' : "l'email non ha allegati",
+    ]);
+    return;
+  }
+
+  $email = trim((string) $submission->getElementData('mail_user')) ?: $utente->getEmail();
+
+  $xml = $segnatura->componi(
+    $segnatura->mittenteDipendente($utente, $email),
+    $submission->id(),
+    $message['to'],
+    (string) $message['subject'],
+    $documenti
+  );
+
+  $message['params']['attachments'][] = $segnatura->allegato($xml);
+}
+
+/**
+ * Elenca gli allegati dell'email come documenti della segnatura.
+ *
+ * Il documento principale è il PDF dell'istanza generato dal formulario; gli
+ * altri — per esempio un certificato caricato dal dipendente — sono allegati.
+ *
+ * @param \Drupal\webform\WebformSubmissionInterface $submission
+ *   L'istanza.
+ * @param array $allegati
+ *   Gli allegati dell'email.
+ *
+ * @return array
+ *   I documenti, con il principale per primo.
+ */
+function _entypa_documenti_segnatura(WebformSubmissionInterface $submission, array $allegati) {
+  $pdf_istanza = entypa_pdf_istanza($submission, FALSE)['filename'] ?? NULL;
+
+  $documenti = [];
+  foreach ($allegati as $allegato) {
+    if (empty($allegato['filename'])) {
+      continue;
+    }
+    $documento = ['nome' => $allegato['filename'], 'mime' => $allegato['filemime'] ?? 'application/octet-stream'];
+    if ($allegato['filename'] === $pdf_istanza) {
+      array_unshift($documenti, $documento);
+    }
+    else {
+      $documenti[] = $documento;
+    }
+  }
+
+  return $documenti;
+}
+
+/**
+ * Il PDF dell'istanza, lo stesso che il formulario allega alle email.
+ *
+ * Lo produce il campo di stampa del formulario, con il suo modello: chi ne ha
+ * bisogno altrove — la segnatura, l'email di istanza evasa — lo chiede qui,
+ * così il documento è uno solo.
+ *
+ * @param \Drupal\webform\WebformSubmissionInterface $submission
+ *   L'istanza.
+ * @param bool $con_contenuto
+ *   FALSE quando basta il nome del file: generare il PDF costa.
+ *
+ * @return array|null
+ *   L'allegato, con «filename», «filemime» e, se chiesto, «filecontent»;
+ *   NULL se il formulario non ha un campo di stampa.
+ */
+function entypa_pdf_istanza(WebformSubmissionInterface $submission, $con_contenuto = TRUE) {
+  $gestore_elementi = \Drupal::service('plugin.manager.webform.element');
+
+  foreach ($submission->getWebform()->getElementsInitializedAndFlattened() as $elemento) {
+    if (!str_starts_with($elemento['#type'] ?? '', 'webform_entity_print_attachment')) {
+      continue;
+    }
+
+    $classe = $gestore_elementi->getElementInstance($elemento)->getFormElementClassDefinition();
+    $allegato = [
+      'filename' => $classe::getFileName($elemento, $submission),
+      'filemime' => $classe::getFileMimeType($elemento, $submission),
+    ];
+    if ($con_contenuto) {
+      $allegato['filecontent'] = $classe::getFileContent($elemento, $submission);
+    }
+
+    return $allegato;
+  }
+
+  return NULL;
+}
+
+/**
+ * Compone l'avviso di assenza, o di ritiro dell'avviso, ai referenti.
+ *
+ * Il testo si scrive in HTML, a paragrafi e con «<br>» per andare a capo: le scuole
+ * spediscono con phpmailer_smtp in HTML, dove gli a capo in chiaro si
+ * perdono, e dove invece si spedisce in testo semplice Drupal trasforma i
+ * «<br>» in a capo. I valori passano dai segnaposto «@», che li mettono al
+ * sicuro.
+ */
+function _entypa_mail_referenti($key, array &$message, array $params) {
+  $opzioni = ['langcode' => $message['langcode']];
+  $istituto = \Drupal::config('entypa.settings')->get('nome_scuola') ?: \Drupal::config('system.site')->get('name');
+  $variabili = ['@nome' => $params['nome'], '@istituto' => $istituto];
+  $ritiro = $key === 'referenti_ritiro';
+  $scambio = $params['scambio'] ?? NULL;
+
+  $elenco = function (array $voci) {
+    return implode('', array_map(fn($voce) => '<br>- ' . \Drupal\Component\Utility\Html::escape((string) $voce), $voci));
+  };
+
+  if ($scambio) {
+    $variabili['@collega'] = $scambio['collega'];
+    $chi = $scambio['collega'] !== ''
+      ? t('di @nome con il collega @collega', $variabili, $opzioni)
+      : t('di @nome', $variabili, $opzioni);
+
+    $message['subject'] = $ritiro
+      ? t('Annullata la comunicazione di scambio di ore - @nome', $variabili, $opzioni)
+      : t('Comunicazione di scambio di ore - @nome', $variabili, $opzioni);
+    $testo = ($ritiro
+      ? t('Si comunica che non avrà luogo lo scambio di ore @chi comunicato in precedenza:', ['@chi' => $chi], $opzioni)
+      : t('Si comunica che è stato autorizzato uno scambio di ore @chi:', ['@chi' => $chi], $opzioni))
+      . $elenco([
+        t('orario previsto: @turno', ['@turno' => $scambio['previsto']], $opzioni),
+        t('orario modificato: @turno', ['@turno' => $scambio['modificato']], $opzioni),
+      ]);
+
+    // La copertura la scrive il docente, anche su più righe.
+    if (!$ritiro && $scambio['copertura'] !== '') {
+      $testo .= '</p><p>' . t('Le lezioni saranno così coperte:', [], $opzioni)
+        . '<br>' . nl2br(\Drupal\Component\Utility\Html::escape($scambio['copertura']));
+    }
+  }
+  else {
+    $periodi = $params['periodi'];
+    $message['subject'] = $ritiro
+      ? t('Annullata la comunicazione di assenza - @nome', $variabili, $opzioni)
+      : t('Comunicazione di assenza - @nome', $variabili, $opzioni);
+    $inizio = $ritiro
+      ? t("Si comunica che non avrà luogo l'assenza di @nome comunicata in precedenza", $variabili, $opzioni)
+      : t('Si comunica che @nome sarà assente', $variabili, $opzioni);
+    $testo = count($periodi) === 1
+      ? $inizio . ' ' . \Drupal\Component\Utility\Html::escape(reset($periodi)) . '.'
+      : $inizio . ':' . $elenco($periodi);
+  }
+
+  // I paragrafi danno lo stacco sia in HTML sia nel testo semplice, dove due
+  // «<br>» di seguito diventerebbero un solo a capo.
+  $message['body'][] = \Drupal\Core\Render\Markup::create(
+    '<p>' . $testo . '</p><p>' . t('Cordiali saluti,', [], $opzioni) . '<br>' . \Drupal\Component\Utility\Html::escape($istituto) . '</p>'
+  );
+}
+
+/**
+ * Implements hook_mail().
+ */
+function entypa_mail($key, &$message, $params) {
+  // L'avviso ai referenti di plesso ha testi suoi, volutamente scarni: chi e
+  // quando, mai il perché.
+  if (str_starts_with($key, 'referenti_')) {
+    _entypa_mail_referenti($key, $message, $params);
+    return;
+  }
+
+  if ($key !== 'richiesta_annullamento') {
+    return;
+  }
+
+  $config = \Drupal::config('entypa.settings');
+  $langcode = $message['langcode'];
+
+  $variabili = [
+    '@nomesito' => \Drupal::config('system.site')->get('name'),
+    '@nome' => $params['nome'],
+    '@codice_fiscale' => $params['codice_fiscale'],
+    '@istanza' => $params['istanza'],
+    '@istanza_serial' => $params['istanza_serial'],
+    '@data' => $params['data'],
+    // Il motivo lo scrive il dipendente: va messo al sicuro, e le sue andate a
+    // capo rese in HTML, altrimenti in un messaggio HTML si perderebbero.
+    '@motivo' => \Drupal\Core\Render\Markup::create(
+      nl2br(\Drupal\Component\Utility\Html::escape((string) $params['motivo']))
+    ),
+  ];
+
+  // I testi vengono dalla configurazione e passano da t(): ogni scuola li
+  // riscrive secondo le proprie formule di protocollo.
+  $oggetto = $config->get('annullamento_subject') ?: 'Richiesta di annullamento istanza n. @istanza_serial - @nome';
+  $corpo = $config->get('annullamento_body') ?: entypa_annullamento_testo_predefinito();
+
+  $message['subject'] = t($oggetto, $variabili, ['langcode' => $langcode]);
+  $message['body'][] = t($corpo, $variabili, ['langcode' => $langcode]);
+
+  // La segreteria deve poter rispondere a chi ha chiesto l'annullamento.
+  if (!empty($params['mail_richiedente'])) {
+    $message['headers']['Reply-to'] = $params['mail_richiedente'];
+  }
+}
+
+/**
+ * Restituisce il testo predefinito della richiesta di annullamento.
+ *
+ * Sta qui e non ripetuto nel modulo di impostazioni e nell'aggiornamento,
+ * perché lo stesso testo scritto in più posti prima o poi diverge. L'unica
+ * altra copia è in config/install/entypa.settings.yml, che è un file di
+ * configurazione e non può chiamare codice.
+ *
+ * Il messaggio viaggia in HTML — le scuole lo spediscono con phpmailer_smtp —
+ * quindi le andate a capo si scrivono con <br>.
+ *
+ * @return string
+ *   Il testo, con i segnaposto da sostituire.
+ */
+function entypa_annullamento_testo_predefinito() {
+  return "Il/La sottoscritto/a @nome (@codice_fiscale),<br><br>\nchiede l'annullamento della propria istanza @istanza, n. @istanza_serial presentata il @data, per il seguente motivo:<br><br>\n\n@motivo.<br><br>\nCordiali saluti.";
+}
+
+/**
+ * Restituisce un'icona del corredo Bootstrap Italia del tema.
+ *
+ * Stesso meccanismo usato da Katatáxeis: lo sprite è quello del tema, e il
+ * percorso resta configurabile perché alcune scuole lo servono da CDN.
+ *
+ * @param string $nome
+ *   Il nome del simbolo nello sprite, per esempio «it-close-circle».
+ * @param string $colore
+ *   Il colore in esadecimale.
+ * @param string $etichetta
+ *   Il testo alternativo, che fa anche da suggerimento al passaggio del mouse.
+ *
+ * @return \Drupal\Component\Render\MarkupInterface
+ *   L'icona pronta da stampare.
+ */
+function entypa_icona($nome, $colore, $etichetta) {
+  $sprite = theme_get_setting('libraries_cdn_icons') ?: '/libraries/ouitoulia-skenografia/svg/sprites.svg';
+  $etichetta = htmlspecialchars((string) $etichetta, ENT_QUOTES);
+
+  return \Drupal\Core\Render\Markup::create(
+    '<svg class="icon entypa-icona" style="width:1.4em;height:1.4em;color:' . $colore . ';fill:currentColor" role="img" aria-label="' . $etichetta . '">' .
+    '<title>' . $etichetta . '</title>' .
+    '<use href="' . $sprite . '#' . $nome . '"></use>' .
+    '</svg>'
+  );
+}
+
+/**
+ * Come si è conclusa un'istanza evasa.
+ *
+ * «Evasa» dice solo che l'iter è finito, non come: per chi ha presentato la
+ * domanda è una parola ambigua, e letta accanto a un'email di diniego sembra
+ * perfino dire il contrario.
+ *
+ * Vale l'ultimo passaggio che ha deciso — il visto del DS, altrimenti quello
+ * del DSGA, altrimenti la verifica d'ufficio — e non «un diniego qualunque
+ * lungo la catena»: se un passaggio successivo ha ribaltato quello prima, fa
+ * fede il più recente. È la stessa regola con cui viene scelto l'esito
+ * comunicato per email, e deve restare una sola: lo stato che il dipendente
+ * legge sul sito e quello che riceve nel messaggio non possono discordare.
+ *
+ * @param array $stati
+ *   Gli stati dei passaggi, in ordine di precedenza: visto del DS, visto del
+ *   DSGA, verifica d'ufficio.
+ * @param int|null $evaso_data
+ *   La data di evasione, oppure NULL se l'istanza è ancora in corso.
+ *
+ * @return array|null
+ *   Chiave, etichetta e valore numerico dell'esito, oppure NULL se non è
+ *   ancora evasa.
+ */
+function entypa_esito_istanza(array $stati, $evaso_data) {
+  if (is_null($evaso_data)) {
+    return NULL;
+  }
+
+  $deciso = 0;
+  foreach ($stati as $stato) {
+    if (!empty($stato)) {
+      $deciso = (int) $stato;
+      break;
+    }
+  }
+
+  $esiti = [
+    2 => ['chiave' => 'respinta', 'etichetta' => 'respinta'],
+    3 => ['chiave' => 'sospesa', 'etichetta' => 'sospesa'],
+  ];
+
+  $esito = $esiti[$deciso] ?? ['chiave' => 'accolta', 'etichetta' => 'accolta'];
+  $esito['is_ok'] = $deciso ?: 1;
+
+  return $esito;
+}
+
+/**
+ * Legge la riga di istruttoria di un'istanza, se il modulo c'è.
+ *
+ * @param int $sid
+ *   L'identificativo dell'invio del formulario.
+ *
+ * @return array|null
+ *   La riga, oppure NULL se Entýpa — Praxis non è installato o non c'è riga.
+ */
+function entypa_riga_istruttoria($sid) {
+  if (!\Drupal::moduleHandler()->moduleExists('entypa_praxis')) {
+    return NULL;
+  }
+
+  $riga = \Drupal::database()->select('entypa_praxis', 'x')
+    ->fields('x')
+    ->condition('submission_id', $sid)
+    ->execute()
+    ->fetchAssoc();
+
+  return $riga ?: NULL;
+}
+
+/**
+ * Elenca i formulari pubblicati dalle pagine di Modulistica OnLine.
+ *
+ * È l'insieme dei formulari che riguardano Entýpa su questo sito: né tutti
+ * quelli installati — un formulario senza pagina non è raggiungibile dal
+ * personale — né i formulari di altri moduli, come le graduatorie o i
+ * contatti, che con le istanze non c'entrano.
+ *
+ * @return array
+ *   Gli identificativi dei formulari, come chiave e come valore.
+ */
+function entypa_formulari_pubblicati() {
+  $identificativi = \Drupal::entityQuery('node')
+    ->accessCheck(FALSE)
+    ->condition('type', 'modulistica_online')
+    ->execute();
+
+  if (!$identificativi) {
+    return [];
+  }
+
+  $formulari = [];
+
+  foreach (\Drupal::entityTypeManager()->getStorage('node')->loadMultiple($identificativi) as $nodo) {
+    foreach ($nodo->get('webform') as $riferimento) {
+      if ($riferimento->target_id) {
+        $formulari[$riferimento->target_id] = $riferimento->target_id;
+      }
+    }
+  }
+
+  return $formulari;
+}
+
+/**
+ * Riversa nel sito le configurazioni di config/update di un modulo.
+ *
+ * Core legge config/install e config/optional, non config/update: su un sito
+ * nuovo, senza questo passaggio, le configurazioni non esisterebbero fino al
+ * primo "drush updb". Le configurazioni già presenti non vengono toccate.
+ *
+ * @param string $modulo
+ *   Il nome del modulo di cui riversare la cartella config/update.
+ */
+function entypa_importa_config_update($modulo) {
+  $percorso = DRUPAL_ROOT . '/' . \Drupal::service('extension.list.module')->getPath($modulo) . '/config/update';
+
+  if (!is_dir($percorso)) {
+    return;
+  }
+
+  \Drupal::service('config.installer')->installOptionalConfig(new FileStorage($percorso));
+}
+
+/**
+ * Installa il formulario di un sottomodulo e la pagina che lo pubblica.
+ *
+ * La chiamano i sottomoduli dalla propria installazione, ed è il gesto
+ * simmetrico a entypa_rimuovi_formulario().
+ *
+ * Il formulario sta in config/update e non in config/install o config/optional,
+ * che core leggerebbe da sé: quella è l'unica copia, ed è la stessa che ogni
+ * "drush updb" riapplica (vedi src/Drush/Commands/EntypaCommands.php). Tenerne
+ * una sola evita che la versione installata sui siti nuovi e quella riallineata
+ * sui siti esistenti finiscano col divergere.
+ *
+ * @param string $modulo
+ *   Il nome del sottomodulo che possiede il formulario.
+ * @param string $webform_id
+ *   L'identificativo del formulario da installare e pubblicare.
+ *
+ * @return \Drupal\node\NodeInterface|null
+ *   Il nodo creato, oppure NULL se c'era già o se il formulario non esiste.
+ */
+function entypa_installa_formulario($modulo, $webform_id) {
+  entypa_importa_config_update($modulo);
+
+  return entypa_crea_modulistica($webform_id);
+}
+
+/**
+ * Rimuove un formulario e la pagina di modulistica che lo pubblica.
+ *
+ * La chiamano i sottomoduli dalla propria disinstallazione. Sta qui, e non
+ * ripetuta in ciascuno, perché la regola è una sola: se se ne va il
+ * formulario deve andarsene anche il nodo che lo ospita, altrimenti nella
+ * modulistica resta una voce che apre una pagina vuota.
+ *
+ * L'ordine conta: prima si cercano i nodi, perché cancellare il formulario
+ * svuota il riferimento e dopo non si saprebbe più quali erano.
+ *
+ * @param string $webform_id
+ *   L'identificativo del formulario da rimuovere.
+ *
+ * @return array
+ *   Quanti nodi e quanti formulari sono stati rimossi.
+ */
+function entypa_rimuovi_formulario($webform_id) {
+  $esito = ['nodi' => 0, 'formulari' => 0];
+
+  $archivio_nodi = \Drupal::entityTypeManager()->getStorage('node');
+  $identificativi = \Drupal::entityQuery('node')
+    ->accessCheck(FALSE)
+    ->condition('type', 'modulistica_online')
+    ->condition('webform', $webform_id)
+    ->execute();
+
+  if ($identificativi) {
+    $nodi = $archivio_nodi->loadMultiple($identificativi);
+    $archivio_nodi->delete($nodi);
+    $esito['nodi'] = count($nodi);
+  }
+
+  $formulario = \Drupal::entityTypeManager()->getStorage('webform')->load($webform_id);
+  if ($formulario) {
+    $formulario->delete();
+    $esito['formulari'] = 1;
+  }
+
+  \Drupal::logger('entypa')->notice('Rimosso il formulario @id e @n pagine di modulistica che lo pubblicavano.', [
+    '@id' => $webform_id,
+    '@n' => $esito['nodi'],
+  ]);
+
+  return $esito;
+}
+
+/**
+ * Crea la pagina di modulistica che pubblica un formulario.
+ *
+ * La chiamano i sottomoduli dalla propria installazione, ed è il gesto
+ * simmetrico a entypa_rimuovi_formulario(): quello che l'installazione mette,
+ * la disinstallazione toglie.
+ *
+ * Il nodo nasce pubblicato, così il formulario è subito a disposizione del
+ * personale. I destinatari sono dedotti dal nome del formulario: è una
+ * deduzione, e va ricontrollata sulla pagina appena creata.
+ *
+ * @param string $webform_id
+ *   L'identificativo del formulario da pubblicare.
+ *
+ * @return \Drupal\node\NodeInterface|null
+ *   Il nodo creato, oppure NULL se c'era già o se il formulario non esiste.
+ */
+function entypa_crea_modulistica($webform_id) {
+  $formulario = \Drupal::entityTypeManager()->getStorage('webform')->load($webform_id);
+
+  if (!$formulario) {
+    \Drupal::logger('entypa')->warning('Formulario @id non trovato: la pagina di modulistica non è stata creata.', ['@id' => $webform_id]);
+    return NULL;
+  }
+
+  // Chiamare due volte non deve produrre due pagine.
+  $esistenti = \Drupal::entityQuery('node')
+    ->accessCheck(FALSE)
+    ->condition('type', 'modulistica_online')
+    ->condition('webform', $webform_id)
+    ->execute();
+
+  if ($esistenti) {
+    return NULL;
+  }
+
+  $nodo = \Drupal::entityTypeManager()->getStorage('node')->create([
+    'type' => 'modulistica_online',
+    'title' => $formulario->label(),
+    'uid' => 1,
+    'status' => 1,
+    'webform' => [['target_id' => $webform_id, 'status' => 'open']],
+  ]);
+
+  $destinatari = _entypa_destinatari_dal_nome($webform_id);
+  if ($destinatari && $nodo->hasField('field_destinatari')) {
+    $nodo->set('field_destinatari', $destinatari);
+  }
+
+  $nodo->save();
+
+  \Drupal::logger('entypa')->notice('Creata e pubblicata la pagina di modulistica @titolo per il formulario @id.', [
+    '@titolo' => $nodo->label(),
+    '@id' => $webform_id,
+  ]);
+
+  return $nodo;
+}
+
+/**
+ * Deduce i destinatari dal nome del formulario.
+ *
+ * I formulari del personale finiscono in «_ata» o in «_doc»; quelli che non
+ * distinguono — adesione alle commissioni, incarichi, libera professione —
+ * riguardano entrambe le categorie. I termini si cercano per nome e non per
+ * identificativo, perché su ogni scuola hanno numeri diversi.
+ *
+ * @param string $webform_id
+ *   L'identificativo del formulario.
+ *
+ * @return array
+ *   I riferimenti da assegnare a field_destinatari.
+ */
+function _entypa_destinatari_dal_nome($webform_id) {
+  $ata = preg_match('/_ata(_|$)/', $webform_id);
+  $docenti = preg_match('/_doc(_|$)/', $webform_id);
+
+  if (!$ata && !$docenti) {
+    $ata = $docenti = TRUE;
+  }
+
+  $voluti = array_filter(['ATA' => $ata, 'Docenti' => $docenti]);
+  $riferimenti = [];
+
+  foreach (array_keys($voluti) as $nome) {
+    $termini = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+      ->loadByProperties(['vid' => 'destinatari', 'name' => $nome]);
+
+    if ($termine = reset($termini)) {
+      $riferimenti[] = ['target_id' => $termine->id()];
+    }
+  }
+
+  return $riferimenti;
+}
+
+/**
+ * Le province italiane, per sigla.
+ *
+ * @return array
+ *   Il nome della provincia, indicizzato per sigla.
+ */
+function entypa_province() {
+  return [
+    'AG' => 'Agrigento',
+    'AL' => 'Alessandria',
+    'AN' => 'Ancona',
+    'AO' => 'Aosta',
+    'AR' => 'Arezzo',
+    'AP' => 'Ascoli Piceno',
+    'AT' => 'Asti',
+    'AV' => 'Avellino',
+    'BA' => 'Bari',
+    'BT' => 'Barletta-Andria-Trani',
+    'BL' => 'Belluno',
+    'BN' => 'Benevento',
+    'BG' => 'Bergamo',
+    'BI' => 'Biella',
+    'BO' => 'Bologna',
+    'BZ' => 'Bolzano',
+    'BS' => 'Brescia',
+    'BR' => 'Brindisi',
+    'CA' => 'Cagliari',
+    'CL' => 'Caltanissetta',
+    'CB' => 'Campobasso',
+    'CI' => 'Carbonia-Iglesias',
+    'CE' => 'Caserta',
+    'CT' => 'Catania',
+    'CZ' => 'Catanzaro',
+    'CH' => 'Chieti',
+    'CO' => 'Como',
+    'CS' => 'Cosenza',
+    'CR' => 'Cremona',
+    'KR' => 'Crotone',
+    'CN' => 'Cuneo',
+    'EN' => 'Enna',
+    'FM' => 'Fermo',
+    'FE' => 'Ferrara',
+    'FI' => 'Firenze',
+    'FG' => 'Foggia',
+    'FC' => 'Forlì-Cesena',
+    'FR' => 'Frosinone',
+    'GE' => 'Genova',
+    'GO' => 'Gorizia',
+    'GR' => 'Grosseto',
+    'IM' => 'Imperia',
+    'IS' => 'Isernia',
+    'SP' => 'La Spezia',
+    'AQ' => 'L\'Aquila',
+    'LT' => 'Latina',
+    'LE' => 'Lecce',
+    'LC' => 'Lecco',
+    'LI' => 'Livorno',
+    'LO' => 'Lodi',
+    'LU' => 'Lucca',
+    'MC' => 'Macerata',
+    'MN' => 'Mantova',
+    'MS' => 'Massa-Carrara',
+    'MT' => 'Matera',
+    'ME' => 'Messina',
+    'MI' => 'Milano',
+    'MO' => 'Modena',
+    'MB' => 'Monza e della Brianza',
+    'NA' => 'Napoli',
+    'NO' => 'Novara',
+    'NU' => 'Nuoro',
+    'OT' => 'Olbia-Tempio',
+    'OR' => 'Oristano',
+    'PD' => 'Padova',
+    'PA' => 'Palermo',
+    'PR' => 'Parma',
+    'PV' => 'Pavia',
+    'PG' => 'Perugia',
+    'PU' => 'Pesaro e Urbino',
+    'PE' => 'Pescara',
+    'PC' => 'Piacenza',
+    'PI' => 'Pisa',
+    'PT' => 'Pistoia',
+    'PN' => 'Pordenone',
+    'PZ' => 'Potenza',
+    'PO' => 'Prato',
+    'RG' => 'Ragusa',
+    'RA' => 'Ravenna',
+    'RC' => 'Reggio Calabria',
+    'RE' => 'Reggio Emilia',
+    'RI' => 'Rieti',
+    'RN' => 'Rimini',
+    'RM' => 'Roma',
+    'RO' => 'Rovigo',
+    'SA' => 'Salerno',
+    'VS' => 'Medio Campidano',
+    'SS' => 'Sassari',
+    'SV' => 'Savona',
+    'SI' => 'Siena',
+    'SR' => 'Siracusa',
+    'SO' => 'Sondrio',
+    'TA' => 'Taranto',
+    'TE' => 'Teramo',
+    'TR' => 'Terni',
+    'TO' => 'Torino',
+    'OG' => 'Ogliastra',
+    'TP' => 'Trapani',
+    'TN' => 'Trento',
+    'TV' => 'Treviso',
+    'TS' => 'Trieste',
+    'UD' => 'Udine',
+    'VA' => 'Varese',
+    'VE' => 'Venezia',
+    'VB' => 'Verbano-Cusio-Ossola',
+    'VC' => 'Vercelli',
+    'VR' => 'Verona',
+    'VV' => 'Vibo Valentia',
+    'VI' => 'Vicenza',
+    'VT' => 'Viterbo',
+  ];
 }

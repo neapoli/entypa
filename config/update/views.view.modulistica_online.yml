@@ -22,6 +22,9 @@ dependencies:
     - better_exposed_filters
     - node
     - user
+  enforced:
+    module:
+      - entypa
 id: modulistica_online
 label: 'Modulistica OnLine'
 module: views

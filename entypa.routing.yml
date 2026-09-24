@@ -5,3 +5,15 @@ entypa.settings:
     _title: 'Entýpa - Istanze del personale'
   requirements:
     _permission: 'administer webform'
+
+# La richiesta di annullamento si compila in una finestra: nella colonna
+# dell'elenco non c'è spazio per una casella di testo.
+entypa.richiesta_annullamento:
+  path: '/entypa/richiesta-annullamento/{sid}'
+  defaults:
+    _form: '\Drupal\entypa\Form\EntypaRichiestaAnnullamentoForm'
+    _title_callback: '\Drupal\entypa\Form\EntypaRichiestaAnnullamentoForm::titolo'
+  requirements:
+    # Il controllo verifica che l'istanza sia propria e ancora annullabile.
+    _custom_access: '\Drupal\entypa\Form\EntypaRichiestaAnnullamentoForm::accesso'
+    sid: \d+

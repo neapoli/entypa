@@ -47,12 +47,6 @@ class VistoDsgaField extends FieldPluginBase {
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function query() {
-    // Do nothing -- this field is computed.
-  }
 
 
   /**

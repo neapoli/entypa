@@ -184,18 +184,18 @@ function entypa_praxis_views_data() {
     ],
   ];
 
-  // Elaborato data field.
-  $data['entypa_praxis']['elaborato_data'] = [
-    'title' => t('Elaborato'),
-    'help' => t('Istanza finalizzata il...'),
+  // Stato dell'annullamento.
+  $data['entypa_praxis']['richiesta_annullamento'] = [
+    'title' => t('Annullamento'),
+    'help' => t("A che punto è l'annullamento: richiesto dal dipendente, disposto dall'ufficio o non accolto."),
     'field' => [
-      'id' => 'entypa_praxis_elaborato_data',
+      'id' => 'entypa_praxis_richiesta_annullamento',
     ],
     'sort' => [
-      'id' => 'date',
+      'id' => 'standard',
     ],
     'filter' => [
-      'id' => 'entypa_praxis_elaborato_data_filter',
+      'id' => 'entypa_praxis_richiesta_annullamento_filter',
     ],
   ];
 

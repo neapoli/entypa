@@ -6,6 +6,101 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function entypa_praxis_install() {
+  entypa_importa_config_update('entypa_praxis');
+
+  // I quattro campi che governano l'istruttoria vanno messi sul tipo di
+  // contenuto scelto: senza, le pagine di modulistica non saprebbero dire se
+  // l'istanza richiede il visto del DSGA o si ferma all'acquisizione.
+  \Drupal::service('entypa_praxis.field_manager')->resetFields();
+
+  _entypa_praxis_crea_righe_mancanti();
+}
+
+/**
+ * Apre l'istruttoria sulle istanze che ne sono sprovviste.
+ *
+ * Le righe nascono di norma insieme all'istanza, ma una scuola può partire con
+ * il solo Entýpa e aggiungere Praxis dopo mesi: quelle istanze non avrebbero
+ * riga, e nella vista della segreteria comparirebbero senza protocollo, senza
+ * visti e — quel che conta di più — senza la richiesta di annullamento che il
+ * dipendente aveva già presentato.
+ *
+ * La richiesta si rilegge dall'istanza, che è dove il dipendente l'ha scritta.
+ *
+ * @return int
+ *   Quante righe di istruttoria sono state aperte.
+ */
+function _entypa_praxis_crea_righe_mancanti() {
+  $database = \Drupal::database();
+  $gestore = \Drupal::service('entypa_praxis.field_manager');
+
+  $query = $database->select('webform_submission', 's');
+  $query->innerJoin('node_field_data', 'n', "s.entity_type = 'node' AND s.entity_id = n.nid");
+  $query->leftJoin('entypa_praxis', 'x', 's.sid = x.submission_id');
+  $query->fields('s', ['sid', 'uid']);
+  $query->addField('n', 'type', 'tipo');
+  $query->isNull('x.tid');
+
+  $istanze = [];
+
+  foreach ($query->execute() as $riga) {
+    if ($gestore->appliesToBundle($riga->tipo)) {
+      $istanze[$riga->sid] = $riga->uid;
+    }
+  }
+
+  if (!$istanze) {
+    return 0;
+  }
+
+  // Le richieste di annullamento si leggono dai dati delle istanze in un colpo
+  // solo: caricarle una per una sarebbe inutilmente pesante.
+  $richieste = $database->select('webform_submission_data', 'd')
+    ->fields('d', ['sid', 'value'])
+    ->condition('name', 'richiesta_annullamento')
+    ->condition('sid', array_keys($istanze), 'IN')
+    ->execute()
+    ->fetchAllKeyed();
+
+  $aperte = 0;
+
+  foreach ($istanze as $sid => $uid) {
+    try {
+      $database->insert('entypa_praxis')
+        ->fields([
+          'submission_id' => $sid,
+          'user_id' => $uid,
+          'protocollo_stato' => 0,
+          'concedibile_stato' => 0,
+          'visto_dsga_stato' => 0,
+          'visto_referente_stato' => 0,
+          'visto_stato' => 0,
+          'richiesta_annullamento' => (int) ($richieste[$sid] ?? 0),
+          'evaso_data' => NULL,
+          'annullato_data' => NULL,
+          'elaborato_data' => NULL,
+          'motivazioni' => NULL,
+        ])
+        ->execute();
+      $aperte++;
+    }
+    catch (\Exception $e) {
+      \Drupal::logger('entypa_praxis')->error("Non è stato possibile aprire l'istruttoria dell'istanza @sid: @errore", [
+        '@sid' => $sid,
+        '@errore' => $e->getMessage(),
+      ]);
+    }
+  }
+
+  \Drupal::logger('entypa_praxis')->info('Aperte @n righe di istruttoria su istanze già presenti.', ['@n' => $aperte]);
+
+  return $aperte;
+}
+
+/**
  * Implements hook_schema().
  */
 function entypa_praxis_schema() {
@@ -67,6 +162,13 @@ function entypa_praxis_schema() {
         'type' => 'int',
         'not null' => FALSE,
       ],
+      'richiesta_annullamento' => [
+        'description' => "Annullamento: 0 nulla, 1 richiesto dal dipendente, 2 annullata dall'ufficio, 3 richiesta non accolta.",
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
       'motivazioni' => [
         'description' => 'Motivazioni del diniego o annotazioni di istruttoria.',
         'type' => 'text',
@@ -83,10 +185,19 @@ function entypa_praxis_schema() {
         'type' => 'int',
         'not null' => FALSE,
       ],
+      'referenti_avvisati' => [
+        'description' => "Quando i referenti di plesso sono stati avvisati dell'assenza (timestamp); NULL se non lo sono o se l'avviso è stato ritirato.",
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
     ],
     'primary key' => ['tid'],
-    'indexes' => [
+    // Una sola riga di istruttoria per istanza: lo garantisce il database, non
+    // solo il codice che le crea.
+    'unique keys' => [
       'submission_id' => ['submission_id'],
+    ],
+    'indexes' => [
       'user_id' => ['user_id'],
       'evaso_data' => ['evaso_data'],
       'annullato_data' => ['annullato_data'],
@@ -95,4 +206,312 @@ function entypa_praxis_schema() {
   ];
 
   return $schema;
+}
+
+/**
+ * Aggiunge la colonna «richiesta_annullamento».
+ */
+function entypa_praxis_update_10001() {
+  $schema = \Drupal::database()->schema();
+
+  if ($schema->fieldExists('entypa_praxis', 'richiesta_annullamento')) {
+    return t('La colonna «richiesta_annullamento» era già presente.');
+  }
+
+  $schema->addField('entypa_praxis', 'richiesta_annullamento', [
+    'description' => "Annullamento: 0 nulla, 1 richiesto dal dipendente, 2 annullata dall'ufficio, 3 richiesta non accolta.",
+    'type' => 'int',
+    'size' => 'tiny',
+    'not null' => TRUE,
+    'default' => 0,
+  ]);
+
+  // Le istanze già annullate portano il segno dell'ufficio.
+  $aggiornate = \Drupal::database()->update('entypa_praxis')
+    ->fields(['richiesta_annullamento' => 2])
+    ->isNotNull('annullato_data')
+    ->execute();
+
+  return t('Aggiunta la colonna «richiesta_annullamento»; @n istanze già annullate segnate con 2.', ['@n' => $aggiornate]);
+}
+
+/**
+ * Aggiunge i testi dell'email di annullamento.
+ */
+function entypa_praxis_update_10002() {
+  $config = \Drupal::configFactory()->getEditable('entypa_praxis.settings');
+  $aggiunte = [];
+
+  $predefiniti = [
+    'annullata_subject' => 'Istanza annullata - @istanza n. @istanza_serial',
+    'annullata_body' => "La sua istanza @istanza, n. @istanza_id del @data, è stata annullata.",
+  ];
+
+  foreach ($predefiniti as $chiave => $valore) {
+    if ($config->get($chiave) === NULL) {
+      $config->set($chiave, $valore);
+      $aggiunte[] = $chiave;
+    }
+  }
+
+  if (!$aggiunte) {
+    return t("I testi dell'email di annullamento erano già configurati.");
+  }
+
+  $config->save();
+
+  return t('Aggiunti i testi predefiniti: @chiavi. Si personalizzano nelle impostazioni del modulo.', [
+    '@chiavi' => implode(', ', $aggiunte),
+  ]);
+}
+
+/**
+ * Allinea la colonna «richiesta_annullamento» a quanto scritto sulle istanze.
+ */
+function entypa_praxis_update_10003() {
+  $database = \Drupal::database();
+  $allineate = 0;
+
+  // Si guardano solo le istanze che hanno una riga di istruttoria: le altre
+  // non hanno niente da allineare.
+  $identificativi = $database->select('entypa_praxis', 'x')
+    ->fields('x', ['submission_id'])
+    ->execute()
+    ->fetchCol();
+
+  foreach (array_chunk($identificativi, 50) as $gruppo) {
+    foreach (\Drupal\webform\Entity\WebformSubmission::loadMultiple($gruppo) as $submission) {
+      if (!$submission->getWebform()->getElement('richiesta_annullamento')) {
+        continue;
+      }
+
+      $valore = (int) $submission->getElementData('richiesta_annullamento');
+      $allineate += $database->update('entypa_praxis')
+        ->fields(['richiesta_annullamento' => $valore])
+        ->condition('submission_id', $submission->id())
+        ->condition('richiesta_annullamento', $valore, '<>')
+        ->execute();
+    }
+  }
+
+  return t('Righe di istruttoria allineate alle istanze: @n.', ['@n' => $allineate]);
+}
+
+/**
+ * Rimette nel form del nodo i quattro campi che governano l'iter.
+ */
+function entypa_praxis_update_10004() {
+  $tipi = array_filter((array) \Drupal::config('entypa_praxis.settings')->get('node_types'));
+
+  if (!$tipi) {
+    return t("Nessun tipo di contenuto configurato: i campi si creeranno quando lo sarà, dalla pagina delle impostazioni del modulo.");
+  }
+
+  \Drupal::service('entypa_praxis.field_manager')->resetFields();
+
+  return t('Campi dell\'iter verificati sui tipi di contenuto: @tipi.', [
+    '@tipi' => implode(', ', array_keys($tipi)),
+  ]);
+}
+
+/**
+ * Accende l'istruttoria sulla modulistica e recupera le istanze già arrivate.
+ */
+function entypa_praxis_update_10005() {
+  $config = \Drupal::configFactory()->getEditable('entypa_praxis.settings');
+  $tipi = array_filter($config->get('node_types') ?: []);
+  $messaggi = [];
+
+  // Finché nessun tipo di contenuto è abilitato il modulo non apre istruttorie
+  // e la vista della segreteria resta vuota, senza che niente lo segnali. La
+  // scelta è una sola — la modulistica online — ed è il modulo stesso a
+  // fornirla: la diamo per fatta invece di lasciarla da cercare.
+  if (!$tipi) {
+    $config->set('node_types', ['modulistica_online' => 'modulistica_online'])->save();
+    \Drupal::service('entypa_praxis.field_manager')->resetFields();
+    $messaggi[] = t('Istruttoria abilitata sulla Modulistica OnLine.');
+  }
+
+  $aperte = _entypa_praxis_crea_righe_mancanti();
+  $messaggi[] = t('Istruttorie aperte su istanze già presenti: @n.', ['@n' => $aperte]);
+
+  return implode(' ', $messaggi);
+}
+
+/**
+ * Rende unica la riga di istruttoria di ogni istanza.
+ *
+ * Finora l'unicità la garantiva solo il codice che crea le righe, e due
+ * inserimenti ravvicinati sulla stessa istanza potevano lasciarne due: la
+ * vista della segreteria mostrava allora l'istanza due volte, con i visti su
+ * una riga e l'evasione sull'altra.
+ *
+ * Prima di mettere il vincolo si tolgono i doppioni. Per ogni istanza resta la
+ * riga più avanti nell'iter — evasa o annullata, poi quella con più passaggi
+ * fatti, infine la più recente — e le altre si cancellano dopo averne scritto
+ * il contenuto nel log, così nulla si perde senza traccia.
+ */
+function entypa_praxis_update_10006() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+
+  if ($schema->indexExists('entypa_praxis', 'submission_id') && !_entypa_praxis_indice_submission_semplice()) {
+    return t('La chiave unica su «submission_id» era già presente.');
+  }
+
+  $doppie = $database->query(
+    'SELECT submission_id FROM {entypa_praxis} GROUP BY submission_id HAVING COUNT(*) > 1'
+  )->fetchCol();
+
+  $cancellate = 0;
+
+  foreach ($doppie as $sid) {
+    $righe = $database->select('entypa_praxis', 'x')
+      ->fields('x')
+      ->condition('submission_id', $sid)
+      ->execute()
+      ->fetchAllAssoc('tid', \PDO::FETCH_ASSOC);
+
+    uasort($righe, function ($a, $b) {
+      return _entypa_praxis_avanzamento($b) <=> _entypa_praxis_avanzamento($a);
+    });
+
+    $tenuta = array_key_first($righe);
+    unset($righe[$tenuta]);
+
+    foreach ($righe as $tid => $riga) {
+      \Drupal::logger('entypa_praxis')->warning("Istanza @sid: cancellata la riga di istruttoria doppia @tid (tenuta la @tenuta). Contenuto: @riga", [
+        '@sid' => $sid,
+        '@tid' => $tid,
+        '@tenuta' => $tenuta,
+        '@riga' => json_encode($riga, JSON_UNESCAPED_UNICODE),
+      ]);
+    }
+
+    $cancellate += $database->delete('entypa_praxis')
+      ->condition('tid', array_keys($righe), 'IN')
+      ->execute();
+  }
+
+  if ($schema->indexExists('entypa_praxis', 'submission_id')) {
+    $schema->dropIndex('entypa_praxis', 'submission_id');
+  }
+  $schema->addUniqueKey('entypa_praxis', 'submission_id', ['submission_id']);
+
+  return t('Chiave unica su «submission_id» aggiunta; righe doppie cancellate: @n su @i istanze (dettaglio nel log).', [
+    '@n' => $cancellate,
+    '@i' => count($doppie),
+  ]);
+}
+
+/**
+ * Dice se l'indice su «submission_id» è ancora quello semplice.
+ *
+ * @return bool
+ *   TRUE se l'indice ammette doppioni.
+ */
+function _entypa_praxis_indice_submission_semplice() {
+  $database = \Drupal::database();
+
+  if ($database->databaseType() !== 'mysql') {
+    // Su altri database non si sa leggerlo: si rifà, ed è innocuo.
+    return TRUE;
+  }
+
+  $non_unico = $database->query(
+    "SHOW INDEX FROM {entypa_praxis} WHERE Key_name = 'submission_id'"
+  )->fetchField(1);
+
+  return (bool) $non_unico;
+}
+
+/**
+ * Misura quanto è avanti nell'iter una riga di istruttoria.
+ *
+ * @param array $riga
+ *   La riga della tabella.
+ *
+ * @return array
+ *   Un valore confrontabile: prima chiusa o no, poi i passaggi fatti, poi la
+ *   riga più recente.
+ */
+function _entypa_praxis_avanzamento(array $riga) {
+  $chiusa = !empty($riga['evaso_data']) || !empty($riga['annullato_data']);
+
+  $passaggi = 0;
+  foreach (['protocollo_stato', 'visto_referente_stato', 'concedibile_stato', 'visto_dsga_stato', 'visto_stato'] as $colonna) {
+    if (!empty($riga[$colonna])) {
+      $passaggi++;
+    }
+  }
+
+  return [(int) $chiusa, $passaggi, (int) $riga['tid']];
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function entypa_praxis_update_dependencies() {
+  // I dati dell'istituto si tolgono da Praxis solo dopo che Entýpa li ha
+  // copiati.
+  $dipendenze['entypa_praxis'][10007] = ['entypa' => 10004];
+  // Lo stesso per i referenti di plesso.
+  $dipendenze['entypa_praxis'][10009] = ['entypa' => 10005];
+
+  return $dipendenze;
+}
+
+/**
+ * Toglie da Praxis i dati dell'istituto, ora nelle impostazioni di Entýpa.
+ */
+function entypa_praxis_update_10007() {
+  $config = \Drupal::configFactory()->getEditable('entypa_praxis.settings');
+  $tolte = [];
+
+  foreach (['instance_signature', 'email_protocollo', 'nome_scuola', 'toponimo', 'civico', 'cap', 'comune', 'provincia', 'fax', 'telefono'] as $chiave) {
+    if ($config->get($chiave) !== NULL) {
+      $config->clear($chiave);
+      $tolte[] = $chiave;
+    }
+  }
+
+  if (!$tolte) {
+    return t("Nelle impostazioni di Praxis non c'erano dati dell'istituto da togliere.");
+  }
+
+  $config->save();
+
+  return t("Tolti dalle impostazioni di Praxis i dati dell'istituto, ora in Entýpa: @chiavi.", ['@chiavi' => implode(', ', $tolte)]);
+}
+
+/**
+ * Prepara l'avviso di assenza ai referenti di plesso.
+ */
+function entypa_praxis_update_10008() {
+  $schema = \Drupal::database()->schema();
+
+  if (!$schema->fieldExists('entypa_praxis', 'referenti_avvisati')) {
+    $schema->addField('entypa_praxis', 'referenti_avvisati', [
+      'description' => "Quando i referenti di plesso sono stati avvisati dell'assenza (timestamp); NULL se non lo sono o se l'avviso è stato ritirato.",
+      'type' => 'int',
+      'not null' => FALSE,
+    ]);
+  }
+
+  return t("Pronto l'avviso di assenza ai referenti di plesso: si attiva indicando le loro email nelle impostazioni di Entýpa.");
+}
+
+/**
+ * Toglie da Praxis i referenti di plesso, ora nelle impostazioni di Entýpa.
+ */
+function entypa_praxis_update_10009() {
+  $config = \Drupal::configFactory()->getEditable('entypa_praxis.settings');
+
+  if ($config->get('referenti_plesso') === NULL) {
+    return t("Nelle impostazioni di Praxis non c'erano referenti di plesso da togliere.");
+  }
+
+  $config->clear('referenti_plesso')->save();
+
+  return t('Tolti dalle impostazioni di Praxis i referenti di plesso, ora in Entýpa.');
 }

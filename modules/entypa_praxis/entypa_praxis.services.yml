@@ -9,6 +9,9 @@ services:
       - '@language_manager'
       - '@date.formatter'
       - '@database'
+      - '@entypa.segnatura'
+      - '@plugin.manager.entity_print.print_engine'
+      - '@messenger'
 
   entypa_praxis.field_manager:
     class: Drupal\entypa_praxis\Service\FieldManagerService
@@ -21,3 +24,11 @@ services:
     arguments:
       - '@database'
       - '@entity_type.manager'
+
+  entypa_praxis.referenti:
+    class: Drupal\entypa_praxis\Service\ReferentiPlessoService
+    arguments:
+      - '@database'
+      - '@entity_type.manager'
+      - '@entypa.referenti'
+      - '@datetime.time'

@@ -17,10 +17,10 @@ dependencies:
     - user.role.redattore
   module:
     - better_exposed_filters
+    - entypa
     - node
     - user
     - webform
-    - webform_views
 id: modulistica_online_istanze_inviate
 label: 'Modulistica OnLine: Istanze Inviate'
 module: views
@@ -558,19 +558,19 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        webform_submission_value:
-          id: webform_submission_value
-          table: webform_submission_field_adesione_a_commissioni_richiesta_annullamento
-          field: webform_submission_value
+        entypa_stato:
+          id: entypa_stato
+          table: webform_submission
+          field: entypa_stato
           relationship: webform_submission
           group_type: group
           admin_label: ''
-          plugin_id: webform_submission_field
-          label: 'Richiesta Annullamento'
+          plugin_id: entypa_stato
+          label: Stato
           exclude: false
           alter:
-            alter_text: true
-            text: "Annullamento Richiesto<br>\r\n<a href=\"/admin/structure/webform/manage/adesione_a_commissioni/submission/{{ webform_submission_value }}\">Vedi richiesta</a>"
+            alter_text: false
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -599,18 +599,85 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '<a href="/form/annullamento-istanza-inviata?sub={{ sid }}">Richiedi Annullamento</a>'
+          empty: ''
           hide_empty: false
-          empty_zero: true
+          empty_zero: false
           hide_alter_empty: true
-          webform_element_format: value
-          webform_multiple_value: true
-          webform_multiple_delta: 0
-          webform_check_access: 1
+          click_sort_column: value
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        entypa_annullamento:
+          id: entypa_annullamento
+          table: webform_submission
+          field: entypa_annullamento
+          relationship: webform_submission
+          group_type: group
+          admin_label: ''
+          plugin_id: entypa_annullamento
+          label: Annullamento
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: mini
         options:
@@ -684,7 +751,7 @@ display:
             doc_primaria: doc_primaria
             doc_secondaria: doc_secondaria
       cache:
-        type: tag
+        type: none
         options: {  }
       empty:
         area:
@@ -1502,19 +1569,19 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        webform_submission_value:
-          id: webform_submission_value
-          table: webform_submission_field_adesione_a_commissioni_richiesta_annullamento
-          field: webform_submission_value
+        entypa_stato:
+          id: entypa_stato
+          table: webform_submission
+          field: entypa_stato
           relationship: webform_submission
           group_type: group
           admin_label: ''
-          plugin_id: webform_submission_field
-          label: 'Richiesta Annullamento'
+          plugin_id: entypa_stato
+          label: Stato
           exclude: false
           alter:
-            alter_text: true
-            text: "Annullamento Richiesto<br>\r\n<a href=\"/admin/webform/manage/annullamento_istanza_inviata/submission/{{ webform_submission_value }}/table\">Vedi richiesta</a>"
+            alter_text: false
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -1543,18 +1610,85 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '<a href="/modulistica-online/annullamento-istanza-inviata?sub={{ sid }}">Richiedi Annullamento</a>'
+          empty: ''
           hide_empty: false
-          empty_zero: true
+          empty_zero: false
           hide_alter_empty: true
-          webform_element_format: value
-          webform_multiple_value: true
-          webform_multiple_delta: 0
-          webform_check_access: 1
+          click_sort_column: value
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        entypa_annullamento:
+          id: entypa_annullamento
+          table: webform_submission
+          field: entypa_annullamento
+          relationship: webform_submission
+          group_type: group
+          admin_label: ''
+          plugin_id: entypa_annullamento
+          label: Annullamento
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       filters:
         status:
           id: status
@@ -1841,3 +1975,4 @@ display:
         - 'user.node_grants:view'
         - user.roles
       tags: {  }
+

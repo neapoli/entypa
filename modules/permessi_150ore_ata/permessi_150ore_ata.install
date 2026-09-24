@@ -2,21 +2,24 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the Comment module.
+ * Installazione e disinstallazione del formulario.
  */
 
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\field\Entity\FieldStorageConfig;
+/**
+ * Implements hook_install().
+ */
+function permessi_150ore_ata_install() {
+  // Il formulario vive in config/update, che core non legge: lo installa
+  // entypa insieme alla pagina di modulistica che lo pubblica. I
+  // destinatari sono dedotti dal nome: vanno ricontrollati.
+  entypa_installa_formulario('permessi_150ore_ata', 'permessi_150ore_ata');
+}
 
 /**
  * Implements hook_uninstall().
  */
 function permessi_150ore_ata_uninstall() {
-
-  // ID of webform to delete.
-  $webform_id = 'permessi_150ore_ata';
-  $webform_entity = \Drupal::entityTypeManager()->getStorage('webform')->load($webform_id);
-  if (!is_null($webform_entity)) {
-    $webform_entity->delete();
-  }
+  // Se se ne va il formulario deve andarsene anche la pagina di modulistica
+  // che lo pubblica, altrimenti nell'elenco resta una voce che non apre nulla.
+  entypa_rimuovi_formulario('permessi_150ore_ata');
 }

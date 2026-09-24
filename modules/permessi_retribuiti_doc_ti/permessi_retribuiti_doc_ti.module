@@ -36,6 +36,7 @@ function _permessi_retribuiti_doc_ti_tetti() {
     'Lutto familiare' => [3, 'art. 15, comma 1, del CCNL 29/11/2007'],
     'Matrimonio' => [15, 'art. 15, comma 3, del CCNL 29/11/2007'],
     'Motivi familiari/personali ' => [3, 'art. 15, comma 2, del CCNL 29/11/2007'],
+    'Ferie per motivi familiari/personali' => [6, 'art. 15, comma 2, e art. 13, comma 9, del CCNL 29/11/2007'],
   ];
 }
 

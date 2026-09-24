@@ -11,15 +11,23 @@ tutte le scuole, anche dopo modifiche fatte a mano sul singolo sito.
 | `config/optional` | core | all'installazione e quando vengono abilitati i moduli da cui dipende; salta le configurazioni già presenti |
 | `config/update` | questo modulo | **a ogni** `drush updb`, tramite `src/Drush/Commands/EntypaCommands.php` |
 
+Lo stesso vale per i sottomoduli: ognuno tiene il proprio formulario in
+`modules/<sottomodulo>/config/update/`, e il comando di Entýpa raccoglie le
+cartelle dei **soli sottomoduli installati** su quel sito. Così una scuola che
+ha già i formulari in opera riceve le nostre modifiche con un semplice
+`drush updb`, senza che dobbiamo scrivere un hook di aggiornamento per ogni
+campo aggiunto.
+
 Una configurazione va messa **o** in `config/optional` **o** qui, non in
 entrambe: `config/optional` viene ignorata se la configurazione esiste già,
 quindi per ciò che va riallineato a ogni aggiornamento fa fede solo questa
 cartella.
 
 Alla prima installazione del modulo i file di questa cartella vengono comunque
-creati da `_entypa_install_config_update()` in `entypa.install`, altrimenti su
-un sito nuovo le viste e i display della Modulistica online non esisterebbero
-fino al primo `drush updb`.
+creati da `entypa_importa_config_update()`, altrimenti su un sito nuovo le viste
+e i display della Modulistica online non esisterebbero fino al primo
+`drush updb`. I sottomoduli fanno lo stesso con `entypa_installa_formulario()`,
+che installa il formulario e crea la pagina che lo pubblica.
 
 ## Come si scrivono i file
 
@@ -55,3 +63,6 @@ Nessuna configurazione viene mai cancellata.
 - `core.entity_view_display.node.modulistica_online.default.yml`
 - `core.entity_view_display.node.modulistica_online.full.yml`
 - `pathauto.pattern.contenuto_modulistica_online.yml`
+- `theme_change.theme_change.modulistica_online.yml`
+
+Nei sottomoduli, un file per ciascuno: `webform.webform.<formulario>.yml`.

@@ -21,6 +21,9 @@ entypa_praxis.acquisisci:
     submission: \d+
     tid: \d+
   options:
+    # Pagina di lavoro della segreteria: va vestita con il tema di
+    # amministrazione, come faceva hook_admin_paths() in Drupal 7.
+    _admin_route: TRUE
     parameters:
       node:
         type: entity:node
@@ -37,6 +40,9 @@ entypa_praxis.concedi:
     submission: \d+
     tid: \d+
   options:
+    # Pagina di lavoro della segreteria: va vestita con il tema di
+    # amministrazione, come faceva hook_admin_paths() in Drupal 7.
+    _admin_route: TRUE
     parameters:
       node:
         type: entity:node
@@ -53,6 +59,9 @@ entypa_praxis.visto:
     submission: \d+
     tid: \d+
   options:
+    # Pagina di lavoro della segreteria: va vestita con il tema di
+    # amministrazione, come faceva hook_admin_paths() in Drupal 7.
+    _admin_route: TRUE
     parameters:
       node:
         type: entity:node
@@ -69,6 +78,9 @@ entypa_praxis.visto_dsga:
     submission: \d+
     tid: \d+
   options:
+    # Pagina di lavoro della segreteria: va vestita con il tema di
+    # amministrazione, come faceva hook_admin_paths() in Drupal 7.
+    _admin_route: TRUE
     parameters:
       node:
         type: entity:node
@@ -85,6 +97,9 @@ entypa_praxis.visto_referente:
     submission: \d+
     tid: \d+
   options:
+    # Pagina di lavoro della segreteria: va vestita con il tema di
+    # amministrazione, come faceva hook_admin_paths() in Drupal 7.
+    _admin_route: TRUE
     parameters:
       node:
         type: entity:node
@@ -96,3 +111,18 @@ entypa_praxis.ajax_protocollo:
   requirements:
     _permission: 'protocollato'
   methods: [POST]
+
+# I testi lunghi si leggono in una finestra, non in colonna. Il permesso è in
+# OR: chiunque partecipi all'istruttoria deve poterli leggere.
+entypa_praxis.motivo:
+  path: '/entypa-praxis/motivo/{tipo}/{id}'
+  defaults:
+    _controller: '\Drupal\entypa_praxis\Controller\MotivoController::mostra'
+    _title_callback: '\Drupal\entypa_praxis\Controller\MotivoController::titolo'
+  requirements:
+    _permission: 'amministra istanze+protocollato+visto dsga+visto referente+visto+acquisito+annullato'
+    tipo: 'istruttoria|annullamento'
+    id: \d+
+  options:
+    _admin_route: TRUE
+

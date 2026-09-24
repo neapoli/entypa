@@ -1,0 +1,645 @@
+langcode: it
+status: open
+dependencies:
+  module:
+    - webform_entity_print
+third_party_settings:
+  webform_entity_print:
+    template:
+      header: '<h2>ASSENZA - Permessi brevi art. 16 - DOCENTI</h2>'
+      footer: ''
+      css: ''
+    export_types:
+      pdf:
+        enabled: true
+        link_text: ''
+        link_attributes: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: permessi_brevi_art16_doc
+title: 'Permessi brevi art. 16 - DOCENTI'
+description: '<p>Form per la richiesta di permesso breve art. 16 - DOCENTI</p>'
+categories:
+  - Docenti
+elements: |-
+  dati_anagrafici:
+    '#type': webform_flexbox
+    '#align_items': center
+    markup:
+      '#type': webform_markup
+      '#flex': 0
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#markup': '<p>Il/La sottoscritto/a</p>'
+    cognome:
+      '#type': textfield
+      '#title': Cognome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_cognome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    nome:
+      '#type': textfield
+      '#title': Nome
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#flex': 2
+      '#default_value': '[current-user:field_nome]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    codice_fiscale:
+      '#type': textfield
+      '#title': 'Codice Fiscale'
+      '#readonly': true
+      '#input_mask': "'casing': 'upper'"
+      '#default_value': '[current-user:field_codice_fiscale]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  flexbox:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    sede_di_servizio:
+      '#type': textfield
+      '#title': 'In servizio presso: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 3
+      '#default_value': '[current-user:field_sede_di_servizio]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    in_qualita_di_:
+      '#type': textfield
+      '#title': 'In qualità di: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#flex': 2
+      '#default_value': '[current-user:field_qualifica]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+    a_tempo:
+      '#type': textfield
+      '#title': 'A Tempo: '
+      '#autocomplete': 'off'
+      '#readonly': true
+      '#default_value': '[current-user:field_tipologia_incarico:entity]'
+      '#format_items': comma
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  anno_scolastico_di_riferimento:
+    '#type': textfield
+    '#title': 'Anno scolastico di riferimento'
+    '#description': '<p>Il monte dei permessi brevi si conta nel corso dell''anno scolastico (art. 16, comma 2, del CCNL 29.11.2007).</p>'
+    '#required': true
+    '#size': 12
+    '#placeholder': 2026/2027
+    '#pattern': '\d{4}/\d{4}'
+    '#pattern_error': "Indicare l'anno scolastico nella forma 2026/2027."
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  processed_text:
+    '#type': processed_text
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': '<div class="text-align-center"><strong>CHIEDE</strong></div><div class="text-align-center">&nbsp;</div><div>di poter usufruire dei seguenti permessi brevi, ai sensi dell''art. 16 del C.C.N.L. 29.11.2007:</div><div class="text-align-center">&nbsp;</div><p>Per il personale docente il singolo permesso non può superare <strong>due ore</strong> e si riferisce a unità minime che siano <strong>ore di lezione</strong> (art. 16, comma 1). I permessi complessivamente fruiti non possono eccedere il <strong>rispettivo orario settimanale di insegnamento</strong> (comma 2): 25 ore nella scuola dell''infanzia, 22 nella primaria, 18 nella secondaria.</p><p>Le ore non lavorate vanno recuperate entro i <strong>due mesi lavorativi successivi</strong> a quello della fruizione; per i docenti il recupero avviene prioritariamente con supplenze o interventi didattici integrativi, con precedenza nella classe in cui si sarebbe dovuto prestare servizio (comma 3). Se il recupero non avviene per fatto imputabile al dipendente, l''amministrazione trattiene una somma pari alla retribuzione spettante per le ore non recuperate (comma 4). L''attribuzione del permesso è subordinata alla possibilità della sostituzione con personale in servizio (comma 5).</p>'
+    '#format': bootstrap_italia_2
+  permesso_orario:
+    '#type': webform_custom_composite
+    '#title': 'Permesso Orario'
+    '#required': true
+    '#multiple__sorting': false
+    '#multiple__add_more': false
+    '#multiple__add_more_input': false
+    '#format_items': table
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#element':
+      giorno:
+        '#type': date
+        '#required': true
+        '#title': Giorno
+        '#format': bootstrap_italia_short_date
+      ora_inizio:
+        '#type': webform_time
+        '#required': true
+        '#title': 'Dalle Ore'
+      ora_fine:
+        '#type': webform_time
+        '#required': true
+        '#title': 'Alle Ore'
+      plesso:
+        '#type': select
+        '#options': plessi_scolastici
+        '#required': true
+        '#title': 'Plesso Interessato'
+      classe:
+        '#type': textfield
+        '#required': true
+        '#title': Classe
+        '#size': 21
+      totale_ore:
+        '#type': textfield
+        '#title': Ore
+        '#readonly': true
+        '#size': 6
+        '#attributes':
+          readonly: readonly
+          class:
+            - totale-ore-row
+  per_un_totale_di_ore:
+    '#type': textfield
+    '#title': 'Tot. ore'
+    '#size': 10
+    '#readonly': true
+  recupero_permesso:
+    '#type': radios
+    '#title': 'Recupero permesso'
+    '#options':
+      'Ore da recuperare entro i due mesi lavorativi successivi alla data della fruizione': 'Ore da recuperare entro i due mesi lavorativi successivi alla data della fruizione'
+      'Ore di servizio già prestate': 'Ore di servizio già prestate'
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  processed_text_01:
+    '#type': processed_text
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#text': |
+      <p>Il/la sottoscritto/a, ai sensi dell’art.16 del C.C.N.L. Comparto Scuola 2006 – 2009, del D.P.R. 28 dicembre 2000, n. 445 e della Legge 12 novembre 2011, n. 183, sotto la propria responsabilità,</p>
+
+      <p class="text-align-center"><strong>DICHIARA&nbsp;</strong></p>
+
+      <p>che il coordinatore è stato già informato della richiesta e provvederà alla copertura e di richiedere il permesso per:</p>
+    '#format': bootstrap_italia_2
+  dichiarazione:
+    '#type': textarea
+    '#title': 'Descrizione dei motivi per cui si chiede il permesso'
+    '#description_display': before
+    '#required': true
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  data_firma:
+    '#type': webform_flexbox
+    '#attributes':
+      style: 'margin-top: 30px'
+    data_compilazione:
+      '#type': date
+      '#title': 'Data compilazione'
+      '#title_display': inline
+      '#disabled': true
+      '#default_value': today
+      '#format': bootstrap_italia_short_date
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+      '#date_date_format': ''
+    firma_digitale:
+      '#type': textarea
+      '#title': FIRMA
+      '#rows': 3
+      '#disabled': true
+      '#flex': 0
+      '#default_value': |-
+        [current-user:field_cognome] [current-user:field_nome]
+        C.F. [current-user:field_codice_fiscale]
+        E-mail: [current-user:mail]
+      '#format': raw
+      '#access_create_roles':
+        - authenticated
+      '#access_update_roles':
+        - authenticated
+      '#access_view_roles':
+        - authenticated
+  file_pdf:
+    '#type': 'webform_entity_print_attachment:pdf'
+    '#title': 'File PDF'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+    '#display_on': view
+    '#filename': '[webform_submission:source-title]_[webform_submission:values:cognome]_[webform_submission:values:nome].pdf'
+    '#sanitize': true
+  istituto:
+    '#type': hidden
+    '#title': Istituto
+    '#default_value': '[site:name]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_user:
+    '#type': hidden
+    '#title': 'Mail user'
+    '#default_value': '[current-user:mail]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  mail_istituto:
+    '#type': hidden
+    '#title': 'Mail Istituto'
+    '#default_value': '[entypa:mail-istituto]'
+    '#access_create_roles':
+      - authenticated
+    '#access_update_roles':
+      - authenticated
+    '#access_view_roles':
+      - authenticated
+  richiesta_annullamento:
+    '#type': number
+    '#title': 'Richiesta Annullamento'
+    '#default_value': '0'
+    '#access': false
+  motivo_annullamento:
+    '#type': textarea
+    '#title': 'Motivo annullamento'
+    '#access': false
+css: ''
+javascript: "(function ($, Drupal) {\r\n  'use strict';\r\n\r\n  /* Due limiti, con gradi di certezza diversi.\r\n\r\n     Il singolo permesso non può superare due ore (art. 16, comma 1): è un\r\n     numero fisso e si verifica riga per riga.\r\n\r\n     Il monte annuo corrisponde invece all'orario settimanale di insegnamento\r\n     del docente (comma 2), che vale 25 ore nell'infanzia, 22 nella primaria e\r\n     18 nella secondaria: il formulario non sa a quale ordine appartenga chi\r\n     compila, quindi blocca solo oltre il massimo possibile, 25 ore, che è\r\n     certamente eccessivo per chiunque. Il limite proprio resta nel testo. */\r\n  var ORE_PER_PERMESSO = 2;\r\n  var ORE_ANNUE_MASSIME = 25;\r\n\r\n  function avvisoTetto($tot, minuti) {\r\n    var eccede = minuti > ORE_ANNUE_MASSIME * 60;\r\n    var testo = eccede\r\n      ? 'La domanda chiede ' + Math.round(minuti / 6) / 10 + ' ore, oltre il '\r\n        + 'massimo possibile: per i docenti i permessi brevi non possono eccedere '\r\n        + \"l'orario settimanale di insegnamento, che è di 25 ore nell'infanzia, \"\r\n        + '22 nella primaria e 18 nella secondaria (art. 16, comma 2, del CCNL 29.11.2007).'\r\n      : '';\r\n    var $a = $('#avviso-permessi-brevi');\r\n\r\n    if (!$a.length) {\r\n      $a = $('<div>', { id: 'avviso-permessi-brevi', 'aria-live': 'polite' });\r\n      $tot.closest('.js-form-item, .form-item').after($a);\r\n    }\r\n\r\n    $a.toggleClass('messages messages--warning', eccede).text(testo);\r\n\r\n    if ($tot[0] && $tot[0].setCustomValidity) {\r\n      $tot[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  var SEL_ORE = 'input[name*=\"permesso_orario\"][name*=\"[ora_inizio]\"], ' +\r\n                'input[name*=\"permesso_orario\"][name*=\"[ora_fine]\"]';\r\n  var SEL_GIORNO = 'input[name*=\"permesso_orario\"][name*=\"[giorno]\"]';\r\n  var SEL_PESO   = 'select[name*=\"permesso_orario\"][name*=\"[weight]\"]';\r\n\r\n  function toMinuti(valore) {\r\n    if (!valore) { return null; }\r\n    var p = valore.split(':');\r\n    var h = parseInt(p[0], 10);\r\n    var m = parseInt(p[1], 10);\r\n    if (isNaN(h) || isNaN(m)) { return null; }\r\n    return h * 60 + m;\r\n  }\r\n\r\n  function toData(valore) {\r\n    if (!valore) { return null; }\r\n    var m = valore.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);\r\n    if (m) { return Date.UTC(+m[1], +m[2] - 1, +m[3]); }\r\n    m = valore.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$/);\r\n    if (m) { return Date.UTC(+m[3], +m[2] - 1, +m[1]); }\r\n    return null;\r\n  }\r\n\r\n  function formatOre(min) {\r\n    var h = Math.floor(min / 60);\r\n    var m = min % 60;\r\n    return h + 'h' + (m ? ' ' + m + 'min' : '');\r\n  }\r\n\r\n  function prefissoRiga(name) {\r\n    return name.replace(/\\[[^\\[\\]]*\\]$/, '');\r\n  }\r\n\r\n  function campo($form, prefisso, chiave) {\r\n    return $form.find('[name=\"' + prefisso + '[' + chiave + ']\"]');\r\n  }\r\n\r\n  function errore($campo, testo) {\r\n    if ($campo[0] && $campo[0].setCustomValidity) {\r\n      $campo[0].setCustomValidity(testo);\r\n    }\r\n  }\r\n\r\n  function validaForm($form) {\r\n    var totale = 0;\r\n    var giornoPrecedente = null;\r\n\r\n    $form.find(SEL_GIORNO).each(function (indice) {\r\n      var p       = prefissoRiga(this.name);\r\n      var $giorno = campo($form, p, 'giorno');\r\n      var $inizio = campo($form, p, 'ora_inizio');\r\n      var $fine   = campo($form, p, 'ora_fine');\r\n      var $tot    = campo($form, p, 'totale_ore');\r\n\r\n      var dGiorno = toData($giorno.val());\r\n      var inizio  = toMinuti($inizio.val());\r\n      var fine    = toMinuti($fine.val());\r\n\r\n      var errGiorno = '';\r\n      var errFine   = '';\r\n\r\n      // 1. Il giorno deve essere successivo a quello della riga precedente.\r\n      if (dGiorno !== null && giornoPrecedente !== null && dGiorno <= giornoPrecedente) {\r\n        errGiorno = 'Il giorno della riga ' + (indice + 1) +\r\n          ' deve essere successivo a quello della riga precedente.';\r\n      }\r\n\r\n      // 2. Ora fine successiva a ora inizio.\r\n      if (inizio !== null && fine !== null && fine <= inizio) {\r\n        errFine = \"L'ora di fine deve essere successiva all'ora di inizio.\";\r\n      }\r\n\r\n      errore($giorno, errGiorno);\r\n      errore($fine, errFine);\r\n\r\n      if (inizio !== null && fine !== null && !errGiorno && !errFine) {\r\n        $tot.val(formatOre(fine - inizio));\r\n        totale += fine - inizio;\r\n        if (fine - inizio > ORE_PER_PERMESSO * 60) {\r\n          errore($fine, 'Per il personale docente il permesso breve non può ' +\r\n            'superare due ore (art. 16, comma 1, del CCNL 29.11.2007).');\r\n        }\r\n      }\r\n      else {\r\n        $tot.val('');\r\n      }\r\n\r\n      // Riferimento per la riga successiva: solo se questa riga è valida.\r\n      if (dGiorno !== null && !errGiorno) {\r\n        giornoPrecedente = dGiorno;\r\n      }\r\n    });\r\n\r\n    var $totOre = $form.find('input[name=\"per_un_totale_di_ore\"]');\r\n    $totOre.val(totale ? formatOre(totale) : '');\r\n    avvisoTetto($totOre, totale);\r\n  }\r\n\r\n  function formConPermessi(context) {\r\n    return $(context).find('form').addBack('form').has(SEL_GIORNO);\r\n  }\r\n\r\n  $(document).on('change.permessiOre input.permessiOre',\r\n    SEL_ORE + ', ' + SEL_GIORNO, function () {\r\n      var $form = $(this).closest('form');\r\n      if ($form.length) { validaForm($form); }\r\n    });\r\n\r\n  // Riordino righe via drag & drop.\r\n  $(document).on('change.permessiOre', SEL_PESO, function () {\r\n    var $form = $(this).closest('form');\r\n    if ($form.length) { validaForm($form); }\r\n  });\r\n\r\n  // Aggiunta / rimozione righe del composite.\r\n  $(document).on('ajaxComplete.permessiOre', function () {\r\n    formConPermessi(document).each(function () {\r\n      validaForm($(this));\r\n    });\r\n  });\r\n\r\n  Drupal.behaviors.permessiOrariTotale = {\r\n    attach: function (context) {\r\n      formConPermessi(context).each(function () {\r\n        validaForm($(this));\r\n      });\r\n    }\r\n  };\r\n\r\n}(jQuery, Drupal));"
+settings:
+  ajax: false
+  ajax_scroll_top: ''
+  ajax_progress_type: ''
+  ajax_effect: ''
+  ajax_speed: null
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: true
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_file_limit_message: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: '[webform_submission:submitted-to]: [webform_submission:values:cognome]'
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements:
+    istituto: istituto
+    mail_user: mail_user
+    mail_istituto: mail_istituto
+    richiesta_annullamento: richiesta_annullamento
+    motivo_annullamento: motivo_annullamento
+  submission_exclude_empty: true
+  submission_exclude_empty_checkbox: true
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - element__cognome
+    - element__nome
+    - element__codice_fiscale
+    - element__sede_di_servizio
+    - element__in_qualita_di_
+    - element__a_tempo
+    - completed
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: '< Precedente'
+  wizard_next_button_label: ''
+  wizard_toggle: true
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
+  preview: 2
+  preview_label: Anteprima
+  preview_title: '[webform:title]: Anteprima'
+  preview_message: '<p><strong>ATTENZIONE</strong>:&nbsp;Ti preghiamo di rivedere la tua richiesta.</p><p>L''invio <strong>NON E'' COMPLETO</strong> finché non si preme il pulsante "<strong>INVIA</strong>" in fondo alla pagina!</p>'
+  preview_attributes: {  }
+  preview_excluded_elements:
+    file_pdf: file_pdf
+    istituto: istituto
+    mail_user: mail_user
+    mail_istituto: mail_istituto
+    richiesta_annullamento: richiesta_annullamento
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: true
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: url_message
+  confirmation_url: /admin/modulistica-online/le-mie-istanze
+  confirmation_title: "La sua richiesta\_è stata inviata alla segreteria."
+  confirmation_message: '<p>La sua richiesta è stata inviata alla segreteria.</p><p>A breve riceverà una mail con i dati inseriti.</p><p>-- Il team di [site:name]</p>'
+  confirmation_attributes: {  }
+  confirmation_back: false
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: true
+  confirmation_exclude_token: true
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: true
+  form_remote_addr: true
+access:
+  create:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles:
+      - amministratore
+      - capo_redattore
+      - redattore
+      - dirigente_scolastico
+      - doc_infanzia
+      - doc_primaria
+      - doc_secondaria
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers:
+  e_mail:
+    id: email
+    handler_id: e_mail
+    label: E-mail
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -50
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_istituto:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[webform_submission:values:cognome] [webform_submission:values:nome]'
+      reply_to: '[webform_submission:values:mail_user:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Invio Richiesta: [webform_submission:serial] - "[webform_submission:source-title]" : [webform_submission:values:cognome] [webform_submission:values:nome]'
+      body: "<p>Il giorno {{ webform_token('[webform_submission:created]', webform_submission) }} <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n\r\n<p>ha inviato la seguente richiesta: <strong>{{ webform_token('[webform_submission:source-title]', webform_submission) }}</strong></p>\r\n\r\n<p>Si prega di scaricare il file pdf in allegato.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_user: mail_user
+        mail_istituto: mail_istituto
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+  e_mail_conferma_ricezione:
+    id: email
+    handler_id: e_mail_conferma_ricezione
+    label: 'E-mail conferma ricezione'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -49
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:mail_user:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: '[site:name]'
+      reply_to: '[webform_submission:values:mail_istituto:raw]'
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'La richiesta n. [webform_submission:serial] di "[webform_submission:source-title]" è stata ricevuta'
+      body: "<p>RICEVUTA dell'Invio N° {{ webform_token('[webform_submission:serial]', webform_submission) }} di {{ webform_token('[webform_submission:created]', webform_submission) }}</p>\r\n<p>Trasmesso da: <strong>{{ webform_token('[webform_submission:values:cognome]', webform_submission) }} {{ webform_token('[webform_submission:values:nome]', webform_submission) }}</strong></p>\r\n<p>Di seguito sono riportati i dati acquisiti dal sistema:</p>\r\n<hr />\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n<hr />\r\n<p><strong>NON rispondere</strong> alla presente mail, casella di servizio <strong>non abilitata</strong> alla ricezione dei messaggi.</p>"
+      excluded_elements:
+        istituto: istituto
+        mail_user: mail_user
+        mail_istituto: mail_istituto
+        richiesta_annullamento: richiesta_annullamento
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: true
+      exclude_attachments: false
+      html: true
+      attachments: true
+      twig: true
+      theme_name: ''
+      langcode: ''
+      parameters: {  }
+      debug: false
+variants: {  }

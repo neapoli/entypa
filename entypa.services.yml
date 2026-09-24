@@ -3,3 +3,9 @@ services:
     class: '\Drupal\entypa\EventSubscriber\EntypaEntityPrintCssAlterSubscriber'
     tags:
       - { name: 'event_subscriber' }
+  entypa.segnatura:
+    class: '\Drupal\entypa\Segnatura'
+    arguments: ['@config.factory', '@state', '@lock', '@datetime.time', '@date.formatter']
+  entypa.referenti:
+    class: '\Drupal\entypa\ReferentiPlesso'
+    arguments: ['@config.factory', '@plugin.manager.mail', '@language_manager', '@module_handler']

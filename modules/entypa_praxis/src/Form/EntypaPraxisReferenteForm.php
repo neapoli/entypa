@@ -246,10 +246,13 @@ class EntypaPraxisReferenteForm extends FormBase {
     if ($tid == 0) {
       // Insert new record.
       try {
-        $database->insert('entypa_praxis')
+        // Merge e non insert: se nel frattempo la riga è nata — l'istanza è
+        // appena arrivata, o un collega ha cliccato un attimo prima — la si
+        // aggiorna, invece di urtare la chiave unica e perdere il clic.
+        $database->merge('entypa_praxis')
+          ->key('submission_id', $submission_id)
           ->fields([
             'user_id' => $user_id,
-            'submission_id' => $submission_id,
             $field . '_stato' => $is_ok,
             'evaso_data' => $evaso_data,
           ])
@@ -298,6 +301,18 @@ class EntypaPraxisReferenteForm extends FormBase {
         return;
       }
     }
+
+    // Se l'istanza è stata evasa mentre pendeva una richiesta di annullamento,
+    // la lavorazione è andata avanti lo stesso: la richiesta risulta non
+    // accolta. Protocollo e visto del referente non evadono nulla, quindi non
+    // chiudono nessuna richiesta.
+    if (!is_null($evaso_data)) {
+      \Drupal::service('entypa_praxis.instance_helper')->chiudiRichiestaAnnullamento($tid);
+    }
+
+    // I referenti di plesso seguono l'esito: avvisati se accolta, avvisati
+    // del ritiro se non lo è più.
+    \Drupal::service('entypa_praxis.referenti')->aggiorna($submission_id);
 
     if ($message) {
       $this->messenger()->addStatus(

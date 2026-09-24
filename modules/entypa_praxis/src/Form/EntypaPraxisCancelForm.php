@@ -10,6 +10,8 @@ use Drupal\Core\Database\Database;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\entypa_praxis\Service\EmailService;
 
 /**
  * Form for canceling instances.
@@ -31,11 +33,27 @@ class EntypaPraxisCancelForm extends FormBase {
   protected $dateFormatter;
 
   /**
+   * The email service.
+   *
+   * @var \Drupal\entypa_praxis\Service\EmailService
+   */
+  protected $emailService;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a new EntypaPraxisCancelForm.
    */
-  public function __construct(AccountInterface $current_user, DateFormatterInterface $date_formatter) {
+  public function __construct(AccountInterface $current_user, DateFormatterInterface $date_formatter, EmailService $email_service, EntityTypeManagerInterface $entity_type_manager) {
     $this->currentUser = $current_user;
     $this->dateFormatter = $date_formatter;
+    $this->emailService = $email_service;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -44,7 +62,9 @@ class EntypaPraxisCancelForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_user'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('entypa_praxis.email'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -79,9 +99,8 @@ class EntypaPraxisCancelForm extends FormBase {
       ],
       '#attributes' => [
         'title' => $this->t('Fare clic per annullare'),
-        'class' => ['button-si', 'deleteButtonClass'],
+        'class' => ['button', 'button--small', 'deleteButtonClass'],
         'data-tid' => $tid,
-        'style' => 'position:relative;top:-1.4em;',
       ],
     ];
 
@@ -111,38 +130,20 @@ class EntypaPraxisCancelForm extends FormBase {
     
     $response = new AjaxResponse();
     
-    // Get module path for icon.
-    $module_path = \Drupal::service('extension.list.module')->getPath('entypa_praxis');
     $timestamp = \Drupal::time()->getRequestTime();
     $formatted_date = $this->dateFormatter->format($timestamp, 'short');
     
-    // Replace the cancel button with canceled status.
+    // La classe «entypa-praxis-riga-annullata» è l'aggancio per il
+    // comportamento JavaScript che nasconde la riga: Drupal riesegue i
+    // comportamenti sul contenuto inserito via AJAX, mentre uno <script>
+    // incollato nel markup non è detto che venga eseguito.
     $html = sprintf(
-      '<span style="white-space:nowrap"><img class="istanza-annullata" src="/%s/icone/no.png" alt="%s" title="%s" /> (%s)</span>',
-      $module_path,
-      $this->t('istanza annullata'),
-      $this->t('istanza annullata'),
-      $formatted_date
-    );
-    
-    // Add script to hide the row.
-    $html .= sprintf(
-      '<script type="text/javascript">
-        (function() {
-          var node = document.getElementById("can0%d");
-          if (node) {
-            while (node.nodeName.toLowerCase() !== "tr") {
-              node = node.parentNode;
-            }
-            node.style.display = "none";
-          }
-        })();
-      </script>',
-      $sid
+      '<span class="entypa-praxis-riga-annullata">%s</span>',
+      entypa_icona('it-close-circle', '#dc3545', $this->t('Annullata il @data', ['@data' => $formatted_date]))
     );
     
     $response->addCommand(new ReplaceCommand('#can' . $sid, $html));
-    $response->addCommand(new ReplaceCommand('#done' . $sid, '---'));
+    $response->addCommand(new ReplaceCommand('#done' . $sid, '<span id="done' . $sid . '">---</span>'));
     
     return $response;
   }
@@ -167,15 +168,61 @@ class EntypaPraxisCancelForm extends FormBase {
     $database->update('entypa_praxis')
       ->fields([
         'annullato_data' => \Drupal::time()->getRequestTime(),
+        // 2 = annullata dall'ufficio.
+        'richiesta_annullamento' => 2,
       ])
       ->condition('tid', $values['tid'])
       ->execute();
+
+    $uid = $this->segnaSullIstanza($values['submission']);
+
+    // Se i referenti di plesso erano stati avvisati dell'assenza, ora sanno
+    // che non avrà luogo.
+    \Drupal::service('entypa_praxis.referenti')->aggiorna($values['submission']);
+
+    // L'avviso parte solo se l'istanza esiste e ha un intestatario.
+    if ($uid) {
+      $this->emailService->sendCancellationNotice($values['submission'], $uid);
+    }
 
     if ($message) {
       $this->messenger()->addStatus(
         $this->t('Annullata istanza id @sid.', ['@sid' => $values['submission']])
       );
     }
+  }
+
+  /**
+   * Scrive l'annullamento anche dentro l'invio del formulario.
+   *
+   * La riga di istruttoria è una tabella di servizio: il segno deve stare
+   * anche sull'istanza, così viaggia con i dati — esportazioni, PDF, elenco
+   * del dipendente. I gestori email dei formulari sono configurati sullo
+   * stato «completed», quindi salvare un invio già concluso non li riattiva.
+   *
+   * @param int $submission_id
+   *   L'identificativo dell'invio del formulario.
+   *
+   * @return int|null
+   *   L'identificativo di chi ha presentato l'istanza, oppure NULL.
+   */
+  protected function segnaSullIstanza($submission_id) {
+    $submission = $this->entityTypeManager
+      ->getStorage('webform_submission')
+      ->load($submission_id);
+
+    if (!$submission) {
+      return NULL;
+    }
+
+    // Il campo c'è in tutti i formulari di Entýpa, ma non si può dare per
+    // scontato su un formulario estraneo agganciato allo stesso tipo di nodo.
+    if ($submission->getWebform()->getElement('richiesta_annullamento')) {
+      $submission->setElementData('richiesta_annullamento', 2);
+      $submission->save();
+    }
+
+    return $submission->getOwnerId();
   }
 
 }
