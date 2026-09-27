@@ -1,7 +1,7 @@
 name: "Entýpa"
 description: 'Entýpa, dal greco «moduli, formulari», è la base delle istanze on line del personale scolastico: fornisce il tipo di contenuto, le impostazioni e i servizi condivisi dai formulari e dalla loro istruttoria.'
 package: "Neapoli"
-version: 2.0.1
+version: 2.1.0
 
 type: module
 core_version_requirement: ^10 || ^11 || ^12
@@ -9,6 +9,7 @@ configure: entypa.settings
 dependencies:
   - drupal:pathauto
   - entity_print:entity_print
+  - honeypot:honeypot
   - webform:webform
   - webform:webform_entity_print
   - webform:webform_entity_print_attachment
